@@ -1,5 +1,7 @@
 {
-  "name": "swadhesi",
+  "name": "@swadhesi/web",
+  "description": "Admin dashboard for Swadhesi",
+  "author": "nerdboi008",
   "version": "0.1.0",
   "type": "module",
   "private": true,

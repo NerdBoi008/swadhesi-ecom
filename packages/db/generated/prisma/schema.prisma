@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres.rvlnsqeskhcmpyynqxbv:Nerdboi@supabase5678@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+}
+
+model Category {
+  id          String     @id @default(uuid())
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  name        String
+  parent_id   String?    @map("parent_id") // Foreign key to the parent category
+  parent      Category?  @relation("CategoryChildren", fields: [parent_id], references: [id]) // Self-referencing many-to-one
+  children    Category[] @relation("CategoryChildren") // Self-referencing one-to-many
+  products    Product[] // One-to-many relationship with Product
+  image_url   String?
+  description String?
+
+  @@map("categories") // Map model name to table name
+}
+
+model Product {
+  id                  String             @id @default(uuid())
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
+  name                String
+  description         String
+  category_id         String             @map("category_id") // Foreign key to the Category
+  category            Category           @relation(fields: [category_id], references: [id]) // Many-to-one relationship with Category
+  thumbnail_image_url String
+  images_url          String[] // Using String[] for array of URLs
+  variants            ProductVariant[] // One-to-many relationship with ProductVariant
+  attributes          ProductAttribute[] // One-to-many relationship with ProductAttribute
+  brand_id            String?            @map("brand_id") // Optional foreign key for Brand (if you create a Brand model)
+  // brand              Brand?            @relation(fields: [brand_id], references: [id]) // Example relation if Brand model exists
+  meta_title          String?
+  meta_description    String?
+  slug                String?            @unique // Slugs are typically unique
+  related_products    String[] // Using String[] for array of related product IDs
+
+  @@map("products") // Map model name to table name
+}
+
+model ProductVariant {
+  id               String           @id @default(uuid())
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  product_id       String           @map("product_id") // Foreign key to the Product
+  product          Product          @relation(fields: [product_id], references: [id]) // Many-to-one relationship with Product
+  sku              String           @unique // SKUs are typically unique
+  price            Decimal // Use Decimal for monetary values
+  sale_price       Decimal? // Use Decimal for monetary values
+  stock            Int
+  size             Json // Store the ProductSize structure as JSON
+  image_url        String?
+  barcode          String?
+  attribute_values AttributeValue[] @relation("VariantAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
+
+  @@map("product_variants") // Map model name to table name
+}
+
+model ProductAttribute {
+  id           String           @id @default(uuid()) // Adding an ID for this join table equivalent
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  product_id   String           @map("product_id") // Foreign key to the Product
+  product      Product          @relation(fields: [product_id], references: [id]) // Many-to-one relationship with Product
+  attribute_id String           @map("attribute_id") // Foreign key to the Attribute
+  attribute    Attribute        @relation(fields: [attribute_id], references: [id]) // Many-to-one relationship with Attribute
+  values       AttributeValue[] @relation("ProductAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
+
+  @@unique([product_id, attribute_id]) // A product should have a unique entry for each attribute
+  @@map("product_attributes") // Map model name to table name
+}
+
+// Prisma will automatically create a join table for the many-to-many relationship
+// between ProductAttribute and AttributeValue.
+
+model Attribute {
+  id            String             @id @default(uuid())
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+  name          String             @unique // Attribute names are typically unique
+  values        AttributeValue[] // One-to-many relationship with AttributeValue
+  display_order Int?
+  products      ProductAttribute[] // One-to-many relationship with ProductAttribute
+
+  @@map("attributes") // Map model name to table name
+}
+
+model AttributeValue {
+  id                String             @id @default(uuid())
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  attribute_id      String             @map("attribute_id") // Foreign key to the Attribute
+  attribute         Attribute          @relation(fields: [attribute_id], references: [id]) // Many-to-one relationship with Attribute
+  value             String
+  display_order     Int?
+  variants          ProductVariant[]   @relation("VariantAttributeValue") // Many-to-many relationship with ProductVariant (through an implicit join table)
+  productAttributes ProductAttribute[] @relation("ProductAttributeValue") // Many-to-many relationship with ProductAttribute (through an implicit join table)
+
+  @@unique([attribute_id, value]) // An attribute value is unique within its attribute
+  @@map("attribute_values") // Map model name to table name
+}
+
+// Notes:
+// - BaseEntity fields (id, created_at, updated_at) are included directly in each model.
+// - Relationships are defined using the @relation attribute.
+// - Foreign keys are explicitly defined and mapped with @map.
+// - String[] is used for array types.
+// - The ProductSize structure is stored as JSON using the Json type. You'll need to handle serialization/deserialization in your application code.
+// - Decimal is used for monetary values (price, sale_price) for precision.
+// - @unique constraints are added for fields that should have unique values (sku, slug, attribute name, attribute value within an attribute).
+// - @@map is used to explicitly name the database tables.
+// - Implicit many-to-many join tables are created by Prisma for relationships like ProductVariant to AttributeValue and ProductAttribute to AttributeValue.
+// - A specific ID field is added to ProductAttribute as it serves as a form of join table/linking entity in the application logic.

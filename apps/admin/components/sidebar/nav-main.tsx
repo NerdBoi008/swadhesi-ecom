@@ -21,22 +21,29 @@ export function NavMain({
     url: string
     icon?: LucideIcon
   }[]
-    }) {
-    const pathname = usePathname();
+  }) {
+  const pathname = usePathname();
+  
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          {items.map((item) => (
+          {items.map((item) => {
+            const isActive = item.url === '/'
+            ? pathname === '/' // exact match for home
+              : pathname.startsWith(item.url) // match for other routes
+            
+            return(
             <SidebarMenuItem key={item.title}>
               <Link href={item.url}>
-                <SidebarMenuButton tooltip={item.title} className={cn(pathname === item.url && 'bg-primary text-white rounded-md', 'hover:cursor-pointer hover:bg-primary/5')}>
+                <SidebarMenuButton tooltip={item.title} className={cn(isActive && 'bg-primary text-white rounded-md', 'hover:cursor-pointer hover:bg-primary/5')}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-          ))}
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

@@ -22,77 +22,62 @@ import {
     UserPenIcon,
     Users2Icon,
 } from "lucide-react"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { NavSecondary } from "./nav-secondary"
+import Link from "next/link"
+import { getCurrentUser } from "aws-amplify/auth"
+import { useRouter } from "next/navigation"
 
-export const navigationData = {
-    user: {
-        name: 'no-name',
-        email: 'mail@example.com',
-        avatar: '',
-    },
-    navMain: [
-        {
-            title: 'Dashboard',
-            url: '/',
-            icon: LayoutDashboardIcon,
-        },
-        {
-            title: 'Product Management',
-            url: '/product-management',
-            icon: ShirtIcon,
-        },
-        {
-            title: 'Order Management',
-            url: '#',
-            icon: PackageSearchIcon,
-        },
-        {
-            title: 'Customer Management',
-            url: '/analytics',
-            icon: UserPenIcon,
-        },
-        {
-            title: "Marketing & Promotions",
-            url: "#",
-            icon: ChartNoAxesCombinedIcon,
-        },
-        {
-            title: "Content Management (CMS)",
-            url: "#",
-            icon: SquareGanttChartIcon,
-        },
-        {
-            title: "Reporting & Analytics",
-            url: "#",
-            icon: FileChartPieIcon,
-        },
-        
-    ],
-    navSecondary: [
-        {
-            title: "Settings",
-            url: "#",
-            icon: SettingsIcon,
-        },
-        {
-            title: "Get Help",
-            url: "#",
-            icon: HelpCircleIcon,
-        },
-        {
-            title: "Admin User Management",
-            url: "#",
-            icon: Users2Icon,
-        },
-    ],
+interface UserData {
+    name: string
+    email: string
+    avatar: string
 }
   
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const router = useRouter()
+    const [currentUser, setCurrentUser] = useState<UserData | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        async function fetchCurrentUser() {
+            try {
+              const { username, userId, signInDetails } = await getCurrentUser();
+                
+                setCurrentUser({
+                    name: username || 'User',
+                    email: signInDetails?.loginId || 'no-email@example.com',
+                    avatar: '' // You can add avatar logic here
+                })
+            } catch (error) {
+                console.error("Not authenticated, redirecting to sign-in")
+                router.push("/signin")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchCurrentUser()
+    }, [router])
+
+    if (loading) {
+        return (
+            <Sidebar {...props} collapsible="offcanvas">
+                <SidebarFooter>
+                    <div className="p-4 text-center">Loading user...</div>
+                </SidebarFooter>
+            </Sidebar>
+        )
+    }
+
+    if (!currentUser) {
+        return null // Redirect will happen in useEffect
+    }
+
   return (
-    <Sidebar {...props} collapsible="offcanvas" >
+    <Sidebar {...props} collapsible="offcanvas">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -100,10 +85,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link href="/">
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">Swadhesi Admin</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -115,9 +100,67 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={navigationData.user} />
+        <NavUser user={currentUser} />
       </SidebarFooter>
     </Sidebar>
   )
+}
+
+export const navigationData = {
+  navMain: [
+      {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboardIcon,
+      },
+      {
+          title: 'Product Management',
+          url: '/product-management',
+          icon: ShirtIcon,
+      },
+      {
+          title: 'Order Management',
+          url: '/order-management',
+          icon: PackageSearchIcon,
+      },
+      {
+          title: 'Customer Management',
+          url: '/customer-management',
+          icon: UserPenIcon,
+      },
+      {
+          title: "Marketing & Promotions",
+          url: "/marketing-and-promotions",
+          icon: ChartNoAxesCombinedIcon,
+      },
+      {
+          title: "Content Management (CMS)",
+          url: "/cms",
+          icon: SquareGanttChartIcon,
+      },
+      {
+          title: "Reporting & Analytics",
+          url: "/analytics",
+          icon: FileChartPieIcon,
+      },
+      
+  ],
+  navSecondary: [
+      {
+          title: "Settings",
+          url: "/settings",
+          icon: SettingsIcon,
+      },
+      {
+          title: "Get Help",
+          url: "#",
+          icon: HelpCircleIcon,
+      },
+      {
+          title: "Admin User Management",
+          url: "/admin-user-management",
+          icon: Users2Icon,
+      },
+  ],
 }
   

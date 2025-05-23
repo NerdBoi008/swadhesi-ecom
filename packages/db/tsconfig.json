@@ -1,0 +1,27 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "./dist", // Output directory if you build
+    "declaration": true, // Generate .d.ts files
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "lib": ["esnext"],
+    "sourceMap": true,
+    "baseUrl": "./src", // Helps with importing from within the package
+    "paths": {
+      "@repo/db/*": ["*"]
+    },
+    "resolveJsonModule": true,
+  },
+  "include": [
+    "src/**/*.ts",
+    "sst-env.d.ts",
+  ],
+  "exclude": ["dist", "node_modules", "test", "tests", "coverage", "**/*.spec.ts"],
+}

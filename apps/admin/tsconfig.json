@@ -30,7 +30,8 @@
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts",
-    "**/*.mjs"
+    "**/*.mjs",
+    "sst-env.d.ts",
   ],
   "exclude": [
     "node_modules"

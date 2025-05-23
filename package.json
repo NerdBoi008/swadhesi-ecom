@@ -6,12 +6,15 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "check-types": "turbo run check-types",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "lint": "turbo run lint",
+    "dev-web": "turbo run dev --filter=@swadhesi/web ",
+    "dev-admin": "turbo run dev --filter=@swadhesi/admin"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.149",
     "prettier": "^3.5.3",
     "turbo": "^2.5.1",
     "typescript": "5.8.2"
@@ -23,5 +26,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@pulumi/aws": "^6.79.1",
+    "sst": "3.13.20"
+  }
 }

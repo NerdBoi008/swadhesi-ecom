@@ -1,0 +1,31 @@
+{
+  "name": "@repo/db",
+  "version": "1.0.0",
+  "author": "nerdboi008",
+  "description": "Backend core functionality for monorepo applications",
+  "main": "./src/index.ts",
+  "types": "./src/index.d.ts",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./generated/prisma/index.d.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:push": "prisma db push"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.802.0",
+    "@aws-sdk/s3-request-presigner": "^3.802.0",
+    "@prisma/client": "^6.7.0",
+    "dotenv": "^16.5.0",
+    "aws-amplify": "^6.14.4"
+  },
+  "devDependencies": {
+    "prisma": "^6.7.0"
+  }
+}

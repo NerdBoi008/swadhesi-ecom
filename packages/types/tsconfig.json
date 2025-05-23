@@ -6,7 +6,7 @@
     "declaration": true, // Generate .d.ts files
     "esModuleInterop": true,
     "lib": ["esnext"],
-    "module": "ESNext", 
+    "module": "NodeNext", 
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
