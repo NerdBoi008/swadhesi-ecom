@@ -102,7 +102,7 @@ model AttributeValue {
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
   attribute_id    String           @map("attribute_id") // Foreign key to the Attribute
-  attribute       Attribute        @relation(fields: [attribute_id], references: [id]) // Many-to-one relationship with Attribute
+  attribute       Attribute        @relation(fields: [attribute_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Attribute
   value           String
   display_order   Int?
   variants        ProductVariant[]  @relation("VariantAttributeValue")// Many-to-many relationship with ProductVariant (through an implicit join table)

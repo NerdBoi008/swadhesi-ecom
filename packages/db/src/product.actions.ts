@@ -1,7 +1,7 @@
 'use server';
 
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Category, Prisma, Product } from '../generated/prisma';
+import { Attribute, AttributeValue, Category, Prisma, Product } from '../generated/prisma';
 import { prismaClient } from './prismaClient';
 import { deleteImageFromS3 } from './aws/bucket.actions';
 import { extractKeyFromUrl } from './util/bucket-utils';
@@ -26,9 +26,120 @@ export async function addProduct(
   });
 }
 
-/* Category functions */
+/*--------------------- Attribute functions --------------------------------------*/
 
-// Example function to get all categories
+export async function getAllAttributesWithValues() {
+  return prismaClient.attribute.findMany({
+    include: {
+      values: true, // Include the related AttributeValue records
+    },
+    orderBy: {
+      display_order: 'asc', // Optional: order attributes
+    }
+  });
+}
+
+export async function deleteAttribute(id: string) {
+  try {
+    // If onDelete: Cascade is set in your Prisma schema for AttributeValue,
+    // this single delete operation will automatically delete all related attribute values.
+    const deletedAttribute = await prismaClient.attribute.delete({
+      where: { id },
+    });
+    return deletedAttribute;
+  } catch (error) {
+    console.error(`Error deleting attribute with ID ${id}:`, error);
+    throw error;
+  }
+}
+
+export async function updateAttribute(
+  id: string,
+  data: Partial<Omit<Attribute, 'id' | 'created_at' | 'updated_at' | 'values' | 'products'>>
+): Promise<Attribute> {
+  return prismaClient.attribute.update({
+    where: { id },
+    data: {
+      name: data.name,
+      display_order: data.display_order,
+    },
+  });
+}
+
+export async function updateAttributeValue(
+  id: string,
+  data: Partial<Omit<AttributeValue, 'id' | 'created_at' | 'updated_at' | 'attribute' | 'variants' | 'productAttributes'>>
+): Promise<AttributeValue> {
+  return prismaClient.attributeValue.update({
+    where: { id },
+    data: {
+      value: data.value,
+      display_order: data.display_order,
+    },
+  });
+}
+
+export async function deleteAttributeValue(id: string): Promise<AttributeValue> {
+  return prismaClient.attributeValue.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Adds a new attribute to the database.
+ * @param attributeData - The data for the new attribute. `display_order` is optional.
+ * @returns Promise resolving with the newly created Attribute.
+ * @throws {Error} For network/database connection errors or unexpected issues.
+ * @throws {PrismaClientKnownRequestError} For Prisma-specific errors (e.g., unique constraint violation).
+ */
+export async function addAttribute(
+  attributeData: Omit<Attribute, 'id' | 'created_at' | 'updated_at' | 'values' | 'products'>
+): Promise<Attribute> {
+  try {
+    return await prismaClient.attribute.create({
+      data: {
+        name: attributeData.name,
+        display_order: attributeData.display_order ?? null,
+      },
+    });
+  } catch (error) {
+    handlePrismaError(error, 'adding attribute');
+    throw error; // Re-throw after handling
+  }
+}
+
+/**
+ * Adds a new attribute value to the database.
+ * @param attributeValueData - The data for the new attribute value.
+ * Requires `attribute_id` and `value`. `display_order` is optional.
+ * @returns Promise resolving with the newly created AttributeValue.
+ * @throws {Error} For network/database connection errors or unexpected issues.
+ * @throws {PrismaClientKnownRequestError} For Prisma-specific errors (e.g., unique constraint violation,
+ * foreign key constraint violation if attribute_id is invalid).
+ */
+export async function addAttributeValue(
+  attributeValueData: Omit<AttributeValue, 'id' | 'created_at' | 'updated_at' | 'attribute' | 'variants' | 'productAttributes'>
+): Promise<AttributeValue> {
+  try {
+    return await prismaClient.attributeValue.create({
+      data: {
+        attribute_id: attributeValueData.attribute_id,
+        value: attributeValueData.value,
+        display_order: attributeValueData.display_order ?? null,
+      },
+    });
+  } catch (error) {
+    handlePrismaError(error, 'adding attribute value');
+    throw error; // Re-throw after handling
+  }
+}
+
+/*--------------------- Category functions --------------------------------------*/
+
+/**
+ * Function to get all the categories
+ * @returns array of categories
+ */
 export async function getAllCategories(): Promise<Category[]> {
   try {
     const categories = await prismaClient.category.findMany({
@@ -170,8 +281,6 @@ export async function deleteCategory(id: string): Promise<Category> {
     throw error; 
   }
 }
-
-
 
 // Helper function for error handling
 function handlePrismaError(error: unknown, context: string): void {

@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 })
             } catch (error) {
                 console.error("Not authenticated, redirecting to sign-in")
-                router.push("/signin")
+                router.push("/sign-in")
             } finally {
                 setLoading(false)
             }

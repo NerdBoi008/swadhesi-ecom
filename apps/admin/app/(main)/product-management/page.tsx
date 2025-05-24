@@ -67,7 +67,7 @@ import Image from "next/image";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { deleteCategory } from "@repo/db";
 import { toast } from "sonner";
-import { Attribute } from "@repo/db/types";
+import useAttributeDataStore from "@/lib/store/network-attributes-data-store";
 
 // Mock data
 const products = [
@@ -114,51 +114,6 @@ const products = [
       { size: "4T", color: "Pink", stock: 0 },
       { size: "5T", color: "Pink", stock: 0 },
     ],
-  },
-];
-
-const categories = [
-  {
-    id: "cat_1",
-    name: "Tops",
-    children: [
-      { id: "cat_1_1", name: "T-Shirts" },
-      { id: "cat_1_2", name: "Shirts" },
-    ],
-  },
-  {
-    id: "cat_2",
-    name: "Bottoms",
-    children: [
-      { id: "cat_2_1", name: "Pants" },
-      { id: "cat_2_2", name: "Shorts" },
-    ],
-  },
-  { id: "cat_3", name: "Dresses" },
-  { id: "cat_4", name: "Outerwear" },
-];
-
-const collections = [
-  { id: "col_1", name: "Summer Collection", type: "manual", products: 12 },
-  { id: "col_2", name: "School Uniforms", type: "auto", products: 8 },
-  { id: "col_3", name: "Party Wear", type: "manual", products: 15 },
-];
-
-const attributes = [
-  {
-    id: "attr_1",
-    name: "Size",
-    values: ["2T", "3T", "4T", "5T", "S", "M", "L"],
-  },
-  {
-    id: "attr_2",
-    name: "Color",
-    values: ["Red", "Blue", "Green", "Yellow", "Pink", "Black", "White"],
-  },
-  {
-    id: "attr_3",
-    name: "Material",
-    values: ["Cotton", "Polyester", "Wool", "Denim"],
   },
 ];
 
@@ -285,51 +240,27 @@ const CategoryTree = ({
 };
 
 export default function ProductManagementPage() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('')
   const [selectedTab, setSelectedTab] = useState("products");
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-
-  const router = useRouter();
-
-  const [searchQuery, setSearchQuery] = useState('')
-  const [attributesLoading, setAttributesLoading] = useState(false)
-  const [errorAttributes, setErrorAttributes] = useState<string | null>(null)
-  const [attributes, setAttributes] = useState<Attribute[]>([])
-
-  // Fetch attributes from API
-  const fetchAttributes = async (force = false) => {
-    try {
-      setAttributesLoading(true)
-      setErrorAttributes(null)
-      
-      // Simulate API call - replace with your actual API call
-      const response = await fetch('/api/attributes' + (force ? '?refresh=true' : ''))
-      if (!response.ok) throw new Error('Failed to fetch attributes')
-      
-      const data = await response.json()
-      setAttributes(data)
-    } catch (err) {
-      setErrorAttributes(err instanceof Error ? err.message : 'Failed to fetch attributes')
-    } finally {
-      setAttributesLoading(false)
-    }
-  }
+  
+  const { categories, loading: categoriesLoading, error: categoriesError, fetchCategories } = useCategoryDataStore();
+  const { attributes, loading: attributLoading, error: attributeError, fetchAttributes, deleteAttribute } = useAttributeDataStore();
 
   // Delete attribute handler
   const handleDeleteAttribute = async (id: string) => {
     try {
-      const response = await fetch(`/api/attributes/${id}`, {
-        method: 'DELETE',
-      })
-      
-      if (!response.ok) throw new Error('Failed to delete attribute')
+      await deleteAttribute(id);
+
       
       toast('Success',{
         description: 'Attribute deleted successfully',
       })
       
       // Refresh the list after deletion
-      fetchAttributes()
+      fetchAttributes(true);
     } catch (err) {
       toast.error('Error',{
         description: err instanceof Error ? err.message : 'Failed to delete attribute',
@@ -348,7 +279,12 @@ export default function ProductManagementPage() {
   // Fetch attributes on component mount
   useEffect(() => {
     fetchAttributes()
-  }, [])
+  }, [fetchAttributes])
+
+  // Fetch categories on mount
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const toggleProductSelection = (productId: string) => {
     setSelectedProducts((prev) =>
@@ -357,13 +293,6 @@ export default function ProductManagementPage() {
         : [...prev, productId]
     );
   };
-
-  const { categories, loading, error, fetchCategories } = useCategoryDataStore();
-
-  // Fetch categories on mount
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
   const toggleCategoryExpansion = (categoryId: string) => {
     setExpandedCategories((prev) =>
@@ -629,10 +558,10 @@ export default function ProductManagementPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => fetchCategories(true)}
-                  disabled={loading}
+                  disabled={categoriesLoading}
                 >
                   <RefreshCwIcon
-                    className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+                    className={`h-4 w-4 mr-2 ${categoriesLoading ? "animate-spin" : ""}`}
                   />
                   Refresh
                 </Button>
@@ -640,7 +569,7 @@ export default function ProductManagementPage() {
             </CardHeader>
             <CardContent>
               {/* Loading state */}
-              {loading && (
+              {categoriesLoading && (
                 <div className="flex justify-center items-center p-4">
                   <Loader2Icon className="h-6 w-6 animate-spin" />
                   <span className="ml-2">Loading categories...</span>
@@ -648,10 +577,10 @@ export default function ProductManagementPage() {
               )}
 
               {/* Error state */}
-              {error && (
+              {categoriesError && (
                 <div className="flex justify-center items-center p-4 text-red-500">
                   <AlertCircleIcon className="h-6 w-6 mr-2" />
-                  <span>{error}</span>
+                  <span>{categoriesError}</span>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -664,7 +593,7 @@ export default function ProductManagementPage() {
               )}
 
               {/* Success state */}
-              {!loading && !error && (
+              {!categoriesLoading && !categoriesError && (
                 <div className="space-y-2">
                   {categories.length === 0 ? (
                     <div className="text-center p-4 text-muted-foreground">
@@ -724,10 +653,10 @@ export default function ProductManagementPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => fetchAttributes(true)}
-                  disabled={loading}
+                  disabled={attributLoading}
                 >
                   <RefreshCwIcon
-                    className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+                    className={`h-4 w-4 mr-2 ${attributLoading ? "animate-spin" : ""}`}
                   />
                   Refresh
                 </Button>
@@ -735,7 +664,7 @@ export default function ProductManagementPage() {
             </CardHeader>
             <CardContent>
               {/* Loading state */}
-              {loading && (
+              {attributLoading && (
                 <div className="flex justify-center items-center p-4">
                   <Loader2Icon className="h-6 w-6 animate-spin" />
                   <span className="ml-2">Loading attributes...</span>
@@ -743,10 +672,10 @@ export default function ProductManagementPage() {
               )}
 
               {/* Error state */}
-              {error && (
+              {attributeError && (
                 <div className="flex justify-center items-center p-4 text-red-500">
                   <AlertCircleIcon className="h-6 w-6 mr-2" />
-                  <span>{error}</span>
+                  <span>{attributeError}</span>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -759,7 +688,7 @@ export default function ProductManagementPage() {
               )}
 
               {/* Success state */}
-              {!loading && !error && (
+              {!attributLoading && !attributeError && (
                 <div className="space-y-4">
                   {filteredAttributes.length === 0 ? (
                     <div className="text-center p-4 text-muted-foreground">
@@ -807,13 +736,13 @@ export default function ProductManagementPage() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem
-                                    onClick={() => router.push(`/product-management/attributes/${attribute.id}/edit`)}
+                                    onClick={() => router.push(`/product-management/attributes/edit/${attribute.id}`)}
                                   >
                                     <EditIcon className="mr-2 h-4 w-4" />
                                     Edit
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.push(`/product-management/attributes/${attribute.id}/values`)}
+                                    onClick={() => router.push(`/product-management/attributes/values/${attribute.id}`)}
                                   >
                                     <ListIcon className="mr-2 h-4 w-4" />
                                     Manage Values

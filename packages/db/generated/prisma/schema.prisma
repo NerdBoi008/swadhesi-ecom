@@ -83,9 +83,7 @@ model ProductAttribute {
   @@map("product_attributes") // Map model name to table name
 }
 
-// Prisma will automatically create a join table for the many-to-many relationship
-// between ProductAttribute and AttributeValue.
-
+// e.g. Color, Size
 model Attribute {
   id            String             @id @default(uuid())
   created_at    DateTime           @default(now())
@@ -98,6 +96,7 @@ model Attribute {
   @@map("attributes") // Map model name to table name
 }
 
+// Values for attributes above like Red, Green, L, M, S, etc.
 model AttributeValue {
   id                String             @id @default(uuid())
   created_at        DateTime           @default(now())
