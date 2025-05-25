@@ -51,16 +51,27 @@ model Product {
   @@map("products") // Map model name to table name
 }
 
+enum ProductVariantStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+  ARCHIVED
+  OUT_OF_STOCK
+  COMING_SOON
+  DISCONTINUED
+}
+
 model ProductVariant {
   id              String           @id @default(uuid())
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
   product_id      String           @map("product_id") // Foreign key to the Product
-  product         Product          @relation(fields: [product_id], references: [id]) // Many-to-one relationship with Product
+  product         Product          @relation(fields: [product_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Product
   sku             String           @unique // SKUs are typically unique
   price           Decimal // Use Decimal for monetary values
   sale_price      Decimal? // Use Decimal for monetary values
   stock           Int
+  status          ProductVariantStatus @default(ACTIVE)
   size            Json // Store the ProductSize structure as JSON
   image_url       String?
   barcode         String?
@@ -74,9 +85,9 @@ model ProductAttribute {
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   product_id    String         @map("product_id") // Foreign key to the Product
-  product       Product        @relation(fields: [product_id], references: [id]) // Many-to-one relationship with Product
+  product       Product        @relation(fields: [product_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Product
   attribute_id  String         @map("attribute_id") // Foreign key to the Attribute
-  attribute     Attribute      @relation(fields: [attribute_id], references: [id]) // Many-to-one relationship with Attribute
+  attribute     Attribute      @relation(fields: [attribute_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Attribute
   values        AttributeValue[] @relation("ProductAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
 
   @@unique([product_id, attribute_id]) // A product should have a unique entry for each attribute
@@ -111,15 +122,3 @@ model AttributeValue {
   @@unique([attribute_id, value]) // An attribute value is unique within its attribute
   @@map("attribute_values") // Map model name to table name
 }
-
-// Notes:
-// - BaseEntity fields (id, created_at, updated_at) are included directly in each model.
-// - Relationships are defined using the @relation attribute.
-// - Foreign keys are explicitly defined and mapped with @map.
-// - String[] is used for array types.
-// - The ProductSize structure is stored as JSON using the Json type. You'll need to handle serialization/deserialization in your application code.
-// - Decimal is used for monetary values (price, sale_price) for precision.
-// - @unique constraints are added for fields that should have unique values (sku, slug, attribute name, attribute value within an attribute).
-// - @@map is used to explicitly name the database tables.
-// - Implicit many-to-many join tables are created by Prisma for relationships like ProductVariant to AttributeValue and ProductAttribute to AttributeValue.
-// - A specific ID field is added to ProductAttribute as it serves as a form of join table/linking entity in the application logic.

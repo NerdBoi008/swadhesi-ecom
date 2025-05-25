@@ -1,10 +1,12 @@
 'use server';
 
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Attribute, AttributeValue, Category, Prisma, Product } from '../generated/prisma';
+import { Attribute, AttributeValue, Category, Prisma, Product, ProductAttribute, ProductVariant } from '../generated/prisma';
 import { prismaClient } from './prismaClient';
 import { deleteImageFromS3 } from './aws/bucket.actions';
 import { extractKeyFromUrl } from './util/bucket-utils';
+
+/*--------------------- Product functions --------------------------------------*/
 
 /**
  * Adds a new product to the database.
@@ -18,11 +20,334 @@ export async function addProduct(
   return await prismaClient.product.create({
     data: {
       ...productData,
-      brand_id: productData.brand_id ?? null,       // Ensure null instead of undefined
-      meta_title: productData.meta_title ?? null,   // Ensure null instead of undefined
-      meta_description: productData.meta_description ?? null, // Ensure null instead of undefined
-      slug: productData.slug ?? null                // Ensure null instead of undefined
+      brand_id: productData.brand_id ?? null,
+      meta_title: productData.meta_title ?? null,
+      meta_description: productData.meta_description ?? null,
+      slug: productData.slug ?? null,
     },
+  });
+}
+
+/**
+ * Fetches products from the database, with optional pagination and relations.
+ * If page or limit are not specified (or are 0), it retrieves all products.
+ * @param page - The page number for pagination (defaults to 1). Set to 0 or omit to retrieve all.
+ * @param limit - The number of products per page (defaults to 10). Set to 0 or omit to retrieve all.
+ * @param categoryId - Optional: Filter products by category ID.
+ * @param includeRelations - Optional: Whether to include related data like category, variants, attributes. Defaults to false.
+ * @returns Promise resolving with an array of Products
+ */
+export async function fetchAllProducts(
+  page: number = 1,
+  limit: number = 10,
+  categoryId?: string,
+  includeRelations: boolean = false
+): Promise<Product[]> {
+  const queryOptions: any = {
+    where: {
+      category_id: categoryId,
+    },
+    include: includeRelations
+      ? {
+          category: true,
+          variants: {
+            include: {
+              attribute_values: {
+                include: {
+                  attribute: true,
+                },
+              },
+            },
+          },
+          attributes: {
+            include: {
+              attribute: true,
+              values: {
+                include: {
+                  attribute: true,
+                },
+              },
+            },
+          },
+        }
+      : undefined,
+  };
+
+  // Only apply skip and take if both page and limit are greater than 0
+  if (page > 0 && limit > 0) {
+    const skip = (page - 1) * limit;
+    queryOptions.skip = skip;
+    queryOptions.take = limit;
+  }
+
+  return await prismaClient.product.findMany(queryOptions);
+}
+
+/**
+ * Fetches a single product by its ID.
+ * @param productId - The ID of the product to fetch
+ * @param includeRelations - Optional: Whether to include related data like category, variants, attributes. Defaults to false.
+ * @returns Promise resolving with the Product or null if not found
+ */
+export async function fetchProductById(
+  productId: string,
+  includeRelations: boolean = false
+): Promise<Product | null> {
+  return await prismaClient.product.findUnique({
+    where: { id: productId },
+    include: includeRelations ? {
+      category: true,
+      variants: {
+        include: {
+          attribute_values: {
+            include: {
+              attribute: true
+            }
+          }
+        }
+      },
+      attributes: {
+        include: {
+          attribute: true,
+          values: {
+            include: {
+              attribute: true
+            }
+          }
+        }
+      }
+    } : undefined,
+  });
+}
+
+/**
+ * Fetches products belonging to a specific category.
+ * @param categoryId - The ID of the category
+ * @param page - The page number for pagination (defaults to 1)
+ * @param limit - The number of products per page (defaults to 10)
+ * @param includeRelations - Optional: Whether to include related data like category, variants, attributes. Defaults to false.
+ * @returns Promise resolving with an array of Products
+ */
+export async function fetchProductsByCategory(
+  categoryId: string,
+  page: number = 1,
+  limit: number = 10,
+  includeRelations: boolean = false
+): Promise<Product[]> {
+  const skip = (page - 1) * limit;
+  return await prismaClient.product.findMany({
+    where: { category_id: categoryId },
+    skip: skip,
+    take: limit,
+    include: includeRelations ? {
+      category: true,
+      variants: {
+        include: {
+          attribute_values: {
+            include: {
+              attribute: true
+            }
+          }
+        }
+      },
+      attributes: {
+        include: {
+          attribute: true,
+          values: {
+            include: {
+              attribute: true
+            }
+          }
+        }
+      }
+    } : undefined,
+  });
+}
+
+/**
+ * Updates an existing product in the database.
+ * @param productId - The ID of the product to update
+ * @param productData - The data to update the product with
+ * @returns Promise resolving with the updated Product
+ * @throws {PrismaClientKnownRequestError} For Prisma-specific errors (e.g., product not found)
+ */
+export async function updateProduct(
+  productId: string,
+  productData: Partial<Omit<Product, 'id' | 'created_at' | 'updated_at'>>
+): Promise<Product> {
+  return await prismaClient.product.update({
+    where: { id: productId },
+    data: {
+      ...productData,
+      brand_id: productData.brand_id === undefined ? undefined : productData.brand_id ?? null,
+      meta_title: productData.meta_title === undefined ? undefined : productData.meta_title ?? null,
+      meta_description: productData.meta_description === undefined ? undefined : productData.meta_description ?? null,
+      slug: productData.slug === undefined ? undefined : productData.slug ?? null,
+    },
+  });
+}
+
+/**
+ * Deletes a product from the database.
+ * @param productId - The ID of the product to delete
+ * @returns Promise resolving with the deleted Product
+ * @throws {PrismaClientKnownRequestError} For Prisma-specific errors (e.g., product not found)
+ */
+export async function deleteProduct(productId: string): Promise<Product> {
+  return await prismaClient.product.delete({
+    where: { id: productId },
+  });
+}
+
+/**
+ * Adds a new product variant to the database.
+ * @param variantData - The data for the new product variant.
+ * @returns Promise resolving with the newly created ProductVariant.
+ */
+export async function addProductVariant(
+  variantData: Omit<ProductVariant, 'id' | 'created_at' | 'updated_at'>  & { attribute_values: string[] }
+): Promise<ProductVariant> {
+  const { attribute_values, ...restVariantData } = variantData;
+  
+  return await prismaClient.productVariant.create({
+    data: {
+      ...restVariantData, // Spread the rest of the variant data
+      price: new Prisma.Decimal(restVariantData.price), // Ensure price is Prisma.Decimal
+      sale_price: restVariantData.sale_price ?? null,
+      image_url: restVariantData.image_url ?? null,
+      barcode: restVariantData.barcode ?? null,
+      size: restVariantData.size ?? Prisma.JsonNull,
+      // Connect existing attribute values
+      attribute_values: {
+        connect: attribute_values.map(id => ({ id })), // Map string IDs to { id: string } objects
+      },
+      // You also need to ensure product_id is correctly handled if it's a relation
+      // If product_id is a direct field, it's fine. If it's a relation, it might need `connect: { id: product_id }`
+      // based on your Prisma schema. Assuming it's a direct field for now based on your error.
+    },
+  });
+}
+
+/**
+ * Updates an existing product variant.
+ * @param variantId - The ID of the variant to update.
+ * @param variantData - The partial data to update the variant with.
+ * @returns Promise resolving with the updated ProductVariant.
+ */
+export async function updateProductVariant(
+  variantId: string,
+  variantData: Partial<Omit<ProductVariant, 'id' | 'created_at' | 'updated_at'>>
+): Promise<ProductVariant> {
+  if (!variantData.product_id) {
+    throw new Error('Product must not be null')
+  }
+  return await prismaClient.productVariant.update({
+    where: { id: variantId },
+    data: {
+      ...variantData,
+      sale_price: variantData.sale_price === undefined ? undefined : variantData.sale_price ?? null,
+      image_url: variantData.image_url === undefined ? undefined : variantData.image_url ?? null,
+      barcode: variantData.barcode === undefined ? undefined : variantData.barcode ?? null,
+      product_id: variantData.product_id,
+      size: variantData.size === undefined ? undefined : variantData.size ?? Prisma.JsonNull,
+    },
+  });
+}
+
+/**
+ * Deletes a product variant.
+ * @param variantId - The ID of the variant to delete.
+ * @returns Promise resolving with the deleted ProductVariant.
+ */
+export async function deleteProductVariant(variantId: string): Promise<ProductVariant> {
+  return await prismaClient.productVariant.delete({
+    where: { id: variantId },
+  });
+}
+
+// 1. Add Product Attribute (Create)
+// -----------------------------------------------------------------------------
+// This assumes ProductAttribute table directly stores attribute_id and product_id,
+// and optionally an array of attribute_value_ids if it's a many-to-many link there.
+// If you want to connect it to AttributeValue entries during creation, you'd use 'connect'.
+export async function addProductAttribute(
+  productAttributeData: Omit<ProductAttribute, 'id' | 'created_at' | 'updated_at'>
+): Promise<ProductAttribute> {
+  // Destructure to handle 'attribute_value_ids' separately if it's for connect/set
+  const { product_id, attribute_id, ...rest } = productAttributeData;
+
+  return await prismaClient.productAttribute.create({
+    data: {
+      product: {
+        connect: { id: product_id }
+      },
+      attribute: {
+        connect: { id: attribute_id }
+      },
+      ...rest,
+    },
+    include: {
+      attribute: true,
+      values: true,
+    }
+  });
+}
+
+// 2. Update Product Attribute (Update)
+// -----------------------------------------------------------------------------
+export async function updateProductAttribute(
+  productAttributeId: string,
+  productAttributeData: Partial<Omit<ProductAttribute, 'id' | 'created_at' | 'updated_at' | 'product_id' | 'attribute_id'>>
+): Promise<ProductAttribute> {
+
+  return await prismaClient.productAttribute.update({
+    where: { id: productAttributeId },
+    data: {
+      ...productAttributeData,
+    },
+    include: {
+      attribute: true,
+      values: true,
+    }
+  });
+}
+
+// 3. Delete Product Attribute (Delete)
+// -----------------------------------------------------------------------------
+export async function deleteProductAttribute(productAttributeId: string): Promise<ProductAttribute> {
+  return await prismaClient.productAttribute.delete({
+    where: { id: productAttributeId },
+  });
+}
+
+// 4. Get Product Attribute by ID (Read - useful for internal validation or specific fetching)
+// -----------------------------------------------------------------------------
+export async function getProductAttributeById(
+  productAttributeId: string,
+  includeRelations: boolean = false
+): Promise<ProductAttribute | null> {
+  return await prismaClient.productAttribute.findUnique({
+    where: { id: productAttributeId },
+    include: includeRelations ? {
+      product: true,
+      attribute: true,
+      values: true,
+    } : undefined,
+  });
+}
+
+// 5. Get Product Attributes by Product ID (Read - for getting all attributes of a product)
+// -----------------------------------------------------------------------------
+export async function getProductAttributesByProductId(
+  productId: string,
+  includeRelations: boolean = false
+): Promise<ProductAttribute[]> {
+  return await prismaClient.productAttribute.findMany({
+    where: { product_id: productId },
+    include: includeRelations ? {
+      attribute: true,
+      values: true,
+    } : undefined,
   });
 }
 

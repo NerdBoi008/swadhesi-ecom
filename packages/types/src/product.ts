@@ -1,6 +1,7 @@
 import { AttributeValue, Attribute } from "./attribute";
 import { Category } from "./category";
 import { BaseEntity } from "./core";
+import { ProductVariantStatus } from '../../db/generated/prisma/index';
 
 export interface Product extends BaseEntity {
   name: string;
@@ -25,6 +26,7 @@ export interface ProductVariant extends BaseEntity {
   price: number;
   sale_price: number | null;
   stock: number;
+  status: ProductVariantStatus;
   size: ProductSize;
   image_url?: string | null;
   barcode?: string;

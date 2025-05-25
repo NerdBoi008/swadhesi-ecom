@@ -1,8 +1,13 @@
+import { 
+  fetchAllProducts as getAllProducts,
+  fetchProductsByCategory as getProductsByCategory,
+} from "@repo/db";
 import { Product } from "@repo/db/types";
+import { Product as LocalProductType } from "@repo/types";
 import { create } from "zustand";
 
 type ProductStore = {
-  products: Product[];
+  products: LocalProductType[];
   featuredProducts: Product[];
   loading: boolean;
   error: string | null;
@@ -24,7 +29,7 @@ type ProductStore = {
   /**
    * Fetches featured products
    */
-  fetchFeaturedProducts: () => Promise<void>;
+  // fetchFeaturedProducts: () => Promise<void>;
   
   /**
    * Clears the current product selection
@@ -54,12 +59,18 @@ const useProductStore = create<ProductStore>((set, get) => ({
     console.log(`Fetching all products... (force=${force})`);
 
     try {
-      const response = await getAllProducts();
-      console.log("Fetched products response:", response);
+      const response = await getAllProducts(0, 0, undefined, true);
+      console.log("Store Fetched products response:", response);
 
       if (response && Array.isArray(response)) {
         set({ 
-          products: response,
+          products: response.map(product => ({
+            ...product,
+            brand_id: product.brand_id ?? undefined,
+            meta_title: product.meta_title ?? undefined,
+            meta_description: product.meta_description ?? undefined,
+            slug: product.slug ?? undefined,
+          })),
           selectedCategory: null,
           loading: false 
         });
@@ -98,7 +109,13 @@ const useProductStore = create<ProductStore>((set, get) => ({
 
       if (response && Array.isArray(response)) {
         set({ 
-          products: response,
+          products: response.map(product => ({
+            ...product,
+            brand_id: product.brand_id ?? undefined,
+            meta_title: product.meta_title ?? undefined,
+            meta_description: product.meta_description ?? undefined,
+            slug: product.slug ?? undefined,
+          })),
           selectedCategory: categoryId,
           loading: false 
         });
@@ -115,41 +132,41 @@ const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  fetchFeaturedProducts: async () => {
-    if (get().loading) {
-      console.log("Skipping fetch: Already loading featured products");
-      return;
-    }
+  // fetchFeaturedProducts: async () => {
+  //   if (get().loading) {
+  //     console.log("Skipping fetch: Already loading featured products");
+  //     return;
+  //   }
 
-    if (get().featuredProducts.length > 0) {
-      console.log("Skipping fetch: Featured products already exist");
-      return;
-    }
+  //   if (get().featuredProducts.length > 0) {
+  //     console.log("Skipping fetch: Featured products already exist");
+  //     return;
+  //   }
 
-    set({ loading: true, error: null });
-    console.log("Fetching featured products...");
+  //   set({ loading: true, error: null });
+  //   console.log("Fetching featured products...");
 
-    try {
-      const response = await getAllProducts({ featured: true });
-      console.log("Fetched featured products response:", response);
+  //   try {
+  //     const response = await getAllProducts();
+  //     console.log("Fetched featured products response:", response);
 
-      if (response && Array.isArray(response)) {
-        set({ 
-          featuredProducts: response,
-          loading: false 
-        });
-        console.log("Featured products updated in store");
-      } else {
-        console.warn("Received unexpected featured products response format:", response);
-        set({ loading: false, error: "Received unexpected data format" });
-      }
-    } catch (error) {
-      console.error("Failed to fetch featured products:", error);
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-      set({ error: errorMessage, loading: false });
-      return Promise.reject(new Error(errorMessage));
-    }
-  },
+  //     if (response && Array.isArray(response)) {
+  //       set({ 
+  //         featuredProducts: response,
+  //         loading: false 
+  //       });
+  //       console.log("Featured products updated in store");
+  //     } else {
+  //       console.warn("Received unexpected featured products response format:", response);
+  //       set({ loading: false, error: "Received unexpected data format" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to fetch featured products:", error);
+  //     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+  //     set({ error: errorMessage, loading: false });
+  //     return Promise.reject(new Error(errorMessage));
+  //   }
+  // },
 
   clearProducts: () => {
     set({ 

@@ -45,6 +45,28 @@ export type Attribute = $Result.DefaultSelection<Prisma.$AttributePayload>
 export type AttributeValue = $Result.DefaultSelection<Prisma.$AttributeValuePayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const ProductVariantStatus: {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  DRAFT: 'DRAFT',
+  ARCHIVED: 'ARCHIVED',
+  OUT_OF_STOCK: 'OUT_OF_STOCK',
+  COMING_SOON: 'COMING_SOON',
+  DISCONTINUED: 'DISCONTINUED'
+};
+
+export type ProductVariantStatus = (typeof ProductVariantStatus)[keyof typeof ProductVariantStatus]
+
+}
+
+export type ProductVariantStatus = $Enums.ProductVariantStatus
+
+export const ProductVariantStatus: typeof $Enums.ProductVariantStatus
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -3951,6 +3973,7 @@ export namespace Prisma {
     price: Decimal | null
     sale_price: Decimal | null
     stock: number | null
+    status: $Enums.ProductVariantStatus | null
     image_url: string | null
     barcode: string | null
   }
@@ -3964,6 +3987,7 @@ export namespace Prisma {
     price: Decimal | null
     sale_price: Decimal | null
     stock: number | null
+    status: $Enums.ProductVariantStatus | null
     image_url: string | null
     barcode: string | null
   }
@@ -3977,6 +4001,7 @@ export namespace Prisma {
     price: number
     sale_price: number
     stock: number
+    status: number
     size: number
     image_url: number
     barcode: number
@@ -4005,6 +4030,7 @@ export namespace Prisma {
     price?: true
     sale_price?: true
     stock?: true
+    status?: true
     image_url?: true
     barcode?: true
   }
@@ -4018,6 +4044,7 @@ export namespace Prisma {
     price?: true
     sale_price?: true
     stock?: true
+    status?: true
     image_url?: true
     barcode?: true
   }
@@ -4031,6 +4058,7 @@ export namespace Prisma {
     price?: true
     sale_price?: true
     stock?: true
+    status?: true
     size?: true
     image_url?: true
     barcode?: true
@@ -4132,6 +4160,7 @@ export namespace Prisma {
     price: Decimal
     sale_price: Decimal | null
     stock: number
+    status: $Enums.ProductVariantStatus
     size: JsonValue
     image_url: string | null
     barcode: string | null
@@ -4165,6 +4194,7 @@ export namespace Prisma {
     price?: boolean
     sale_price?: boolean
     stock?: boolean
+    status?: boolean
     size?: boolean
     image_url?: boolean
     barcode?: boolean
@@ -4182,6 +4212,7 @@ export namespace Prisma {
     price?: boolean
     sale_price?: boolean
     stock?: boolean
+    status?: boolean
     size?: boolean
     image_url?: boolean
     barcode?: boolean
@@ -4197,6 +4228,7 @@ export namespace Prisma {
     price?: boolean
     sale_price?: boolean
     stock?: boolean
+    status?: boolean
     size?: boolean
     image_url?: boolean
     barcode?: boolean
@@ -4212,12 +4244,13 @@ export namespace Prisma {
     price?: boolean
     sale_price?: boolean
     stock?: boolean
+    status?: boolean
     size?: boolean
     image_url?: boolean
     barcode?: boolean
   }
 
-  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "updated_at" | "product_id" | "sku" | "price" | "sale_price" | "stock" | "size" | "image_url" | "barcode", ExtArgs["result"]["productVariant"]>
+  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "updated_at" | "product_id" | "sku" | "price" | "sale_price" | "stock" | "status" | "size" | "image_url" | "barcode", ExtArgs["result"]["productVariant"]>
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     attribute_values?: boolean | ProductVariant$attribute_valuesArgs<ExtArgs>
@@ -4245,6 +4278,7 @@ export namespace Prisma {
       price: Prisma.Decimal
       sale_price: Prisma.Decimal | null
       stock: number
+      status: $Enums.ProductVariantStatus
       size: Prisma.JsonValue
       image_url: string | null
       barcode: string | null
@@ -4681,6 +4715,7 @@ export namespace Prisma {
     readonly price: FieldRef<"ProductVariant", 'Decimal'>
     readonly sale_price: FieldRef<"ProductVariant", 'Decimal'>
     readonly stock: FieldRef<"ProductVariant", 'Int'>
+    readonly status: FieldRef<"ProductVariant", 'ProductVariantStatus'>
     readonly size: FieldRef<"ProductVariant", 'Json'>
     readonly image_url: FieldRef<"ProductVariant", 'String'>
     readonly barcode: FieldRef<"ProductVariant", 'String'>
@@ -8568,6 +8603,7 @@ export namespace Prisma {
     price: 'price',
     sale_price: 'sale_price',
     stock: 'stock',
+    status: 'status',
     size: 'size',
     image_url: 'image_url',
     barcode: 'barcode'
@@ -8708,6 +8744,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProductVariantStatus'
+   */
+  export type EnumProductVariantStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductVariantStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProductVariantStatus[]'
+   */
+  export type ListEnumProductVariantStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductVariantStatus[]'>
     
 
 
@@ -8926,6 +8976,7 @@ export namespace Prisma {
     price?: DecimalFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     sale_price?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     stock?: IntFilter<"ProductVariant"> | number
+    status?: EnumProductVariantStatusFilter<"ProductVariant"> | $Enums.ProductVariantStatus
     size?: JsonFilter<"ProductVariant">
     image_url?: StringNullableFilter<"ProductVariant"> | string | null
     barcode?: StringNullableFilter<"ProductVariant"> | string | null
@@ -8942,6 +8993,7 @@ export namespace Prisma {
     price?: SortOrder
     sale_price?: SortOrderInput | SortOrder
     stock?: SortOrder
+    status?: SortOrder
     size?: SortOrder
     image_url?: SortOrderInput | SortOrder
     barcode?: SortOrderInput | SortOrder
@@ -8961,6 +9013,7 @@ export namespace Prisma {
     price?: DecimalFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     sale_price?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     stock?: IntFilter<"ProductVariant"> | number
+    status?: EnumProductVariantStatusFilter<"ProductVariant"> | $Enums.ProductVariantStatus
     size?: JsonFilter<"ProductVariant">
     image_url?: StringNullableFilter<"ProductVariant"> | string | null
     barcode?: StringNullableFilter<"ProductVariant"> | string | null
@@ -8977,6 +9030,7 @@ export namespace Prisma {
     price?: SortOrder
     sale_price?: SortOrderInput | SortOrder
     stock?: SortOrder
+    status?: SortOrder
     size?: SortOrder
     image_url?: SortOrderInput | SortOrder
     barcode?: SortOrderInput | SortOrder
@@ -8999,6 +9053,7 @@ export namespace Prisma {
     price?: DecimalWithAggregatesFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     sale_price?: DecimalNullableWithAggregatesFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     stock?: IntWithAggregatesFilter<"ProductVariant"> | number
+    status?: EnumProductVariantStatusWithAggregatesFilter<"ProductVariant"> | $Enums.ProductVariantStatus
     size?: JsonWithAggregatesFilter<"ProductVariant">
     image_url?: StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
     barcode?: StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
@@ -9399,6 +9454,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -9415,6 +9471,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -9429,6 +9486,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9445,6 +9503,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9460,6 +9519,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -9473,6 +9533,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9487,6 +9548,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9944,6 +10006,13 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
   }
+
+  export type EnumProductVariantStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductVariantStatus | EnumProductVariantStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductVariantStatusFilter<$PrismaModel> | $Enums.ProductVariantStatus
+  }
   export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -9992,6 +10061,7 @@ export namespace Prisma {
     price?: SortOrder
     sale_price?: SortOrder
     stock?: SortOrder
+    status?: SortOrder
     size?: SortOrder
     image_url?: SortOrder
     barcode?: SortOrder
@@ -10012,6 +10082,7 @@ export namespace Prisma {
     price?: SortOrder
     sale_price?: SortOrder
     stock?: SortOrder
+    status?: SortOrder
     image_url?: SortOrder
     barcode?: SortOrder
   }
@@ -10025,6 +10096,7 @@ export namespace Prisma {
     price?: SortOrder
     sale_price?: SortOrder
     stock?: SortOrder
+    status?: SortOrder
     image_url?: SortOrder
     barcode?: SortOrder
   }
@@ -10081,6 +10153,16 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumProductVariantStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductVariantStatus | EnumProductVariantStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductVariantStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProductVariantStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductVariantStatusFilter<$PrismaModel>
+    _max?: NestedEnumProductVariantStatusFilter<$PrismaModel>
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -10512,6 +10594,10 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type EnumProductVariantStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ProductVariantStatus
+  }
+
   export type ProductUpdateOneRequiredWithoutVariantsNestedInput = {
     create?: XOR<ProductCreateWithoutVariantsInput, ProductUncheckedCreateWithoutVariantsInput>
     connectOrCreate?: ProductCreateOrConnectWithoutVariantsInput
@@ -10925,6 +11011,13 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
+  export type NestedEnumProductVariantStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductVariantStatus | EnumProductVariantStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductVariantStatusFilter<$PrismaModel> | $Enums.ProductVariantStatus
+  }
+
   export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -10982,6 +11075,16 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumProductVariantStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductVariantStatus | EnumProductVariantStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductVariantStatus[] | ListEnumProductVariantStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductVariantStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProductVariantStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductVariantStatusFilter<$PrismaModel>
+    _max?: NestedEnumProductVariantStatusFilter<$PrismaModel>
   }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -11269,6 +11372,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -11283,6 +11387,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -11386,6 +11491,7 @@ export namespace Prisma {
     price?: DecimalFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     sale_price?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     stock?: IntFilter<"ProductVariant"> | number
+    status?: EnumProductVariantStatusFilter<"ProductVariant"> | $Enums.ProductVariantStatus
     size?: JsonFilter<"ProductVariant">
     image_url?: StringNullableFilter<"ProductVariant"> | string | null
     barcode?: StringNullableFilter<"ProductVariant"> | string | null
@@ -11851,6 +11957,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -11866,6 +11973,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -12070,6 +12178,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     sale_price?: Decimal | DecimalJsLike | number | string | null
     stock: number
+    status?: $Enums.ProductVariantStatus
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
@@ -12090,6 +12199,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12104,6 +12214,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12118,6 +12229,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12278,6 +12390,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12293,6 +12406,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12307,6 +12421,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null

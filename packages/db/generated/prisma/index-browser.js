@@ -155,6 +155,7 @@ exports.Prisma.ProductVariantScalarFieldEnum = {
   price: 'price',
   sale_price: 'sale_price',
   stock: 'stock',
+  status: 'status',
   size: 'size',
   image_url: 'image_url',
   barcode: 'barcode'
@@ -209,7 +210,15 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
-
+exports.ProductVariantStatus = exports.$Enums.ProductVariantStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  DRAFT: 'DRAFT',
+  ARCHIVED: 'ARCHIVED',
+  OUT_OF_STOCK: 'OUT_OF_STOCK',
+  COMING_SOON: 'COMING_SOON',
+  DISCONTINUED: 'DISCONTINUED'
+};
 
 exports.Prisma.ModelName = {
   Category: 'Category',
