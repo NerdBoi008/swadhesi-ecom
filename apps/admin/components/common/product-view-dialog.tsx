@@ -69,7 +69,8 @@ export const ProductViewDialog: React.FC<ProductViewDialogProps> = ({
                         <Image
                           src={url}
                           alt={`${product.name} ${index + 1}`}
-                          fill
+                          height={50}
+                          width={50}
                           className="object-cover"
                         />
                       </div>

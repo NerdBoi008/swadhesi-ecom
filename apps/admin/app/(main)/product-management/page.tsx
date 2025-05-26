@@ -85,6 +85,7 @@ import {
 } from "@/components/ui/accordion";
 import { ProductViewDialog } from "@/components/common/product-view-dialog";
 import { Product } from "@repo/types";
+import React from "react";
 
 // Separate component for recursive rendering
 const CategoryTree = ({
@@ -133,7 +134,7 @@ const CategoryTree = ({
                 )}
               </Button>
             ) : (
-              <div className="h-6 w-6" /> 
+              <div className="h-6 w-6" />
             )}
             <div className="flex gap-3 justify-center items-center">
               {category.image_url && (
@@ -221,8 +222,19 @@ export default function ProductManagementPage() {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
-  const { categories, loading: categoriesLoading, error: categoriesError, fetchCategories, } = useCategoryDataStore();
-  const { attributes, loading: attributLoading, error: attributeError, fetchAttributes, deleteAttribute, } = useAttributeDataStore();
+  const {
+    categories,
+    loading: categoriesLoading,
+    error: categoriesError,
+    fetchCategories,
+  } = useCategoryDataStore();
+  const {
+    attributes,
+    loading: attributLoading,
+    error: attributeError,
+    fetchAttributes,
+    deleteAttribute,
+  } = useAttributeDataStore();
   const fetchAllProducts = useProductStore((state) => state.fetchAllProducts);
   const products = useProductStore((state) => state.products);
   const productsLoading = useProductStore((state) => state.loading);
@@ -231,11 +243,11 @@ export default function ProductManagementPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [showProductView, setShowProductView] = useState(false);
-  const [selectedProductToView, setSelectedProductToView] = useState<Product | null>(null);
-
+  const [selectedProductToView, setSelectedProductToView] =
+    useState<Product | null>(null);
 
   const toggleDropdown = (productId: string, isOpen: boolean) => {
-    setOpenDropdowns(prev => {
+    setOpenDropdowns((prev) => {
       const newSet = new Set(prev);
       if (isOpen) {
         newSet.add(productId);
@@ -257,8 +269,6 @@ export default function ProductManagementPage() {
     toggleDropdown(product.id, false);
     setShowProductView(true);
   };
-
-  
 
   useEffect(() => {
     fetchAllProducts();
@@ -333,7 +343,7 @@ export default function ProductManagementPage() {
           err instanceof Error ? err.message : "Failed to delete product",
       });
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -437,9 +447,11 @@ export default function ProductManagementPage() {
             <CardContent>
               {productsLoading ? (
                 <div className="h-20 flex items-center">
-                  <p className="m-auto w-full font-semibold">Products loading...</p>
+                  <p className="m-auto w-full font-semibold">
+                    Products loading...
+                  </p>
                 </div>
-              ): (
+              ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -468,8 +480,8 @@ export default function ProductManagementPage() {
                   </TableHeader>
                   <TableBody>
                     {products.map((product) => (
-                      <>
-                        <TableRow key={product.id}>
+                      <React.Fragment key={product.id}>
+                        <TableRow>
                           <TableCell>
                             <Checkbox
                               checked={selectedProducts.includes(product.id)}
@@ -539,8 +551,10 @@ export default function ProductManagementPage() {
                           <TableCell>{product.brand_id}</TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu
-                              open={openDropdowns.has(product.id)} 
-                              onOpenChange={(isOpen) => toggleDropdown(product.id, isOpen)}
+                              open={openDropdowns.has(product.id)}
+                              onOpenChange={(isOpen) =>
+                                toggleDropdown(product.id, isOpen)
+                              }
                             >
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -566,8 +580,8 @@ export default function ProductManagementPage() {
                                   <EyeIcon className="mr-2 h-4 w-4" />
                                   View
                                 </DropdownMenuItem>
-                                <DropdownMenuSeparator/>
-                                <DropdownMenuItem 
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
                                   className="text-red-500"
                                   onSelect={() => {
                                     handleDeleteClick(product.id);
@@ -581,7 +595,7 @@ export default function ProductManagementPage() {
                           </TableCell>
                         </TableRow>
 
-                        {/* Accordion for variants */}
+                        {/* Accordion for variants, nested within a TableRow with colSpan */}
                         <TableRow>
                           <TableCell colSpan={10} className="p-0">
                             <Accordion type="single" collapsible>
@@ -592,7 +606,7 @@ export default function ProductManagementPage() {
                                 <AccordionContent className="p-4">
                                   <div className="space-y-6">
                                     {/* Product attributes section */}
-                                    {(product.attributes?.length ?? 0 > 0) && (
+                                    {(product.attributes?.length ?? 0) > 0 && ( // Changed from 0 > 0 to (0) > 0 for clarity, ensures check for actual length
                                       <div>
                                         <h4 className="font-medium mb-2">
                                           Product Attributes
@@ -637,14 +651,19 @@ export default function ProductManagementPage() {
                                           {product.variants?.map((variant) => (
                                             <TableRow key={variant.id}>
                                               <TableCell>
-                                                <Image 
-                                                  src={variant.image_url || "/cdn/not-available.png"} 
+                                                <Image
+                                                  src={
+                                                    variant.image_url ||
+                                                    "/cdn/not-available.png"
+                                                  }
                                                   alt={variant.sku}
                                                   height={50}
                                                   width={50}
                                                 />
                                               </TableCell>
-                                              <TableCell>{variant.sku}</TableCell>
+                                              <TableCell>
+                                                {variant.sku}
+                                              </TableCell>
                                               <TableCell>
                                                 {(variant.attribute_values
                                                   ?.length ?? 0) > 0 ? (
@@ -715,7 +734,7 @@ export default function ProductManagementPage() {
                             </Accordion>
                           </TableCell>
                         </TableRow>
-                      </>
+                      </React.Fragment>
                     ))}
                   </TableBody>
                 </Table>
@@ -1007,10 +1026,14 @@ export default function ProductManagementPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Product</AlertDialogTitle>
             <div>
-              Are you sure you want to delete this product? This action cannot be undone.
+              Are you sure you want to delete this product? This action cannot
+              be undone.
               <div className="ml-5 text-sm text-red-500">
                 <ul className="list-disc">
-                  <li>This action will also delete products all variants and attributes</li>
+                  <li>
+                    This action will also delete products all variants and
+                    attributes
+                  </li>
                 </ul>
               </div>
             </div>
