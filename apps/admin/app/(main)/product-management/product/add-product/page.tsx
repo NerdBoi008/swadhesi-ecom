@@ -13,6 +13,8 @@ import {
   ChevronRightIcon,
   SaveIcon,
   Loader2Icon,
+  AlertTriangleIcon,
+  WandIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,10 +38,24 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { addProduct } from "@repo/db";
+import { addProduct, addProductAttribute, addProductVariant, generateBucketKey, uploadImageToS3, fetchAllProducts } from '@repo/db';
 import useCategoryDataStore from "@/lib/store/network-category-data-store";
 import Image from "next/image";
 import { generateSkuFromName } from "@/lib/utils";
+import useAttributeDataStore from "@/lib/store/network-attributes-data-store";
+import { Attribute } from "@repo/db/types";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
+import useProductStore from "@/lib/store/network-product-data-store";
 
 // Schema validation
 const productFormSchema = z.object({
@@ -79,12 +95,9 @@ const productFormSchema = z.object({
       })
     )
     .min(1, "At least one variant is required"),
-  attributes: z.array(
-    z.object({
-      attributeId: z.string().min(1, "Attribute is required"),
-      values: z.array(z.string()).min(1, "At least one value is required"),
-    })
-  ),
+  selectedAttributes: z
+    .array(z.string())
+    .min(1, "At least one attribute must be selected"),
   relatedProducts: z.array(z.string()).optional(),
 });
 
@@ -98,33 +111,21 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
-const attributes = [
-  {
-    id: "attr1",
-    name: "Color",
-    values: [
-      { id: "color-red", value: "Red" },
-      { id: "color-blue", value: "Blue" },
-      { id: "color-green", value: "Green" },
-    ],
-  },
-  {
-    id: "attr2",
-    name: "Size",
-    values: [
-      { id: "size-s", value: "S" },
-      { id: "size-m", value: "M" },
-      { id: "size-l", value: "L" },
-    ],
-  },
-];
-
 export default function AddProductPage() {
+
+  const router = useRouter();
+
   const categories = useCategoryDataStore((state) => state.categories);
   const fetchCategories = useCategoryDataStore(
     (state) => state.fetchCategories
   );
   const isCategoriesFetching = useCategoryDataStore((state) => state.loading);
+  const attributes = useAttributeDataStore((state) => state.attributes);
+  const fetchAttributes = useAttributeDataStore(
+    (state) => state.fetchAttributes
+  );
+
+  const fetchAllProducts = useProductStore((state) => state.fetchAllProducts);
 
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
@@ -152,7 +153,7 @@ export default function AddProductPage() {
       metaDescription: "",
       slug: undefined,
       variants: [],
-      attributes: [],
+      selectedAttributes: [],
       relatedProducts: [],
     },
   });
@@ -163,6 +164,13 @@ export default function AddProductPage() {
       console.error("Failed to fetch categories:", error);
     });
   }, [fetchCategories]);
+
+  // Fetch attributes on mount
+  useEffect(() => {
+    fetchAttributes(false).catch((error) => {
+      console.error("Failed to fetch categories:", error);
+    });
+  }, [fetchAttributes]);
 
   // Handle thumbnail image change
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,17 +204,17 @@ export default function AddProductPage() {
 
   const handleProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
-    form.setValue('name', newName);
+    form.setValue("name", newName);
 
     // Get the current variants. For simplicity, we'll update the first variant's SKU.
     // If you have multiple variants and want to update all, you'd loop through them.
-    const currentVariants = form.getValues('variants');
+    const currentVariants = form.getValues("variants");
     if (currentVariants && currentVariants.length > 0) {
       const generatedSku = generateSkuFromName(newName);
       // Ensure that setting the value for nested arrays is type-safe
       form.setValue(`variants.0.sku`, generatedSku, { shouldValidate: true }); // Optionally validate on change
     }
-  }
+  };
 
   // Handle additional images change
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,112 +269,253 @@ export default function AddProductPage() {
     setImagePreviews(newPreviews);
   };
 
-  // Upload file to S3
-  const uploadToS3 = async (file: File): Promise<string> => {
-    // Get presigned URL from your backend
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileName: file.name,
-        fileType: file.type,
-      }),
-    });
-
-    const { url, fields } = await response.json();
-
-    const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-    formData.append("file", file);
-
-    const uploadResponse = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error("Upload failed");
-    }
-
-    return `${url}/${fields.key}`;
-  };
-
   const onSubmit = async (data: ProductFormValues) => {
+    const uploadedImageUrls: string[] = []; // Track uploaded images for cleanup on error
+    setIsUploading(true);
+    
     try {
-      setIsUploading(true);
+      const {
+        name,
+        description,
+        slug,
+        categoryId,
+        thumbnailImage,
+        images,
+        variants,
+        selectedAttributes,
+        metaTitle,
+        metaDescription,
+        relatedProducts,
+      } = data;
 
-      // Upload thumbnail image
-      let thumbnailUrl = "";
-      if (data.thumbnailImage) {
-        thumbnailUrl = await uploadToS3(data.thumbnailImage);
+      // --- Validation ---
+      if (!selectedAttributes || selectedAttributes.length === 0) {
+        throw new Error("Please select at least one product attribute.");
       }
 
-      // Upload additional images
-      const imageUrls = await Promise.all(
-        data.images.map((file) => uploadToS3(file))
-      );
-
-      // Upload variant images if they exist
-      const variantsWithImageUrls = await Promise.all(
-        data.variants.map(async (variant) => {
-          let imageUrl = "";
-          if (variant.image) {
-            imageUrl = await uploadToS3(variant.image);
-          }
-          return {
-            ...variant,
-            imageUrl,
-          };
-        })
-      );
-
-      // Prepare the data for your API
-      const productData = {
-        name: data.name,
-        description: data.description,
-        slug: data.slug || null,
-        category_id: data.categoryId,
-        brand_id: null,
-        thumbnail_image_url: thumbnailUrl,
-        images_url: imageUrls,
-        meta_title: data.metaTitle || null,
-        meta_description: data.metaDescription || null,
-        related_products: data.relatedProducts || [],
+      if (selectedAttributes.length === 0) {
+        throw new Error("Please select at least one product attribute");
+      }
+  
+      // Validate variants have proper attribute combinations
+      for (const [index, variant] of variants.entries()) {
+        if (!variant.attributeValues || variant.attributeValues.length === 0) {
+          throw new Error(`Variant #${index + 1} must have attribute values selected`);
+        }
+        
+        // Ensure each selected attribute has a value in the variant
+        const variantAttributeIds = new Set(
+          variant.attributeValues.map(valueId => {
+            const attr = attributes.find(a => 
+              a.values.some(v => v.id === valueId)
+            );
+            return attr?.id;
+          }).filter(Boolean)
+        );
+        
+        const missingAttributes = selectedAttributes.filter(attrId => 
+          !variantAttributeIds.has(attrId)
+        );
+        
+        if (missingAttributes.length > 0) {
+          const missingNames = missingAttributes.map(id => 
+            attributes.find(a => a.id === id)?.name
+          ).join(", ");
+          throw new Error(`Variant #${index + 1} is missing values for: ${missingNames}`);
+        }
+      }
+  
+      // Create progress tracking
+      const totalOperations = (thumbnailImage ? 1 : 0) + images.length + variants.filter(v => v.image).length;
+      let completedOperations = 0;
+      
+      const updateProgress = () => {
+        completedOperations++;
+        // You can add progress bar updates here if needed
+        console.log(`Upload progress: ${completedOperations}/${totalOperations}`);
       };
 
-      // Submit to your API
-      await addProduct(productData)
-        .then(() => {
-          toast.success(`Product ${data.name} added.`);
-        })
-        .catch((error) => {
-          console.log("Error adding category:", error);
-          toast.error("Error creating product", {
-            description: `Error: ${error}`,
-          });
-        });
+      const uploadFile = async (file: File, keyPrefix: string, index?: number) => {
+        const keyName = index !== undefined ? `${name.replaceAll(" ", "-")}-${keyPrefix}-${index + 1}` : `${name.replaceAll(" ", "-")}-${keyPrefix}`;
+        const url = await uploadImageToS3(file, generateBucketKey("productImage", keyName));
+        uploadedImageUrls.push(url);
+        updateProgress();
+        return url;
+      };
+  
+      // Upload thumbnail
+      const thumbnailUrlPromise = thumbnailImage
+      ? uploadFile(thumbnailImage, "thumbnail")
+      : Promise.resolve("");
 
-      toast.success("Product created successfully", {
-        description: "Your product has been saved to the database.",
+      // Upload additional images in parallel
+      const imageUrlsPromises = images.map((file, index) =>
+        uploadFile(file, "image", index)
+      );
+  
+      const processedVariantsPromises = variants.map(async (variant, index) => {
+        let variantImageUrl = "";
+        if (variant.image) {
+          variantImageUrl = await uploadFile(variant.image, "variant", index);
+        }
+  
+        return {
+          sku: variant.sku,
+          price: variant.price,
+          sale_price: variant.salePrice ? variant.salePrice : null,
+          stock: Number(variant.stock),
+          size: variant.size || null,
+          image_url: variantImageUrl || null,
+          barcode: variant.barcode || null,
+          attribute_values: variant.attributeValues || [],
+        };
       });
 
-      // Reset form after successful submission
+      // Wait for all image uploads and variant processing to complete
+      const [thumbnailUrl, imageUrls, processedVariants] = await Promise.all([
+        thumbnailUrlPromise,
+        Promise.all(imageUrlsPromises),
+        Promise.all(processedVariantsPromises),
+      ]);
+  
+      // Prepare attributes data for API
+      const attributesData = selectedAttributes.map(attributeId => {
+        const attribute = attributes.find(attr => attr.id === attributeId);
+        if (!attribute) {
+          throw new Error(`Selected attribute with ID ${attributeId} not found`);
+        }
+        
+        return {
+          attribute_id: attributeId,
+          values: attribute.values.map(value => value.id) // All available values for this attribute
+        };
+      });
+  
+      // Prepare the complete product data for API
+      const productData = {
+        name: name.trim(),
+        description: description.trim(),
+        slug: slug?.trim() || null,
+        category_id: categoryId,
+        brand_id: null, // Update when brand functionality is added
+        thumbnail_image_url: thumbnailUrl ?? "",
+        images_url: imageUrls,
+        meta_title: metaTitle?.trim() || null,
+        meta_description: metaDescription?.trim() || null,
+        related_products: relatedProducts || [],
+      };
+  
+
+      // --- API Submission ---
+      // Submit product, variants, and attributes in parallel after product creation
+      const product = await addProduct(productData);
+      updateProgress(); // Mark product creation as a completed operation
+
+      await Promise.all([
+        ...processedVariants.map((variant) =>
+          addProductVariant({
+            ...variant,
+            price: variant.price,
+            sale_price: variant.sale_price,
+            product_id: product.id,
+          })
+        ),
+        ...attributesData.map((attribute) =>
+          addProductAttribute({
+            attribute_id: attribute.attribute_id,
+            product_id: product.id,
+          })
+        ),
+      ]);
+
+      toast.success(`Product "${name}" created successfully`, {
+        description: `Added ${processedVariants.length} variant(s) with ${attributesData.length} attribute(s).`,
+      });
+
       form.reset();
       setThumbnailPreview(null);
       setImagePreviews([]);
+      fetchAllProducts(true);
+      router.push('/product-management');
+  
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Product creation error:", error);
+      
+      // Cleanup uploaded images on error (optional - depends on your S3 setup)
+      if (uploadedImageUrls.length > 0) {
+        console.log("Cleaning up uploaded images due to error...");
+        // You might want to implement cleanup logic here
+        // cleanupS3Images(uploadedImageUrls).catch(console.error);
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      
       toast.error("Failed to create product", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
+        description: errorMessage,
       });
+      
+      if (error instanceof Error) {
+        console.error("Error details:", {
+          message: error.message,
+          stack: error.stack,
+        });
+      }
+      
     } finally {
       setIsUploading(false);
     }
+  };
+  
+  // Helper function for cleanup (optional)
+  const cleanupS3Images = async (imageUrls: string[]) => {
+    try {
+      // Implement S3 deletion logic here if needed
+      console.log("Would cleanup images:", imageUrls);
+      // await deleteImagesFromS3(imageUrls);
+    } catch (cleanupError) {
+      console.error("Failed to cleanup images:", cleanupError);
+    }
+  };
+  
+  // Enhanced validation helper
+  const validateProductData = (data: ProductFormValues) => {
+    const errors: string[] = [];
+    
+    // Basic validation
+    if (!data.name?.trim()) errors.push("Product name is required");
+    if (!data.description?.trim()) errors.push("Product description is required");
+    if (!data.categoryId) errors.push("Product category is required");
+    if (!data.selectedAttributes || data.selectedAttributes.length === 0) {
+      errors.push("At least one attribute must be selected");
+    }
+    
+    // Variants validation
+    if (!data.variants || data.variants.length === 0) {
+      errors.push("At least one variant is required");
+    } else {
+      data.variants.forEach((variant, index) => {
+        if (!variant.sku?.trim()) errors.push(`Variant #${index + 1}: SKU is required`);
+        if (!variant.price || variant.price <= 0) errors.push(`Variant #${index + 1}: Valid price is required`);
+        if (!variant.size?.trim()) errors.push(`Variant #${index + 1}: Size is required`);
+        if (variant.stock < 0) errors.push(`Variant #${index + 1}: Stock cannot be negative`);
+      });
+    }
+    
+    return errors;
+  };
+  
+  // Usage with pre-validation
+  const onSubmitWithValidation = async (data: ProductFormValues) => {
+    const validationErrors = validateProductData(data);
+    
+    if (validationErrors.length > 0) {
+      toast.error("Please fix the following errors:", {
+        description: validationErrors.join(", ")
+      });
+      return;
+    }
+    
+    await onSubmit(data);
   };
 
   // Toggle section expansion
@@ -377,76 +526,94 @@ export default function AddProductPage() {
     }));
   };
 
-  // Variant management
-  const addVariant = () => {
-    form.setValue("variants", [
-      ...form.getValues("variants"),
-      {
-        sku: "",
-        price: 0,
-        salePrice: undefined,
-        stock: 0,
-        size: "",
-        image: undefined,
-        barcode: "",
-        attributeValues: [],
-      },
-    ]);
-  };
-
   const removeVariant = (index: number) => {
     const variants = [...form.getValues("variants")];
     variants.splice(index, 1);
     form.setValue("variants", variants);
   };
 
-  // Attribute management
-  const addAttribute = () => {
-    form.setValue("attributes", [
-      ...form.getValues("attributes"),
-      {
-        attributeId: "",
-        values: [],
-      },
-    ]);
+  const generateVariantCombinations = () => {
+    const selectedAttributes = form.watch("selectedAttributes") || [];
+    const availableSelectedAttributes = attributes.filter(attr => 
+      selectedAttributes.includes(attr.id)
+    );
+    
+    if (availableSelectedAttributes.length === 0) return;
+    
+    // Generate all possible combinations
+    const combinations = generateCombinations(availableSelectedAttributes.map(attr => attr.values));
+    
+    const newVariants = combinations.map((combination, index) => ({
+      sku: `PROD-${String(index + 1).padStart(3, '0')}`,
+      price: 0,
+      salePrice: undefined,
+      stock: 0,
+      size: "",
+      image: undefined,
+      barcode: "",
+      attributeValues: combination.map(val => val.id)
+    }));
+    
+    form.setValue("variants", newVariants);
+  };
+  
+  // Helper function to generate all combinations
+  const generateCombinations = (arrays: any[][]): any[][] => {
+    if (arrays.length === 0) return [[]];
+    if (arrays.length === 1 && arrays[0]) return arrays[0].map(item => [item]);
+    
+    const result = [];
+    const restCombinations = generateCombinations(arrays.slice(1));
+    
+    for (const item of arrays[0] ?? []) {
+      for (const restCombination of restCombinations) {
+        result.push([item, ...restCombination]);
+      }
+    }
+    
+    return result;
+  };
+  
+  // Enhanced addVariant function
+  const addVariant = () => {
+    const currentVariants = form.watch("variants") || [];
+    
+    const newVariant = {
+      sku: `PROD-${String(currentVariants.length + 1).padStart(3, '0')}`,
+      price: 0,
+      salePrice: undefined,
+      stock: 0,
+      size: "",
+      image: undefined,
+      barcode: "",
+      attributeValues: [] // Will be filled by user selection
+    };
+    
+    form.setValue("variants", [...currentVariants, newVariant]);
   };
 
-  const removeAttribute = (index: number) => {
-    const attrs = [...form.getValues("attributes")];
-    attrs.splice(index, 1);
-    form.setValue("attributes", attrs);
+  const getSelectedAttributesData = (
+    selectedAttributeIds: string[],
+    availableAttributes: Attribute[]
+  ) => {
+    return selectedAttributeIds
+      .map((id) => {
+        const attribute = attributes.find((attr) => attr.id === id);
+        return attribute
+          ? {
+              attributeId: attribute.id,
+              values: attribute.values.map((val) => val.id), // or val.value depending on your needs
+            }
+          : null;
+      })
+      .filter(Boolean);
   };
-
-  // const onSubmit = async (data: ProductFormValues) => {
-  //   const req = await addProduct({
-  //     name: '',
-  //     description: '',
-  //     slug: null,
-  //     category_id: '',
-  //     thumbnail_image_url: '',
-  //     images_url: [],
-  //     brand_id: null,
-  //     meta_title: null,
-  //     meta_description: null,
-  //     related_products: []
-  //   });
-  //   if (req.error) {
-  //     toast.error("Failed to create product", {
-  //       description: req.error.message,
-  //     })
-  //     return
-  //   }
-  //   toast("Product created successfully", {
-  //     description: "Your product has been saved to the database.",
-  //   })
-  //   // Here you would typically send the data to your API
-  // }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Add New Product</h1>
-        <Button onClick={form.handleSubmit(onSubmit)} disabled={isUploading}>
+        <Button onClick={form.handleSubmit(onSubmitWithValidation)} disabled={isUploading}>
           {isUploading ? (
             <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
           ) : (
@@ -491,10 +658,10 @@ export default function AddProductPage() {
                     <FormItem>
                       <FormLabel>Product Name</FormLabel>
                       <FormControl>
-                        <Input 
-                        placeholder="Enter product name"
-                        {...field}
-                        onChange={handleProductNameChange}
+                        <Input
+                          placeholder="Enter product name"
+                          {...field}
+                          onChange={handleProductNameChange}
                         />
                       </FormControl>
                       <FormMessage />
@@ -732,8 +899,245 @@ export default function AddProductPage() {
             )}
           </Card>
 
-          {/* Variants Section */}
+          {/* Attributes Section */}
           <Card>
+            <CardHeader
+              className="cursor-pointer"
+              onClick={() => toggleSection("attributes")}
+            >
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center">
+                  {expandedSections.attributes ? (
+                    <ChevronDownIcon className="mr-2 h-5 w-5" />
+                  ) : (
+                    <ChevronRightIcon className="mr-2 h-5 w-5" />
+                  )}
+                  Product Attributes
+                </CardTitle>
+                <Badge
+                  variant={
+                    form.formState.errors.selectedAttributes
+                      ? "destructive"
+                      : "outline"
+                  }
+                >
+                  {form.formState.errors.selectedAttributes
+                    ? "Incomplete"
+                    : "Complete"}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Select attributes that apply to this product
+              </p>
+            </CardHeader>
+            {expandedSections.attributes && (
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-sm text-muted-foreground">
+                    {form.watch("selectedAttributes")?.length || 0} attribute(s)
+                    selected
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Select all attributes
+                        const allAttributeIds = attributes.map(
+                          (attr) => attr.id
+                        );
+                        form.setValue("selectedAttributes", allAttributeIds);
+                      }}
+                    >
+                      Select All
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Clear all selections
+                        form.setValue("selectedAttributes", []);
+                      }}
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </div>
+
+                <Table>
+                  <TableCaption>
+                    Select attributes for this product.
+                  </TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[50px]">Select</TableHead>
+                      <TableHead>Attribute</TableHead>
+                      <TableHead>Available Values</TableHead>
+                      <TableHead className="w-[100px]">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {attributes.map((attribute) => {
+                      const isSelected =
+                        form
+                          .watch("selectedAttributes")
+                          ?.includes(attribute.id) || false;
+
+                      return (
+                        <TableRow
+                          key={attribute.id}
+                          className={isSelected ? "bg-muted/50" : ""}
+                        >
+                          <TableCell>
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={(checked) => {
+                                const currentSelected =
+                                  form.watch("selectedAttributes") || [];
+
+                                if (checked) {
+                                  // Add attribute ID to selection
+                                  const newSelected = [
+                                    ...currentSelected,
+                                    attribute.id,
+                                  ];
+                                  form.setValue(
+                                    "selectedAttributes",
+                                    newSelected
+                                  );
+                                } else {
+                                  // Remove attribute ID from selection
+                                  const newSelected = currentSelected.filter(
+                                    (id) => id !== attribute.id
+                                  );
+                                  form.setValue(
+                                    "selectedAttributes",
+                                    newSelected
+                                  );
+                                }
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                {attribute.name}
+                              </span>
+                              {isSelected && (
+                                <Badge variant="secondary">Selected</Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1 max-w-md">
+                              {attribute.values
+                                .slice(0, 5)
+                                .map((attributeValue) => (
+                                  <Badge
+                                    key={attributeValue.id}
+                                    variant="outline"
+                                  >
+                                    {attributeValue.value}
+                                  </Badge>
+                                ))}
+                              {attribute.values.length > 5 && (
+                                <Badge variant="outline">
+                                  +{attribute.values.length - 5} more
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                // Toggle selection
+                                const currentSelected =
+                                  form.watch("selectedAttributes") || [];
+
+                                if (isSelected) {
+                                  const newSelected = currentSelected.filter(
+                                    (id) => id !== attribute.id
+                                  );
+                                  form.setValue(
+                                    "selectedAttributes",
+                                    newSelected
+                                  );
+                                } else {
+                                  const newSelected = [
+                                    ...currentSelected,
+                                    attribute.id,
+                                  ];
+                                  form.setValue(
+                                    "selectedAttributes",
+                                    newSelected
+                                  );
+                                }
+                              }}
+                            >
+                              {isSelected ? "Remove" : "Add"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+
+                {/* Display selected attributes summary */}
+                {form.watch("selectedAttributes")?.length > 0 && (
+                  <div className="mt-6 p-4 border rounded-lg bg-muted/30">
+                    <h4 className="font-medium mb-2">
+                      Selected Attributes Summary:
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {form.watch("selectedAttributes").map((attributeId) => {
+                        const attribute = attributes.find(
+                          (attr) => attr.id === attributeId
+                        );
+                        return attribute ? (
+                          <Badge key={attributeId} variant="default">
+                            {attribute.name}
+                            <button
+                              type="button"
+                              className="ml-2 hover:bg-destructive/20 rounded-full p-0.5"
+                              onClick={() => {
+                                const currentSelected =
+                                  form.watch("selectedAttributes") || [];
+                                const newSelected = currentSelected.filter(
+                                  (id) => id !== attributeId
+                                );
+                                form.setValue(
+                                  "selectedAttributes",
+                                  newSelected
+                                );
+                              }}
+                            >
+                              ×
+                            </button>
+                          </Badge>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Validation error display */}
+                {form.formState.errors.selectedAttributes && (
+                  <div className="text-destructive text-sm mt-2">
+                    {form.formState.errors.selectedAttributes.message}
+                  </div>
+                )}
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Variants Section */}
+          {/* <Card>
             <CardHeader
               className="cursor-pointer"
               onClick={() => toggleSection("variants")}
@@ -938,199 +1342,53 @@ export default function AddProductPage() {
                           </FormItem>
                         )}
                       />
-                    </div>
-
-                    <div className="flex gap-5">
+                      
                       <FormField
                         control={form.control}
-                        name={`variants.${index}.size`}
-                        render={({ field }) => (
-                          <FormItem className="mt-2">
-                            <FormLabel>Size</FormLabel>
-                            <FormControl>
-                              <Input placeholder="M" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="mt-4">
-                        <h4 className="mb-2 text-sm font-medium">Attributes</h4>
-                        <FormField
-                          control={form.control}
-                          name={`variants.${index}.attributeValues`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <div className="flex flex-wrap gap-2">
-                                  {attributes.map((attr) => (
-                                    <div key={attr.id} className="space-y-2">
-                                      <Label className="block">
-                                        {attr.name}
-                                      </Label>
-                                      <Select
-                                        onValueChange={(value) => {
-                                          const currentValues = [
-                                            ...field.value,
-                                          ];
-                                          // Remove any existing values for this attribute
-                                          const filteredValues =
-                                            currentValues.filter(
-                                              (valId) =>
-                                                !attr.values.some(
-                                                  (av) => av.id === valId
-                                                )
-                                            );
-                                          field.onChange([
-                                            ...filteredValues,
-                                            value,
-                                          ]);
-                                        }}
-                                      >
-                                        <SelectTrigger className="w-[180px]">
-                                          <SelectValue
-                                            placeholder={`Select ${attr.name}`}
-                                          />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          {attr.values.map((value) => (
-                                            <SelectItem
-                                              key={value.id}
-                                              value={value.id}
-                                            >
-                                              {value.value}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                    </div>
-                                  ))}
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <Button type="button" variant="outline" onClick={addVariant}>
-                  <PlusIcon className="mr-2 h-4 w-4" />
-                  Add Variant
-                </Button>
-              </CardContent>
-            )}
-          </Card>
-
-          {/* Attributes Section */}
-          <Card>
-            <CardHeader
-              className="cursor-pointer"
-              onClick={() => toggleSection("attributes")}
-            >
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  {expandedSections.attributes ? (
-                    <ChevronDownIcon className="mr-2 h-5 w-5" />
-                  ) : (
-                    <ChevronRightIcon className="mr-2 h-5 w-5" />
-                  )}
-                  Product Attributes
-                </CardTitle>
-                <Badge
-                  variant={
-                    form.formState.errors.attributes ? "destructive" : "outline"
-                  }
-                >
-                  {form.formState.errors.attributes ? "Incomplete" : "Complete"}
-                </Badge>
-              </div>
-            </CardHeader>
-            {expandedSections.attributes && (
-              <CardContent className="space-y-6">
-                {form.watch("attributes").map((attr, index) => (
-                  <div key={index} className="rounded-lg border p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-medium">Attribute #{index + 1}</h3>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        type="button"
-                        onClick={() => removeAttribute(index)}
-                      >
-                        <TrashIcon className="mr-2 h-4 w-4" />
-                        Remove
-                      </Button>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name={`attributes.${index}.attributeId`}
+                        name={`variants.${index}.attributeValues`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Attribute</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select an attribute" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
+                            <FormLabel>Attributes</FormLabel>
+                            <FormControl>
+                              <div className="flex flex-wrap gap-2">
                                 {attributes.map((attr) => (
-                                  <SelectItem key={attr.id} value={attr.id}>
-                                    {attr.name}
-                                  </SelectItem>
+                                  <div key={attr.id} className="space-y-2">
+                                    <Label className="block">{attr.name}</Label>
+                                    <Select
+                                      onValueChange={(value) => {
+                                        const currentValues = [...field.value];
+                                        // Remove any existing values for this attribute
+                                        const filteredValues =
+                                          currentValues.filter(
+                                            (valId) =>
+                                              !attr.values.some(
+                                                (av) => av.id === valId
+                                              )
+                                          );
+                                        field.onChange([
+                                          ...filteredValues,
+                                          value,
+                                        ]);
+                                      }}
+                                    >
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue
+                                          placeholder={`Select ${attr.name}`}
+                                        />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {attr.values.map((value) => (
+                                          <SelectItem
+                                            key={value.id}
+                                            value={value.id}
+                                          >
+                                            {value.value}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="mt-4">
-                      <FormField
-                        control={form.control}
-                        name={`attributes.${index}.values`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Values</FormLabel>
-                            <FormControl>
-                              <div className="space-y-2">
-                                <div className="flex flex-wrap gap-2">
-                                  {attributes
-                                    .find((a) => a.id === attr.attributeId)
-                                    ?.values.map((value) => (
-                                      <Button
-                                        key={value.id}
-                                        type="button"
-                                        variant={
-                                          field.value.includes(value.id)
-                                            ? "default"
-                                            : "outline"
-                                        }
-                                        onClick={() => {
-                                          const newValues =
-                                            field.value.includes(value.id)
-                                              ? field.value.filter(
-                                                  (v) => v !== value.id
-                                                )
-                                              : [...field.value, value.id];
-                                          field.onChange(newValues);
-                                        }}
-                                      >
-                                        {value.value}
-                                      </Button>
-                                    ))}
-                                </div>
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -1141,13 +1399,411 @@ export default function AddProductPage() {
                   </div>
                 ))}
 
-                <Button type="button" variant="outline" onClick={addAttribute}>
+                <Button type="button" variant="outline" onClick={addVariant}>
                   <PlusIcon className="mr-2 h-4 w-4" />
-                  Add Attribute
+                  Add Variant
                 </Button>
               </CardContent>
             )}
-          </Card>
+          </Card> */}
+
+<Card>
+  <CardHeader
+    className="cursor-pointer"
+    onClick={() => toggleSection("variants")}
+  >
+    <div className="flex items-center justify-between">
+      <CardTitle className="flex items-center">
+        {expandedSections.variants ? (
+          <ChevronDownIcon className="mr-2 h-5 w-5" />
+        ) : (
+          <ChevronRightIcon className="mr-2 h-5 w-5" />
+        )}
+        Product Variants
+      </CardTitle>
+      <div className="flex items-center gap-2">
+        <Badge variant="secondary">
+          {form.watch("variants")?.length || 0} variant(s)
+        </Badge>
+        <Badge
+          variant={
+            form.formState.errors.variants ? "destructive" : "outline"
+          }
+        >
+          {form.formState.errors.variants ? "Incomplete" : "Complete"}
+        </Badge>
+      </div>
+    </div>
+    <p className="text-sm text-muted-foreground mt-2">
+      Create different variants of your product with unique combinations of attributes
+    </p>
+  </CardHeader>
+  
+  {expandedSections.variants && (
+    <CardContent className="space-y-6">
+      {/* Helper message when no attributes selected */}
+      {(!form.watch("selectedAttributes") || form.watch("selectedAttributes").length === 0) && (
+        <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <AlertTriangleIcon className="h-5 w-5 text-yellow-600" />
+            <p className="text-sm text-yellow-800">
+              Please select product attributes first to create variants with different attribute combinations.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk actions */}
+      {form.watch("variants")?.length > 0 && (
+        <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+          <p className="text-sm text-muted-foreground">
+            Manage all variants
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Generate variants for all combinations
+                generateVariantCombinations();
+              }}
+            >
+              <WandIcon className="mr-2 h-4 w-4" />
+              Auto Generate
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                form.setValue("variants", []);
+              }}
+            >
+              <TrashIcon className="mr-2 h-4 w-4" />
+              Clear All
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Variants List */}
+      {form.watch("variants")?.map((variant, index) => {
+        const selectedAttributes = form.watch("selectedAttributes") || [];
+        const availableSelectedAttributes = attributes.filter(attr => 
+          selectedAttributes.includes(attr.id)
+        );
+
+        return (
+          <div key={index} className="rounded-lg border p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h3 className="font-medium">Variant #{index + 1}</h3>
+                {/* Show current attribute combination */}
+                <div className="flex gap-1">
+                  {variant.attributeValues?.map((valueId) => {
+                    const attributeValue = availableSelectedAttributes
+                      .flatMap(attr => attr.values)
+                      .find(val => val.id === valueId);
+                    return attributeValue ? (
+                      <Badge key={valueId} variant="secondary">
+                        {attributeValue.value}
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                type="button"
+                onClick={() => removeVariant(index)}
+              >
+                <TrashIcon className="mr-2 h-4 w-4" />
+                Remove
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* SKU Field */}
+              <FormField
+                control={form.control}
+                name={`variants.${index}.sku`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SKU *</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="PROD-001-RED-L" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Price Field */}
+              <FormField
+                control={form.control}
+                name={`variants.${index}.price`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price *</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                          $
+                        </span>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="99.99"
+                          className="pl-7"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseFloat(e.target.value) || 0)
+                          }
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Sale Price Field */}
+              <FormField
+                control={form.control}
+                name={`variants.${index}.salePrice`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sale Price</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                          $
+                        </span>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="79.99"
+                          className="pl-7"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value ? parseFloat(e.target.value) : undefined
+                            )
+                          }
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Stock Field */}
+              <FormField
+                control={form.control}
+                name={`variants.${index}.stock`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stock Quantity *</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder="100"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value) || 0)
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Size Field */}
+              <FormField
+                control={form.control}
+                name={`variants.${index}.size`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Size *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="M, L, XL"
+                        maxLength={4}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Barcode Field */}
+              <FormField
+                control={form.control}
+                name={`variants.${index}.barcode`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Barcode</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1234567890123" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Attribute Selection Section */}
+            {availableSelectedAttributes.length > 0 && (
+              <div className="space-y-4 pt-4 border-t">
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.attributeValues`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Attribute Combination *</FormLabel>
+                      <FormControl>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {availableSelectedAttributes.map((attr) => {
+                            const currentValue = field.value?.find(valueId => 
+                              attr.values.some(av => av.id === valueId)
+                            );
+                            
+                            return (
+                              <div key={attr.id} className="space-y-2">
+                                <Label className="text-sm font-medium">
+                                  {attr.name} *
+                                </Label>
+                                <Select
+                                  value={currentValue || ""}
+                                  onValueChange={(value) => {
+                                    const currentValues = field.value || [];
+                                    // Remove any existing values for this attribute
+                                    const filteredValues = currentValues.filter(
+                                      (valId) =>
+                                        !attr.values.some((av) => av.id === valId)
+                                    );
+                                    // Add the new value
+                                    field.onChange([...filteredValues, value]);
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder={`Select ${attr.name}`} />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {attr.values.map((value) => (
+                                      <SelectItem key={value.id} value={value.id}>
+                                        <div className="flex items-center gap-2">
+                                          <span>{value.value}</span>
+                                        </div>
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+
+            {/* Variant Image Section */}
+            <div className="pt-4 border-t">
+              <FormField
+                control={form.control}
+                name={`variants.${index}.image`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Variant Image</FormLabel>
+                    <FormControl>
+                      <div className="flex flex-col gap-3">
+                        {field.value ? (
+                          <div className="relative inline-block">
+                            <Image
+                              src={URL.createObjectURL(field.value)}
+                              alt={`Variant ${index + 1} preview`}
+                              className="h-32 w-32 rounded-lg object-cover border"
+                              height={128}
+                              width={128}
+                            />
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="absolute -right-2 -top-2 h-6 w-6 rounded-full"
+                              type="button"
+                              onClick={() => {
+                                form.setValue(`variants.${index}.image`, undefined);
+                              }}
+                            >
+                              <XIcon className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div>
+                            <Input
+                              id={`variant-image-${index}`}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  form.setValue(`variants.${index}.image`, file);
+                                }
+                              }}
+                            />
+                            <Label
+                              htmlFor={`variant-image-${index}`}
+                              className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/25 p-6 hover:bg-muted/50 transition-colors"
+                            >
+                              <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                              <span className="text-sm text-muted-foreground">
+                                Upload variant image
+                              </span>
+                            </Label>
+                          </div>
+                        )}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Add Variant Button */}
+      <div className="flex items-center justify-center">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={addVariant}
+          disabled={!form.watch("selectedAttributes") || form.watch("selectedAttributes").length === 0}
+        >
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Add New Variant
+        </Button>
+      </div>
+    </CardContent>
+  )}
+</Card>
 
           {/* SEO Section */}
           <Card>

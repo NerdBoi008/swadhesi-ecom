@@ -10,7 +10,6 @@ import {
   EditIcon,
   TrashIcon,
   EyeIcon,
-  CopyIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   RefreshCwIcon,
@@ -64,58 +63,28 @@ import { useRouter } from "next/navigation";
 import useCategoryDataStore from "@/lib/store/network-category-data-store";
 import { buildCategoryTree, CategoryNode } from "./category/add-category/page";
 import Image from "next/image";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { deleteCategory } from "@repo/db";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { deleteCategory, deleteProduct } from "@repo/db";
 import { toast } from "sonner";
 import useAttributeDataStore from "@/lib/store/network-attributes-data-store";
-
-// Mock data
-const products = [
-  {
-    id: "prod_1",
-    name: "Dinosaur Graphic T-Shirt",
-    sku: "TSHIRT-BLUE-4T",
-    price: 24.99,
-    salePrice: 19.99,
-    stock: 42,
-    status: "active",
-    category: "Tops/T-Shirts",
-    brand: "Little Explorers",
-    variants: [
-      { size: "2T", color: "Blue", stock: 15 },
-      { size: "3T", color: "Blue", stock: 12 },
-      { size: "4T", color: "Blue", stock: 15 },
-    ],
-  },
-  {
-    id: "prod_2",
-    name: "Winter Puffer Jacket",
-    sku: "JACKET-RED-3T",
-    price: 39.99,
-    stock: 8,
-    status: "active",
-    category: "Outerwear",
-    brand: "Cozy Kids",
-    variants: [
-      { size: "2T", color: "Red", stock: 3 },
-      { size: "3T", color: "Red", stock: 5 },
-    ],
-  },
-  {
-    id: "prod_3",
-    name: "Party Dress",
-    sku: "DRESS-PINK-5T",
-    price: 29.99,
-    stock: 0,
-    status: "draft",
-    category: "Dresses",
-    brand: "Pretty Princess",
-    variants: [
-      { size: "4T", color: "Pink", stock: 0 },
-      { size: "5T", color: "Pink", stock: 0 },
-    ],
-  },
-];
+import useProductStore from "@/lib/store/network-product-data-store";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ProductViewDialog } from "@/components/common/product-view-dialog";
+import { Product } from "@repo/types";
 
 // Separate component for recursive rendering
 const CategoryTree = ({
@@ -126,22 +95,24 @@ const CategoryTree = ({
   categories: CategoryNode[];
   expandedCategories: string[];
   onToggleExpand: (id: string) => void;
-  }) => {
+}) => {
   const router = useRouter();
-  const fetchCategories = useCategoryDataStore(state => state.fetchCategories)
+  const fetchCategories = useCategoryDataStore(
+    (state) => state.fetchCategories
+  );
 
   const handleCategoryDelete = async (id: string) => {
     await deleteCategory(id)
       .then(() => {
         toast.success("Deleted.", {
-          description: `Category - ${id} deleted successfully`
-        })
+          description: `Category - ${id} deleted successfully`,
+        });
         fetchCategories(true);
       })
       .catch((error) => {
-      toast.error("Error deleting category: ", error)
-    })
-  }
+        toast.error("Error deleting category: ", error);
+      });
+  };
 
   return (
     <>
@@ -162,10 +133,10 @@ const CategoryTree = ({
                 )}
               </Button>
             ) : (
-              <div className="h-6 w-6" /> // Spacer for alignment
+              <div className="h-6 w-6" /> 
             )}
             <div className="flex gap-3 justify-center items-center">
-              {category.image_url &&
+              {category.image_url && (
                 <Image
                   src={category.image_url}
                   alt={category.name}
@@ -173,7 +144,7 @@ const CategoryTree = ({
                   width={80}
                   className="size-10 rounded-md"
                 />
-              }
+              )}
               <span className="font-medium">{category.name}</span>
             </div>
             <div className="ml-auto flex gap-2">
@@ -181,34 +152,38 @@ const CategoryTree = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  router.push(`/product-management/category/edit-category?id=${category.id}`)
+                  router.push(
+                    `/product-management/category/edit-category?id=${category.id}`
+                  );
                 }}
               >
                 <EditIcon className="h-4 w-4" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                  >
+                  <Button variant="ghost" size="sm">
                     <TrashIcon className="h-4 w-4 text-red-500" />
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete &quot;{category.name}&quot;?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      <p className="font-medium">This action cannot be undone.</p>
-                      <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-                        <li>All subcategories will be orphaned</li>
-                        <li>Associated products won&apos;t be deleted but will lose this category</li>
-                        {category.image_url && (
-                          <li>The category image will be permanently deleted</li>
-                        )}
-                      </ul>
-                    </AlertDialogDescription>
+                    <AlertDialogTitle>
+                      Delete &quot;{category.name}&quot;?
+                    </AlertDialogTitle>
                   </AlertDialogHeader>
+                  <div>
+                    <p className="font-medium">This action cannot be undone.</p>
+                    <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                      <li>All subcategories will be orphaned</li>
+                      <li>
+                        Associated products won&apos;t be deleted but will lose
+                        this category
+                      </li>
+                      {category.image_url && (
+                        <li>The category image will be permanently deleted</li>
+                      )}
+                    </ul>
+                  </div>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
@@ -236,50 +211,91 @@ const CategoryTree = ({
         </div>
       ))}
     </>
-  )
+  );
 };
 
 export default function ProductManagementPage() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("products");
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
+  const { categories, loading: categoriesLoading, error: categoriesError, fetchCategories, } = useCategoryDataStore();
+  const { attributes, loading: attributLoading, error: attributeError, fetchAttributes, deleteAttribute, } = useAttributeDataStore();
+  const fetchAllProducts = useProductStore((state) => state.fetchAllProducts);
+  const products = useProductStore((state) => state.products);
+  const productsLoading = useProductStore((state) => state.loading);
+
+  const [openDropdowns, setOpenDropdowns] = useState(new Set());
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [showProductView, setShowProductView] = useState(false);
+  const [selectedProductToView, setSelectedProductToView] = useState<Product | null>(null);
+
+
+  const toggleDropdown = (productId: string, isOpen: boolean) => {
+    setOpenDropdowns(prev => {
+      const newSet = new Set(prev);
+      if (isOpen) {
+        newSet.add(productId);
+      } else {
+        newSet.delete(productId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleDeleteClick = (productId: string) => {
+    setSelectedProductId(productId);
+    toggleDropdown(productId, false);
+    setShowDeleteDialog(true);
+  };
+
+  const handleProductViewClick = (product: Product) => {
+    setSelectedProductToView(product);
+    toggleDropdown(product.id, false);
+    setShowProductView(true);
+  };
+
   
-  const { categories, loading: categoriesLoading, error: categoriesError, fetchCategories } = useCategoryDataStore();
-  const { attributes, loading: attributLoading, error: attributeError, fetchAttributes, deleteAttribute } = useAttributeDataStore();
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, [fetchAllProducts]);
 
   // Delete attribute handler
   const handleDeleteAttribute = async (id: string) => {
     try {
       await deleteAttribute(id);
 
-      
-      toast('Success',{
-        description: 'Attribute deleted successfully',
-      })
-      
+      toast("Success", {
+        description: "Attribute deleted successfully",
+      });
+
       // Refresh the list after deletion
       fetchAttributes(true);
     } catch (err) {
-      toast.error('Error',{
-        description: err instanceof Error ? err.message : 'Failed to delete attribute',
-      })
+      toast.error("Error", {
+        description:
+          err instanceof Error ? err.message : "Failed to delete attribute",
+      });
     }
-  }
+  };
 
   // Filter attributes based on search query
-  const filteredAttributes = attributes.filter(attr => 
-    attr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    attr.values.some(val => 
-      val.value.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  )
+  const filteredAttributes = attributes.filter(
+    (attr) =>
+      attr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      attr.values.some((val) =>
+        val.value.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  );
 
   // Fetch attributes on component mount
   useEffect(() => {
-    fetchAttributes()
-  }, [fetchAttributes])
+    fetchAttributes();
+  }, [fetchAttributes]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -301,6 +317,23 @@ export default function ProductManagementPage() {
         : [...prev, categoryId]
     );
   };
+
+  const handleActualDelete = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+
+      toast.success("Success", {
+        description: `Product ${productId} deleted successfully`,
+      });
+
+      fetchAllProducts(true);
+    } catch (err) {
+      toast.error("Error", {
+        description:
+          err instanceof Error ? err.message : "Failed to delete product",
+      });
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -388,125 +421,311 @@ export default function ProductManagementPage() {
                     </Button>
                   </div>
                 )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fetchAllProducts(true)}
+                  disabled={productsLoading}
+                >
+                  <RefreshCwIcon
+                    className={`h-4 w-4 mr-2 ${productsLoading ? "animate-spin" : ""}`}
+                  />
+                  Refresh
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[40px]">
-                      <Checkbox
-                        checked={selectedProducts.length === products.length}
-                        onCheckedChange={() => {
-                          setSelectedProducts(
-                            selectedProducts.length === products.length
-                              ? []
-                              : products.map((p) => p.id)
-                          );
-                        }}
-                      />
-                    </TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>SKU</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Stock</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Brand</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
+              {productsLoading ? (
+                <div className="h-20 flex items-center">
+                  <p className="m-auto w-full font-semibold">Products loading...</p>
+                </div>
+              ): (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[40px]">
                         <Checkbox
-                          checked={selectedProducts.includes(product.id)}
-                          onCheckedChange={() =>
-                            toggleProductSelection(product.id)
-                          }
+                          checked={selectedProducts.length === products.length}
+                          onCheckedChange={() => {
+                            setSelectedProducts(
+                              selectedProducts.length === products.length
+                                ? []
+                                : products.map((p) => p.id)
+                            );
+                          }}
                         />
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {product.name}
-                        <div className="text-xs text-muted-foreground">
-                          {product.variants.length} variants
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.sku}</TableCell>
-                      <TableCell>
-                        {product.salePrice ? (
-                          <>
-                            <span className="line-through text-muted-foreground">
-                              ₹{product.price}
-                            </span>
-                            <span className="ml-2 text-red-500">
-                              ₹{product.salePrice}
-                            </span>
-                          </>
-                        ) : (
-                          `₹${product.price}`
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            product.stock > 10 ? "outline" : "destructive"
-                          }
-                        >
-                          {product.stock} in stock
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            product.status === "active"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {product.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{product.category}</TableCell>
-                      <TableCell>{product.brand}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVerticalIcon className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <EditIcon className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <EyeIcon className="mr-2 h-4 w-4" />
-                              View
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <CopyIcon className="mr-2 h-4 w-4" />
-                              Duplicate
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-500">
-                              <TrashIcon className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                      </TableHead>
+                      <TableHead>Thumbnail</TableHead>
+                      <TableHead>Product</TableHead>
+                      <TableHead>SKU</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Stock</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Brand</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {products.map((product) => (
+                      <>
+                        <TableRow key={product.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={selectedProducts.includes(product.id)}
+                              onCheckedChange={() =>
+                                toggleProductSelection(product.id)
+                              }
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium w-[70px]">
+                            <Image
+                              src={
+                                product.thumbnail_image_url ||
+                                "/cdn/not-available.png"
+                              }
+                              alt={product.name}
+                              height={50}
+                              width={50}
+                              className="rounded-sm"
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {product.name}
+                            <div className="text-xs text-muted-foreground">
+                              {product.variants?.length} variants
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {product.variants?.[0]?.sku ?? "N/A"}
+                          </TableCell>
+                          <TableCell>
+                            {product.variants?.[0]?.sale_price ? (
+                              <>
+                                <span className="line-through text-muted-foreground">
+                                  ₹{product.variants?.[0]?.price}
+                                </span>
+                                <span className="ml-2 text-red-500">
+                                  ₹{product.variants?.[0]?.sale_price}
+                                </span>
+                              </>
+                            ) : (
+                              `₹${product.variants?.[0]?.price}`
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                (product.variants?.[0]?.stock ?? 0) > 10
+                                  ? "outline"
+                                  : "destructive"
+                              }
+                            >
+                              {product.variants?.[0]?.stock} in stock
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                product.variants?.[0]?.status == "ACTIVE"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                            >
+                              {product.variants?.[0]?.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{product.category?.name}</TableCell>
+                          <TableCell>{product.brand_id}</TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu
+                              open={openDropdowns.has(product.id)} 
+                              onOpenChange={(isOpen) => toggleDropdown(product.id, isOpen)}
+                            >
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreVerticalIcon className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onSelect={() => {
+                                    router.push(
+                                      `/product-management/product/edit/${product.id}`
+                                    );
+                                  }}
+                                >
+                                  <EditIcon className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onSelect={() => {
+                                    handleProductViewClick(product);
+                                  }}
+                                >
+                                  <EyeIcon className="mr-2 h-4 w-4" />
+                                  View
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem 
+                                  className="text-red-500"
+                                  onSelect={() => {
+                                    handleDeleteClick(product.id);
+                                  }}
+                                >
+                                  <TrashIcon className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+
+                        {/* Accordion for variants */}
+                        <TableRow>
+                          <TableCell colSpan={10} className="p-0">
+                            <Accordion type="single" collapsible>
+                              <AccordionItem value="variants">
+                                <AccordionTrigger className="px-4 py-2">
+                                  View all variants and attributes
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4">
+                                  <div className="space-y-6">
+                                    {/* Product attributes section */}
+                                    {(product.attributes?.length ?? 0 > 0) && (
+                                      <div>
+                                        <h4 className="font-medium mb-2">
+                                          Product Attributes
+                                        </h4>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                          {product.attributes?.map((attr) => (
+                                            <div
+                                              key={attr.attribute_id}
+                                              className="border rounded p-3"
+                                            >
+                                              <div className="font-medium">
+                                                {attr.attribute.name}
+                                              </div>
+                                              <div className="text-sm text-muted-foreground">
+                                                {attr.values
+                                                  .map((v) => v.value)
+                                                  .join(", ")}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Variants section */}
+                                    <div>
+                                      <h4 className="font-medium mb-2">
+                                        All Variants
+                                      </h4>
+                                      <Table>
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead>Variant Image</TableHead>
+                                            <TableHead>SKU</TableHead>
+                                            <TableHead>Attributes</TableHead>
+                                            <TableHead>Price</TableHead>
+                                            <TableHead>Stock</TableHead>
+                                            <TableHead>Status</TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {product.variants?.map((variant) => (
+                                            <TableRow key={variant.id}>
+                                              <TableCell>
+                                                <Image 
+                                                  src={variant.image_url || "/cdn/not-available.png"} 
+                                                  alt={variant.sku}
+                                                  height={50}
+                                                  width={50}
+                                                />
+                                              </TableCell>
+                                              <TableCell>{variant.sku}</TableCell>
+                                              <TableCell>
+                                                {(variant.attribute_values
+                                                  ?.length ?? 0) > 0 ? (
+                                                  <div className="flex flex-wrap gap-1">
+                                                    {variant.attribute_values?.map(
+                                                      (attr) => (
+                                                        <Badge
+                                                          key={attr.id}
+                                                          variant="outline"
+                                                        >
+                                                          {attr.attribute
+                                                            ? `${attr.attribute.name}: ${attr.value}`
+                                                            : "N/A"}
+                                                        </Badge>
+                                                      )
+                                                    )}
+                                                  </div>
+                                                ) : (
+                                                  <span className="text-muted-foreground">
+                                                    No attributes
+                                                  </span>
+                                                )}
+                                              </TableCell>
+                                              <TableCell>
+                                                {variant.sale_price ? (
+                                                  <>
+                                                    <span className="line-through text-muted-foreground">
+                                                      ₹{variant.price}
+                                                    </span>
+                                                    <span className="ml-2 text-red-500">
+                                                      ₹{variant.sale_price}
+                                                    </span>
+                                                  </>
+                                                ) : (
+                                                  `₹${variant.price}`
+                                                )}
+                                              </TableCell>
+                                              <TableCell>
+                                                <Badge
+                                                  variant={
+                                                    variant.stock > 10
+                                                      ? "outline"
+                                                      : "destructive"
+                                                  }
+                                                >
+                                                  {variant.stock} in stock
+                                                </Badge>
+                                              </TableCell>
+                                              <TableCell>
+                                                <Badge
+                                                  variant={
+                                                    variant.status === "ACTIVE"
+                                                      ? "default"
+                                                      : "secondary"
+                                                  }
+                                                >
+                                                  {variant.status}
+                                                </Badge>
+                                              </TableCell>
+                                            </TableRow>
+                                          ))}
+                                        </TableBody>
+                                      </Table>
+                                    </div>
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
             <CardFooter className="flex justify-between">
               <div className="text-sm text-muted-foreground">
                 Showing <span className="font-medium">1</span> to{" "}
                 <span className="font-medium">10</span> of{" "}
-                <span className="font-medium">32</span> products
+                <span className="font-medium">{products.length}</span> products
               </div>
               <Pagination>
                 <PaginationContent>
@@ -692,7 +911,9 @@ export default function ProductManagementPage() {
                 <div className="space-y-4">
                   {filteredAttributes.length === 0 ? (
                     <div className="text-center p-4 text-muted-foreground">
-                      {searchQuery ? 'No matching attributes found' : 'No attributes found. Add one to get started.'}
+                      {searchQuery
+                        ? "No matching attributes found"
+                        : "No attributes found. Add one to get started."}
                     </div>
                   ) : (
                     <Table>
@@ -725,7 +946,7 @@ export default function ProductManagementPage() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              {attribute.display_order || '-'}
+                              {attribute.display_order || "-"}
                             </TableCell>
                             <TableCell className="text-right">
                               <DropdownMenu>
@@ -736,13 +957,17 @@ export default function ProductManagementPage() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem
-                                    onClick={() => router.push(`/product-management/attributes/edit/${attribute.id}`)}
+                                    onClick={() =>
+                                      router.push(
+                                        `/product-management/attributes/edit/${attribute.id}`
+                                      )
+                                    }
                                   >
                                     <EditIcon className="mr-2 h-4 w-4" />
                                     Edit
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.push(`/product-management/attributes/values/${attribute.id}`)}
+                                  // onClick={() => router.push(`/product-management/attributes/values/${attribute.id}`)}
                                   >
                                     <ListIcon className="mr-2 h-4 w-4" />
                                     Manage Values
@@ -750,7 +975,9 @@ export default function ProductManagementPage() {
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
                                     className="text-red-500"
-                                    onClick={() => handleDeleteAttribute(attribute.id)}
+                                    onClick={() =>
+                                      handleDeleteAttribute(attribute.id)
+                                    }
                                   >
                                     <TrashIcon className="mr-2 h-4 w-4" />
                                     Delete
@@ -775,7 +1002,39 @@ export default function ProductManagementPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Add/Edit Product Modal (would be implemented separately) */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <div>
+              Are you sure you want to delete this product? This action cannot be undone.
+              <div className="ml-5 text-sm text-red-500">
+                <ul className="list-disc">
+                  <li>This action will also delete products all variants and attributes</li>
+                </ul>
+              </div>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleActualDelete(selectedProductId!);
+                setShowDeleteDialog(false);
+                setSelectedProductId("");
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <ProductViewDialog
+        isOpen={showProductView}
+        onOpenChange={setShowProductView}
+        product={selectedProductToView}
+      />
     </div>
-  )
+  );
 }

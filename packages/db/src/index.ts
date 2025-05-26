@@ -6,10 +6,27 @@ export { prismaClient } from "./prismaClient";
 // Export your database action functions
 export {
   addProduct,
+  fetchAllProducts,
+  updateProduct,
+  fetchProductById,
+  fetchProductsByCategory,
+  deleteProduct,
+  countAllProducts,
+  countProductsInCategory,
+
+  addProductVariant,
+  updateProductVariant,
+  deleteProductVariant,
+
+  addProductAttribute,
+  updateProductAttribute,
+  deleteProductAttribute,
+
   addCategory,
   getAllCategories,
   updateCategory,
   deleteCategory,
+
   addAttribute,
   addAttributeValue,
   getAllAttributesWithValues,

@@ -15,7 +15,7 @@
  */
 export function generateBucketKey(
   folderType: "productImage" | "categoryImage",
-  entityName: string
+  entityName: string,
 ): string {
   // Define the mapping between folder types and their corresponding folder names
   const folderMap: Record<typeof folderType, string> = {
