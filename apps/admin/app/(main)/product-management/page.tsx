@@ -10,7 +10,6 @@ import {
   EditIcon,
   TrashIcon,
   EyeIcon,
-  CopyIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   RefreshCwIcon,
@@ -84,6 +83,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ProductViewDialog } from "@/components/common/product-view-dialog";
+import { Product } from "@repo/types";
 
 // Separate component for recursive rendering
 const CategoryTree = ({
@@ -132,7 +133,7 @@ const CategoryTree = ({
                 )}
               </Button>
             ) : (
-              <div className="h-6 w-6" /> // Spacer for alignment
+              <div className="h-6 w-6" /> 
             )}
             <div className="flex gap-3 justify-center items-center">
               {category.image_url && (
@@ -229,6 +230,9 @@ export default function ProductManagementPage() {
   const [openDropdowns, setOpenDropdowns] = useState(new Set());
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [showProductView, setShowProductView] = useState(false);
+  const [selectedProductToView, setSelectedProductToView] = useState<Product | null>(null);
+
 
   const toggleDropdown = (productId: string, isOpen: boolean) => {
     setOpenDropdowns(prev => {
@@ -248,20 +252,13 @@ export default function ProductManagementPage() {
     setShowDeleteDialog(true);
   };
 
-  // const [expandedProducts, setExpandedProducts] = useState(new Set());
+  const handleProductViewClick = (product: Product) => {
+    setSelectedProductToView(product);
+    toggleDropdown(product.id, false);
+    setShowProductView(true);
+  };
 
-
-  // const toggleProductExpansion = (productId: string) => {
-  //   setExpandedProducts((prev) => {
-  //     const newSet = new Set(prev);
-  //     if (newSet.has(productId)) {
-  //       newSet.delete(productId);
-  //     } else {
-  //       newSet.add(productId);
-  //     }
-  //     return newSet;
-  //   });
-  // };
+  
 
   useEffect(() => {
     fetchAllProducts();
@@ -551,11 +548,21 @@ export default function ProductManagementPage() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onSelect={() => {
+                                    router.push(
+                                      `/product-management/product/edit/${product.id}`
+                                    );
+                                  }}
+                                >
                                   <EditIcon className="mr-2 h-4 w-4" />
                                   Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onSelect={() => {
+                                    handleProductViewClick(product);
+                                  }}
+                                >
                                   <EyeIcon className="mr-2 h-4 w-4" />
                                   View
                                 </DropdownMenuItem>
@@ -718,7 +725,7 @@ export default function ProductManagementPage() {
               <div className="text-sm text-muted-foreground">
                 Showing <span className="font-medium">1</span> to{" "}
                 <span className="font-medium">10</span> of{" "}
-                <span className="font-medium">32</span> products
+                <span className="font-medium">{products.length}</span> products
               </div>
               <Pagination>
                 <PaginationContent>
@@ -1022,6 +1029,12 @@ export default function ProductManagementPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ProductViewDialog
+        isOpen={showProductView}
+        onOpenChange={setShowProductView}
+        product={selectedProductToView}
+      />
     </div>
   );
 }

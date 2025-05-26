@@ -29,6 +29,30 @@ export async function addProduct(
 }
 
 /**
+ * Fetches no of products in the category.
+ * @param categoryId - Optional: Filter products by category ID.
+ * @returns Promise resolving with the count of Products
+ */
+export async function countProductsInCategory(categoryId?: string): Promise<number> {
+  const whereClause: any = {};
+  if (categoryId) {
+    whereClause.category_id = categoryId;
+  }
+  return await prismaClient.product.count({
+    where: whereClause,
+  });
+}
+
+/**
+ * Fetches no of products in the database.
+ * @returns Promise resolving with the count of all Products
+ */
+export async function countAllProducts(): Promise<number> {
+  return await prismaClient.product.count();
+}
+
+
+/**
  * Fetches products from the database, with optional pagination and relations.
  * If page or limit are not specified (or are 0), it retrieves all products.
  * @param page - The page number for pagination (defaults to 1). Set to 0 or omit to retrieve all.
@@ -80,7 +104,9 @@ export async function fetchAllProducts(
     queryOptions.take = limit;
   }
 
-  return await prismaClient.product.findMany(queryOptions);
+  const response = await prismaClient.product.findMany(queryOptions);
+
+  return JSON.parse(JSON.stringify(response)) as Product[];
 }
 
 /**

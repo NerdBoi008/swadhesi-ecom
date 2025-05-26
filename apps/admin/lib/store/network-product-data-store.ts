@@ -1,10 +1,13 @@
 import { 
+  countAllProducts,
   fetchAllProducts as getAllProducts,
   fetchProductsByCategory as getProductsByCategory,
 } from "@repo/db";
 import { Product } from "@repo/db/types";
 import { Product as LocalProductType } from "@repo/types";
 import { create } from "zustand";
+import { fetchAllProducts } from '@repo/db';
+import { products } from '../../../../packages/mock-data/data';
 
 type ProductStore = {
   products: LocalProductType[];

@@ -11,12 +11,16 @@ export {
   fetchProductById,
   fetchProductsByCategory,
   deleteProduct,
+  countAllProducts,
+  countProductsInCategory,
 
   addProductVariant,
   updateProductVariant,
   deleteProductVariant,
 
   addProductAttribute,
+  updateProductAttribute,
+  deleteProductAttribute,
 
   addCategory,
   getAllCategories,
