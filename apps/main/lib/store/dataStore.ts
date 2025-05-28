@@ -27,7 +27,6 @@ const useDataStore = create<DataStoreState>((set, get) => ({
             }
 
             const products = await response.json();
-            console.error('Fetched products', products);
             set({ products });
 
         } catch (error) {

@@ -62,7 +62,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
   const { products: productsApi, fetchProducts } = useDataStore();
-  const { cart, updateSize, removeFromCart, updateQuantity } = useCartStore();
+  const { cart, removeFromCart, updateQuantity } = useCartStore();
 
   // --- Effect to fetch base data ---
   useEffect(() => {

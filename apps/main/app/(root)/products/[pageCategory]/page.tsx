@@ -1,14 +1,9 @@
 import ProductsDisplayPage from "@/components/pages/ProductsDisplayPage";
-// import { PageRoutes } from "@/types";
 import { notFound } from "next/navigation";
-
-type PageRoutes = {
-
-}
 
 interface ProductCategoryPage {
     params: Promise<{
-        pageCategory: PageRoutes | string;
+        pageCategory: string;
     }>
 }
 
@@ -18,7 +13,7 @@ const ProductCategoryPage = async ({
     
     const { pageCategory } = await params;
 
-    const pageHeading = pageCategory as PageRoutes;
+    const pageHeading = pageCategory;
 
     if (!pageHeading) {
         notFound();
@@ -26,7 +21,7 @@ const ProductCategoryPage = async ({
 
     return (
         <main className='flex-1'>
-            <ProductsDisplayPage pageHeading={pageHeading as PageRoutes}/>
+            <ProductsDisplayPage pageHeading={pageHeading}/>
         </main>
     )
 }

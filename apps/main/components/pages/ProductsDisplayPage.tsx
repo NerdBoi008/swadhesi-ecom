@@ -107,10 +107,10 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
     }
 
     // Reset other filters to default when page heading/data changes
-    setSelectedSizes([]);
-    setStockStatus("all");
-    setSortBy("featured");
-    setFilterResetKey((prevKey) => prevKey + 1); // Force remount filters if category changes
+    // setSelectedSizes([]);
+    // setStockStatus("all");
+    // setSortBy("featured");
+    // setFilterResetKey((prevKey) => prevKey + 1); // Force remount filters if category changes
 
   }, [productsApi, fetchProducts, pageHeading]); // Dependencies
 
@@ -240,6 +240,8 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
     });
 
     setFilteredAndSortedProducts(currentProcessedProducts);
+    console.log("Filtered and sorted products:", currentProcessedProducts);
+    
   }, [baseProducts, selectedSizes, minPrice, maxPrice, stockStatus, sortBy]); // Dependencies
 
   return (
@@ -408,7 +410,7 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
               <div className="flex gap-3 items-center">
                 <span className="text-sm font-semibold">Sort By :</span>
                 <Select
-                  defaultValue={sortBy}
+                  value={sortBy}
                   onValueChange={handleSortByChange}
                 >
                   <SelectTrigger className="w-[180px]">
