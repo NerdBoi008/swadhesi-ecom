@@ -1,9 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Product, CartItem, ProductSizes } from '@/types';
+import { Product, CartItem } from '@repo/types';
 import { MinusIcon, PlusIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { buildUrl } from '@/lib/utils';
@@ -12,7 +11,6 @@ interface CartItemCardProps {
   cartItem: CartItem;
   originalProduct: Product; // Pass the found product directly
   updateQuantity: (id: string, quantity: number) => void;
-  updateSize: (id: string, size: ProductSizes) => void;
   removeFromCart: (id: string) => void;
 }
 
@@ -20,18 +18,13 @@ export const CartItemCard = ({
   cartItem,
   originalProduct,
   updateQuantity,
-  updateSize,
   removeFromCart,
 }: CartItemCardProps) => {
   const router = useRouter();
-  const { id, name, quantity, size, price, discount, thumbnailImage } = cartItem;
-  const availableSizes = originalProduct.sizes || []; // Ensure sizes array exists
-
-  const calculatedPrice = (price * (1 - (discount || 0))).toFixed(2);
-  const originalPrice = price.toFixed(2);
-
+  const { id, name, quantity, size, price, sale_price, thumbnailImage } = cartItem;
+  
   // --- Image Source Logic ---
-  const imageSrc = thumbnailImage || originalProduct.thumbnailImage || '/cdn-imgs/not-available.png';
+  const imageSrc = thumbnailImage || originalProduct.thumbnail_image_url || '/cdn-imgs/not-available.png';
 
   const handleNavigation = () => {
     router.push(buildUrl('/products/all/product-details', { productId: id }));
@@ -45,8 +38,7 @@ export const CartItemCard = ({
       <CardContent className='flex gap-5'>
         <div className="aspect-square">
           <Image
-            // src={imageSrc}
-            src={'/cdn-imgs/not-available.png'}
+            src={imageSrc}
             alt={name}
             height={120}
             width={120}
@@ -56,25 +48,8 @@ export const CartItemCard = ({
         </div>
         <div className='flex flex-col justify-between flex-1 min-w-fit'>
           <div className='space-y-3'>
-            {/* Size Selector */}
             <div className='flex gap-3 items-center flex-wrap'>
-              <p className='text-muted-foreground text-sm'>Size:</p>
-              <Select
-                defaultValue={size}
-                onValueChange={(size) => updateSize(id, size as ProductSizes)}
-                disabled={availableSizes.length <= 1} 
-              >
-                <SelectTrigger className="w-full max-w-[150px] h-9 text-sm"> {/* Adjusted width/height */}
-                  <SelectValue placeholder="Select Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableSizes.map((s) => (
-                    <SelectItem key={s} value={s} className="text-sm">
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <p className='text-muted-foreground text-sm'>Size: <span>{size}</span></p>
             </div>
 
             {/* Quantity Selector */}
@@ -111,10 +86,11 @@ export const CartItemCard = ({
 
           {/* Price */}
           <p className='mt-3 font-semibold'>
-            ₹ {calculatedPrice}
-            {discount && discount > 0 && ( // Show original price only if there's a discount
+            ₹ {price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+
+            {sale_price && sale_price > 0 && ( // Show original price only if there's a discount
                  <span className='ml-2 line-through text-muted-foreground text-sm font-normal'>
-                    ₹{originalPrice}
+                    ₹{sale_price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                  </span>
              )}
           </p>

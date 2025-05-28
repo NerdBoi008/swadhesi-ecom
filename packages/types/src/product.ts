@@ -27,7 +27,7 @@ export interface ProductVariant extends BaseEntity {
   sale_price: number | null;
   stock: number;
   status: ProductVariantStatus;
-  size: ProductSize;
+  size: string;
   image_url?: string | null;
   barcode?: string;
   attribute_values?: AttributeValue[]; // Specific combination
@@ -41,14 +41,14 @@ export interface ProductAttribute {
 }
 
 // Specialized type for size handling
-export interface ProductSize {
-  id?: string;
-  label: string; // e.g., "4T", "5T", "Small"
-  system: 'US' | 'EU' | 'UK' | 'Age'; // Size system
-  equivalent?: { // Size conversions
-    us?: string;
-    eu?: string;
-    uk?: string;
-  };
-  description?: string; // e.g., "Fits 4-5 year olds"
-}
+// export interface ProductSize {
+//   id?: string;
+//   label: string; // e.g., "4T", "5T", "Small"
+//   system: 'US' | 'EU' | 'UK' | 'Age'; // Size system
+//   equivalent?: { // Size conversions
+//     us?: string;
+//     eu?: string;
+//     uk?: string;
+//   };
+//   description?: string; // e.g., "Fits 4-5 year olds"
+// }

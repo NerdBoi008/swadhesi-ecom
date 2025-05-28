@@ -1,4 +1,4 @@
-import { CartItem, ProductSizes } from "@/types";
+import { CartItem } from "@repo/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -7,7 +7,7 @@ type CartStore = {
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
-  updateSize: (id: string, size: ProductSizes) => void;
+  updateSize: (id: string, size: string) => void;
   clearCart: () => void;
 }
 

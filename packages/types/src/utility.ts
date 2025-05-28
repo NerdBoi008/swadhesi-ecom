@@ -28,11 +28,3 @@ export interface ProductFilterOptions {
   sort_order?: 'asc' | 'desc';
   search_query?: string;
 }
-
-// For cart operations
-export interface CartItem {
-  product_id: string;
-  variant_id: string;
-  quantity: number;
-  price?: number; // Current price for verification
-}

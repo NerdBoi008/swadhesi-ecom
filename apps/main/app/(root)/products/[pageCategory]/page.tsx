@@ -1,6 +1,10 @@
 import ProductsDisplayPage from "@/components/pages/ProductsDisplayPage";
-import { PageRoutes } from "@/types";
+// import { PageRoutes } from "@/types";
 import { notFound } from "next/navigation";
+
+type PageRoutes = {
+
+}
 
 interface ProductCategoryPage {
     params: Promise<{

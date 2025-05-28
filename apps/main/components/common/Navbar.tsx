@@ -310,7 +310,6 @@ const Navbar = () => {
                                 key={cartItem.id}
                                 cartItem={cartItem}
                                 originalProduct={originalProduct}
-                                updateSize={updateSize}
                                 updateQuantity={updateQuantity}
                                 removeFromCart={removeFromCart}
                             />

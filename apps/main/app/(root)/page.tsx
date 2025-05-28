@@ -1,7 +1,7 @@
 'use client'
 
 import useDataStore from "@/lib/store/dataStore";
-import { Product } from "@/types";
+import { Product } from "@repo/types";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/common/ProductCard";
@@ -62,6 +62,12 @@ export default function Home() {
     if (productsApi) setProducts(productsApi);
     
   }, [productsApi, fetchProducts]);
+
+  const latestProducts = [...(products ?? [])].sort((a, b) => {
+    const dateA = new Date(a.created_at).getTime();
+    const dateB = new Date(b.created_at).getTime();
+    return dateB - dateA; // Descending order (latest first)
+  }).slice(0, 3);
 
   return (
     <main className="relative flex flex-1 flex-col space-y-6">
@@ -147,24 +153,65 @@ export default function Home() {
         
         {/* New Arrived Products */}
         <div className="grid grid-cols-2 md:flex items-center justify-center justify-items-center gap-4 w-full">
-          {products ? (
-            products.slice(0, 3).map(({ id, name, price, discount, stock, sizes, thumbnailImage, otherImages, description, category, recommendedProducts }: Product) => (
-              <ProductCard
-                key={id}
-                className="w-full"
-                id={id}
-                name={name}
-                price={price}
-                discount={discount}
-                stock={stock}
-                sizes={sizes}
-                thumbnailImage={thumbnailImage}
-                otherImages={otherImages}
-                description={description}
-                category={category}
-                recommendedProducts={recommendedProducts}
-              />
-            ))
+          {latestProducts ? (
+            // latestProducts.map(({ id, name, variants, description, category, related_products, thumbnail_image_url, images_url }: Product) => {
+            //   const discount = variants?.[0]?.sale_price && variants?.[0]?.price
+            //     ? Math.round(((variants[0].price - variants[0].sale_price) / variants[0].price) * 100)
+            //     : 0;
+            //     console.log(`Product ID: ${id}, Name: ${name}, Price: ${variants?.[0]?.price}, Sale Price: ${variants?.[0]?.sale_price}, Discount: ${discount}%`);
+                
+            //   return (
+            //     <ProductCard
+            //       key={id}
+            //       className="w-full"
+            //       id={id}
+            //       name={name}
+            //       price={variants?.[0]?.price ?? 0}
+            //       sale_price={variants?.[0]?.sale_price ?? 0}
+            //       stock={variants?.[0]?.stock ?? 0}
+            //       size={variants?.[0]?.size || ""}
+            //       thumbnailImage={thumbnail_image_url}
+            //       otherImages={images_url}
+            //       description={description}
+            //       category={category?.name || ""}
+            //       related_products={related_products}
+            //     />
+            //   )})
+              latestProducts.map(({ id, name, variants, description, category, related_products, thumbnail_image_url, images_url, created_at, updated_at }: Product) => {
+                const firstVariant = variants?.[0];
+
+                // Parse price and sale_price to numbers before passing them
+                const parsedPrice = parseFloat(firstVariant?.price as any); // Use parseFloat and handle potential non-numeric input
+                const parsedSalePrice = firstVariant?.sale_price !== null && firstVariant?.sale_price !== undefined
+                    ? parseFloat(firstVariant.sale_price as any) // Parse if it exists and isn't null/undefined
+                    : undefined; // Pass undefined if no sale price
+
+                // Fallback to 0 if parsedPrice is NaN or null
+                const priceForCard = !isNaN(parsedPrice) ? parsedPrice : 0;
+
+                // Only pass salePriceForCard if it's a valid number and greater than 0
+                const salePriceForCard = (typeof parsedSalePrice === 'number' && !isNaN(parsedSalePrice) && parsedSalePrice > 0)
+                    ? parsedSalePrice
+                    : undefined;
+
+                return (
+                    <ProductCard
+                        key={id}
+                        className="w-full"
+                        id={id}
+                        name={name}
+                        price={priceForCard}
+                        sale_price={salePriceForCard} // Pass undefined if no sale
+                        stock={firstVariant?.stock ?? 0}
+                        size={firstVariant?.size || ""}
+                        thumbnailImage={thumbnail_image_url}
+                        otherImages={images_url}
+                        description={description}
+                        category={category?.name || "Uncategorized"} // Provide a fallback for category name
+                        related_products={related_products}
+                    />
+                );
+            })
           ) : (
             Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="border-2 h-[440px] animate-pulse bg-gray-100 w-full max-w-96"/>
