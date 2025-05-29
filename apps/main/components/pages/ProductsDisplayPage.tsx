@@ -71,13 +71,13 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
 
   // --- EFFECT 1: Fetch products, determine base products, and set initial price bounds ---
   useEffect(() => {
-
     if (!productsApi || productsApi.length === 0) {
       fetchProducts();
-      return; // Exit early if productsApi is not yet available
+      // Do NOT set baseProducts or price bounds here yet.
+      // Let the component display a loading state until productsApi is available.
+      return;
     }
-
-    // Filter products based on pageHeading
+  
     const currentBaseProducts =
       pageHeading === "all"
         ? productsApi
@@ -85,18 +85,24 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
             (p) => p.category?.name?.toLowerCase() === pageHeading.toLowerCase()
           );
     setBaseProducts(currentBaseProducts);
-
+  
     // Calculate initial price bounds based on currentBaseProducts
     if (currentBaseProducts.length > 0) {
       const prices = currentBaseProducts
-        .map((p) => parseFloat(p.variants?.[0]?.price as any)) // Parse price to number here
-        .filter((price): price is number => !isNaN(price)); // Ensure it's a valid number
-
-      // Ensure prices array is not empty before Math.max
+        .map((p) => parseFloat(p.variants?.[0]?.price as any))
+        .filter((price): price is number => !isNaN(price));
+  
       if (prices.length > 0) {
-        const initialMax = Math.max(...prices);
-        setMinPrice(0);
-        setMaxPrice(initialMax);
+        // Only set min/maxPrice if they haven't been manually set by a filter yet.
+        // This is crucial to avoid overwriting user's price selection on subsequent renders.
+        // A simple way is to check if maxPrice is still at its initial Infinity value
+        // or if filterResetKey implies a fresh start.
+        // For simplicity, let's ensure it's only set initially, not on every re-run
+        // if it's already been set.
+        if (maxPrice === Infinity) { // Only set these if they are still at their initial values
+            setMinPrice(0);
+            setMaxPrice(Math.max(...prices));
+        }
       } else {
         setMinPrice(0);
         setMaxPrice(0);
@@ -105,14 +111,9 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
       setMinPrice(0);
       setMaxPrice(0);
     }
-
-    // Reset other filters to default when page heading/data changes
-    // setSelectedSizes([]);
-    // setStockStatus("all");
-    // setSortBy("featured");
-    // setFilterResetKey((prevKey) => prevKey + 1); // Force remount filters if category changes
-
-  }, [productsApi, fetchProducts, pageHeading]); // Dependencies
+  
+    // No filter resets here.
+  }, [productsApi, fetchProducts, pageHeading, maxPrice]); // Dependencies
 
   // --- useMemo: Calculate price bounds for the PriceFilter component (based on baseProducts) ---
   const priceBounds = useMemo(() => {
@@ -162,16 +163,18 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
 
   // --- EFFECT 2: Central Effect for Filtering and Sorting ---
   useEffect(() => {
-
-    if (!baseProducts) {
-      setFilteredAndSortedProducts([]); // Set to empty array to show "No products found" if base is truly empty
+    // If baseProducts is still null, it means data hasn't loaded yet.
+    // In this case, we don't want to show "No products found", but rather a loading state.
+    if (baseProducts === null) {
+      setFilteredAndSortedProducts(null); // Keep it null to indicate loading/no data yet
       return;
     }
-
+  
     let currentProcessedProducts: Product[] = [...baseProducts];
-
+  
     // --- APPLY FILTERS ---
-
+    // ... (Your existing filter logic) ...
+  
     // 1. Apply size filter
     if (selectedSizes.length > 0) {
       currentProcessedProducts = currentProcessedProducts.filter(
@@ -182,24 +185,21 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
           )
       );
     }
-
+  
     // 2. Apply price filter
-    const effectiveMaxPrice =
-      maxPrice === Infinity ? Number.MAX_SAFE_INTEGER : maxPrice;
+    const effectiveMaxPrice = maxPrice === Infinity ? Number.MAX_SAFE_INTEGER : maxPrice;
     currentProcessedProducts = currentProcessedProducts.filter((p) => {
-      // Products without variants or price are invalid for this filter
       if (!p.variants || p.variants.length === 0) {
         return false;
       }
-      const price = parseFloat(p.variants?.[0]?.price as any ?? "0"); // Corrected: Parse price to number with default value
+      const price = parseFloat(p.variants?.[0]?.price as any ?? "0");
       if (isNaN(price)) {
-          // If price is not a valid number after parsing, exclude it
-          return false;
+        return false;
       }
       const isWithinRange = price >= minPrice && price <= effectiveMaxPrice;
       return isWithinRange;
     });
-
+  
     // 3. Apply stock filter
     if (stockStatus !== "all") {
       currentProcessedProducts = currentProcessedProducts.filter((p) => {
@@ -210,16 +210,16 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
         return stockStatus === "inStock" ? stock > 0 : stock <= 0;
       });
     }
-
+  
     // --- APPLY SORTING ---
     currentProcessedProducts.sort((a, b) => {
-      const priceA = parseFloat(a.variants?.[0]?.price as any) ?? 0; // Parse here too for sorting
-      const priceB = parseFloat(b.variants?.[0]?.price as any) ?? 0; // Parse here too for sorting
+      const priceA = parseFloat(a.variants?.[0]?.price as any) ?? 0;
+      const priceB = parseFloat(b.variants?.[0]?.price as any) ?? 0;
       const nameA = a.name?.toLowerCase() ?? "";
       const nameB = b.name?.toLowerCase() ?? "";
       const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
       const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-
+  
       switch (sortBy) {
         case "name-a-z":
           return nameA.localeCompare(nameB);
@@ -235,14 +235,12 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
           return dateB - dateA;
         case "featured":
         default:
-          return 0; // Maintain original order or a default "featured" logic
+          return 0;
       }
     });
-
+  
     setFilteredAndSortedProducts(currentProcessedProducts);
-    console.log("Filtered and sorted products:", currentProcessedProducts);
-    
-  }, [baseProducts, selectedSizes, minPrice, maxPrice, stockStatus, sortBy]); // Dependencies
+  }, [baseProducts, selectedSizes, minPrice, maxPrice, stockStatus, sortBy]);
 
   return (
     <main className="flex-1 pt-8 container-x-padding space-y-5">

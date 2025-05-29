@@ -1,27 +1,5 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
-// const categoryProductsBucket = new sst.aws.Bucket("swadhesi-category-products-images", {
-//   access: "public",
-//   cors: {
-//     allowOrigins: ["https://www.swadhesi.com", "http://localhost:3001", "http://localhost:3000"],
-//     allowMethods: ["GET", "PUT", "POST", "DELETE"],
-//     allowHeaders: ["*"],
-//     exposeHeaders: ["ETag", "x-amz-version-id", "x-amz-request-id"],
-//     maxAge: `3000 seconds`,
-//   },
-//   transform: {
-//     bucket(args, opts, name) {
-//       args.lifecycleRules = [
-//         {
-//           id: "cleanup-incomplete-uploads",
-//           enabled: true,
-//           abortIncompleteMultipartUploadDays: 7, // Clean up incomplete uploads after 7 days
-//         },
-//       ]
-//     },
-//   }
-// })
-
 export default $config({
   app(input) {
     return {

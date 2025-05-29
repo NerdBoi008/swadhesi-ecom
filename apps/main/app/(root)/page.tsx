@@ -154,29 +154,6 @@ export default function Home() {
         {/* New Arrived Products */}
         <div className="grid grid-cols-2 md:flex items-center justify-center justify-items-center gap-4 w-full">
           {latestProducts ? (
-            // latestProducts.map(({ id, name, variants, description, category, related_products, thumbnail_image_url, images_url }: Product) => {
-            //   const discount = variants?.[0]?.sale_price && variants?.[0]?.price
-            //     ? Math.round(((variants[0].price - variants[0].sale_price) / variants[0].price) * 100)
-            //     : 0;
-            //     console.log(`Product ID: ${id}, Name: ${name}, Price: ${variants?.[0]?.price}, Sale Price: ${variants?.[0]?.sale_price}, Discount: ${discount}%`);
-                
-            //   return (
-            //     <ProductCard
-            //       key={id}
-            //       className="w-full"
-            //       id={id}
-            //       name={name}
-            //       price={variants?.[0]?.price ?? 0}
-            //       sale_price={variants?.[0]?.sale_price ?? 0}
-            //       stock={variants?.[0]?.stock ?? 0}
-            //       size={variants?.[0]?.size || ""}
-            //       thumbnailImage={thumbnail_image_url}
-            //       otherImages={images_url}
-            //       description={description}
-            //       category={category?.name || ""}
-            //       related_products={related_products}
-            //     />
-            //   )})
               latestProducts.map(({ id, name, variants, description, category, related_products, thumbnail_image_url, images_url, created_at, updated_at }: Product) => {
                 const firstVariant = variants?.[0];
 

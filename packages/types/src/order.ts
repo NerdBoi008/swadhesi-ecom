@@ -71,36 +71,3 @@ export type ShippingCarrier =
   | 'BlueDart' 
   | 'Delhivery'
   | 'Custom';
-
-// Prisma Schema
-/*   model Order {
-    id               String        @id @default(uuid())
-    customer_id      String
-    status           OrderStatus
-    total_amount     Float
-    shipping_address Json // Stored as ShippingAddress type
-    billing_address  Json? // Optional
-    payment_status   PaymentStatus
-    payment_method   PaymentMethod
-    shipping_cost    Float
-    tax_amount       Float
-    discount_amount  Float?
-    tracking_number  String?
-    carrier          ShippingCarrier?
-    notes            String?
-    created_at       DateTime      @default(now())
-    updated_at       DateTime      @updatedAt
-    estimated_delivery DateTime?
-    items            OrderItem[]
-  }
-  
-  model OrderItem {
-    id         String   @id @default(uuid())
-    order      Order    @relation(fields: [order_id], references: [id])
-    order_id   String
-    product_id String
-    variant_id String?
-    quantity   Int
-    price      Float
-    discount   Float?
-  } */

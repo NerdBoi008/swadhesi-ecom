@@ -20,7 +20,7 @@ export async function GET() {
 
     return Response.json(category, { status: 200 });
   } catch (error) {
-    console.error("Error fetching products", error);
-    return Response.json({ error: "Error fetching products" }, { status: 500 });
+    console.error("Error fetching categories", error);
+    return Response.json({ error: "Error fetching categories" }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config();
 
 // Export the prisma client instance
 export { prismaClient } from "./prismaClient";
@@ -30,8 +30,8 @@ export {
   addAttribute,
   addAttributeValue,
   getAllAttributesWithValues,
-  updateAttribute, 
-  updateAttributeValue, 
+  updateAttribute,
+  updateAttributeValue,
   deleteAttributeValue,
   deleteAttribute,
 } from "./product.actions";
@@ -43,3 +43,18 @@ export {
 } from "./aws/bucket.actions";
 
 export { generateBucketKey, extractKeyFromUrl } from "./util/bucket-utils";
+
+export {
+  customerSignUpAction,
+  customerSignInAction,
+  confirmCustomerSignUpAction,
+  resendSignUpCodeAction,
+  // customerLogoutAction,
+  // customerGetProfileAction,
+  // customerUpdateProfileAction,
+  fetchUserProfile,
+  updateUserProfile,
+  addAddress,
+  updateAddress,
+  deleteAddress,
+} from "./customer.actions";

@@ -186,12 +186,85 @@ exports.Prisma.AttributeValueScalarFieldEnum = {
   display_order: 'display_order'
 };
 
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  first_name: 'first_name',
+  last_name: 'last_name',
+  name: 'name',
+  email: 'email',
+  cognito_id: 'cognito_id',
+  phone: 'phone',
+  is_guest: 'is_guest',
+  status: 'status',
+  last_login: 'last_login',
+  total_spent: 'total_spent',
+  order_count: 'order_count',
+  notes: 'notes'
+};
+
+exports.Prisma.AddressScalarFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  recipient_name: 'recipient_name',
+  street: 'street',
+  city: 'city',
+  state: 'state',
+  postal_code: 'postal_code',
+  country: 'country',
+  contact_number: 'contact_number',
+  is_default: 'is_default',
+  type: 'type'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  customer_id: 'customer_id',
+  status: 'status',
+  total_amount: 'total_amount',
+  shipping_address: 'shipping_address',
+  billing_address: 'billing_address',
+  payment_status: 'payment_status',
+  payment_method: 'payment_method',
+  shipping_cost: 'shipping_cost',
+  tax_amount: 'tax_amount',
+  discount_amount: 'discount_amount',
+  tracking_number: 'tracking_number',
+  carrier: 'carrier',
+  notes: 'notes',
+  estimated_delivery: 'estimated_delivery',
+  coupon_code: 'coupon_code'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  order_id: 'order_id',
+  product_id: 'product_id',
+  variant_id: 'variant_id',
+  quantity: 'quantity',
+  price_at_purchase: 'price_at_purchase',
+  variant_sku: 'variant_sku',
+  variant_attributes: 'variant_attributes',
+  refunded_quantity: 'refunded_quantity',
+  refund_amount: 'refund_amount'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
 exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -220,13 +293,72 @@ exports.ProductVariantStatus = exports.$Enums.ProductVariantStatus = {
   DISCONTINUED: 'DISCONTINUED'
 };
 
+exports.CustomerStatus = exports.$Enums.CustomerStatus = {
+  Active: 'Active',
+  Inactive: 'Inactive',
+  Banned: 'Banned',
+  Suspended: 'Suspended',
+  Deleted: 'Deleted'
+};
+
+exports.AddressType = exports.$Enums.AddressType = {
+  Shipping: 'Shipping',
+  Billing: 'Billing',
+  Both: 'Both'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  Pending: 'Pending',
+  Processing: 'Processing',
+  Shipped: 'Shipped',
+  Delivered: 'Delivered',
+  Cancelled: 'Cancelled',
+  Returned: 'Returned',
+  Refunded: 'Refunded'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  Pending: 'Pending',
+  Paid: 'Paid',
+  Refunded: 'Refunded',
+  Partially_Refunded: 'Partially_Refunded',
+  Failed: 'Failed'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  COD: 'COD',
+  UPI: 'UPI',
+  Net_Banking: 'Net_Banking',
+  Credit_Card: 'Credit_Card',
+  Debit_Card: 'Debit_Card',
+  Wallet: 'Wallet',
+  EMI: 'EMI',
+  Gift_Card: 'Gift_Card'
+};
+
+exports.ShippingCarrier = exports.$Enums.ShippingCarrier = {
+  FedEx: 'FedEx',
+  UPS: 'UPS',
+  USPS: 'USPS',
+  DHL: 'DHL',
+  BlueDart: 'BlueDart',
+  Delhivery: 'Delhivery',
+  Custom: 'Custom',
+  Porter: 'Porter',
+  Other: 'Other'
+};
+
 exports.Prisma.ModelName = {
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
   ProductAttribute: 'ProductAttribute',
   Attribute: 'Attribute',
-  AttributeValue: 'AttributeValue'
+  AttributeValue: 'AttributeValue',
+  Customer: 'Customer',
+  Address: 'Address',
+  Order: 'Order',
+  OrderItem: 'OrderItem'
 };
 
 /**

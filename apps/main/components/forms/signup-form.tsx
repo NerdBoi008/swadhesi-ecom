@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useTransition } from 'react' 
+import React, { useTransition } from 'react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -19,11 +19,20 @@ import Link from 'next/link'
 import { Loader2 } from 'lucide-react';
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
-import { Checkbox } from '@/components/ui/checkbox' 
+import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
 import { PasswordInput } from '../common/password-input'
 import { GoogleIcon } from '@/public/icons/google-logo-color'
+import { customerSignUpAction } from "@repo/db";
+import { useRouter } from 'next/navigation'
 
+enum AddressType {
+    Shipping = "Shipping",
+    Billing = "Billing",
+    Both = "Both",
+}
+
+// Define the Zod schema for the sign-up form
 const signUpFormSchema = z.object({
     firstName: z.string().min(3, 'First name must be at least 3 characters').max(20).trim(),
     lastName: z.string().min(3, 'Last name must be at least 3 characters').max(20).trim(),
@@ -39,22 +48,30 @@ const signUpFormSchema = z.object({
         .string()
         .min(10, "Phone number seems too short")
         .regex(/^\+?[0-9\s-]{10,15}$/, "Invalid phone number format entered"),
+    recipientName: z.string().min(3, 'Recipient name must be at least 3 characters').max(50).trim(),
+    street: z.string().min(5, 'Street address must be at least 5 characters').max(100).trim(),
+    city: z.string().min(2, 'City must be at least 2 characters').max(50).trim(),
+    state: z.string().min(2, 'State must be at least 2 characters').max(50).trim(),
+    postalCode: z.string().min(3, 'Postal code must be at least 3 characters').max(10).trim(),
+    country: z.string().min(2, 'Country must be at least 2 characters').max(50).trim(),
+    isDefaultAddress: z.boolean().default(true),
+    addressType: z.nativeEnum(AddressType).default(AddressType.Shipping),
     receiveUpdates: z.boolean().default(false),
     rememberMe: z.boolean().default(false),
-    address: z.string().min(5, 'Address must be at least 5 characters').max(150).trim(),
 }).refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
     message: 'Passwords do not match',
 });
 
+// Infer the type from the schema
 type SignUpFormValues = z.infer<typeof signUpFormSchema>;
 
 const SignUpForm = () => {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<SignUpFormValues>({
         resolver: zodResolver(signUpFormSchema),
-        // Provide defaults for all fields
         defaultValues: {
             firstName: "",
             lastName: "",
@@ -62,52 +79,44 @@ const SignUpForm = () => {
             password: "",
             confirmPassword: "",
             phone: "",
-            address: "",
+            recipientName: "",
+            street: "",  
+            city: "",
+            state: "",
+            postalCode: "",
+            country: "",
+            isDefaultAddress: true,
+            addressType: AddressType.Shipping,
             receiveUpdates: false,
             rememberMe: false,
         },
     });
 
-    function onSubmit(values: SignUpFormValues) {
+    async function onSubmit(values: SignUpFormValues) {
         startTransition(async () => {
-            try {
-                console.log("Form Values:", values);
-                // --- TODO: Replace with your actual API call ---
-                // Example:
-                // const response = await fetch('/api/auth/signup', {
-                //   method: 'POST',
-                //   headers: { 'Content-Type': 'application/json' },
-                //   body: JSON.stringify(values),
-                // });
-                // if (!response.ok) {
-                //   const errorData = await response.json();
-                //   throw new Error(errorData.message || 'Sign up failed');
-                // }
-                // const successData = await response.json();
-                // console.log('Sign up successful:', successData);
+            // Client-side validation happens automatically by react-hook-form + zodResolver
+            // before onSubmit is even called if there are errors.
+            // If onSubmit is called, client-side validation passed.
 
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                // --- End API call ---
+            const result = await customerSignUpAction(values); // Call the server action
 
+            if (result.success) {
                 toast("Account Created!", {
-                    description: "You have successfully signed up.",
+                    description: result.message,
                 });
-                form.reset(); // Reset form on success
-                // TODO: Redirect user or update UI state
-
-            } catch (error) {
-                console.error("Sign up error:", error);
-                let errorMessage = "An unexpected error occurred.";
-                if (error instanceof Error) {
-                    errorMessage = error.message;
+                form.reset();
+                router.push('/login'); // Redirect to login page after successful signup
+            } else {
+                // Handle errors returned from the server action
+                if (result.errors) {
+                    // Set specific field errors if returned by server action
+                    // e.g., form.setError('email', { message: result.errors.email });
+                    console.error("Server Action Validation Errors:", result.errors);
                 }
-                // Show error toast
                 toast.error("Sign Up Failed", {
-                    description: errorMessage,
+                    description: result.message,
                 });
-                // Optionally set form error for specific fields if API provides details
-                // form.setError('root.serverError', { type: 'manual', message: errorMessage });
+                form.setError('root.serverError', { type: 'manual', message: result.message });
             }
         });
     }
@@ -115,7 +124,7 @@ const SignUpForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-6">
-                
+
                 <Button
                     type='button'
                     variant={'outline'}
@@ -221,12 +230,11 @@ const SignUpForm = () => {
                                     placeholder='Enter phone number'
                                     value={field.value}
                                     onChange={(phone, countryData, event, formattedValue) => field.onChange(formattedValue)}
-                                    // Style using classes for better theme integration
                                     containerClass="w-full"
-                                    inputClass="!w-full !py-2 !px-11 !border !border-input !bg-background !text-sm !text-foreground !rounded-md focus:!border-ring focus:!shadow-none disabled:!cursor-not-allowed disabled:!opacity-50" // Use Tailwind classes via inputClass prop
-                                    buttonClass="!bg-background !border !border-input hover:!bg-accent" // Style dropdown button
-                                    dropdownClass="!bg-popover !text-popover-foreground !border !border-border" // Style dropdown menu
-                                    searchClass="!bg-background !text-foreground !border-border" // Style search input in dropdown
+                                    inputClass="!w-full !py-2 !px-11 !border !border-input !bg-background !text-sm !text-foreground !rounded-md focus:!border-ring focus:!shadow-none disabled:!cursor-not-allowed disabled:!opacity-50"
+                                    buttonClass="!bg-background !border !border-input hover:!bg-accent"
+                                    dropdownClass="!bg-popover !text-popover-foreground !border !border-border"
+                                    searchClass="!bg-background !text-foreground !border-border"
                                 />
                             </FormControl>
                             <FormMessage />
@@ -234,16 +242,110 @@ const SignUpForm = () => {
                     )}
                 />
 
-                {/* Address */}
+                {/* Address Fields */}
+                <h3 className="text-lg font-semibold mt-8 mb-4">Shipping Address</h3>
                 <FormField
                     control={form.control}
-                    name="address"
+                    name="recipientName"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Address</FormLabel>
+                            <FormLabel>Recipient Name</FormLabel>
                             <FormControl>
-                                <Input placeholder='123 Street, Example City' {...field} />
+                                <Input placeholder="John Doe" {...field} />
                             </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="street"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Street Address</FormLabel>
+                            <FormControl>
+                                <Input placeholder='123 Main St' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                    <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>City</FormLabel>
+                                <FormControl>
+                                    <Input placeholder='Vadodara' {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>State</FormLabel>
+                                <FormControl>
+                                    <Input placeholder='Mumbai' {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                    <FormField
+                        control={form.control}
+                        name="postalCode"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Postal Code</FormLabel>
+                                <FormControl>
+                                    <Input placeholder='564823' {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Country</FormLabel>
+                                <FormControl>
+                                    <Input placeholder='India' {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                {/* Optional: Checkbox for default address, although we're defaulting to true for initial signup */}
+                <FormField
+                    control={form.control}
+                    name="isDefaultAddress"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel className='cursor-pointer'>
+                                    Set as Default Address
+                                </FormLabel>
+                                <FormDescription>
+                                    This will be your primary shipping address.
+                                </FormDescription>
+                            </div>
                             <FormMessage />
                         </FormItem>
                     )}

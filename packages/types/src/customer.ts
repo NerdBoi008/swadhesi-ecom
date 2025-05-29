@@ -1,23 +1,11 @@
 import { BaseEntity } from "./core";
 import { Order } from "./order";
 
-// export interface Customer extends BaseEntity {
-//   first_name: string;
-//   last_name: string;
-//   email: string;
-//   password_hash: string;
-//   phone?: string;
-//   addresses?: Address[];
-//   orders?: Order[];
-//   is_guest: boolean;
-// }
-
 export interface Customer extends BaseEntity {
   first_name: string;
   last_name: string;
   name: string;
   email: string;
-  password_hash: string;
   phone?: string;
   addresses?: Address[];
   orders?: Order[];
@@ -31,7 +19,7 @@ export interface Customer extends BaseEntity {
 
 export interface Address {
   id?: string;
-  customer_id?: number | null;
+  customer_id?: string;
   recipient_name: string;
   street: string;
   city: string;
@@ -40,5 +28,11 @@ export interface Address {
   country: string;
   contact_number: string;
   is_default?: boolean;
-  type?: 'shipping' | 'billing';
+  type?: AddressType;
+}
+
+export enum AddressType {
+  Shipping = 'shipping',
+  Billing = 'billing',
+  Both = 'both'
 }

@@ -43,6 +43,26 @@ export type Attribute = $Result.DefaultSelection<Prisma.$AttributePayload>
  * 
  */
 export type AttributeValue = $Result.DefaultSelection<Prisma.$AttributeValuePayload>
+/**
+ * Model Customer
+ * 
+ */
+export type Customer = $Result.DefaultSelection<Prisma.$CustomerPayload>
+/**
+ * Model Address
+ * 
+ */
+export type Address = $Result.DefaultSelection<Prisma.$AddressPayload>
+/**
+ * Model Order
+ * 
+ */
+export type Order = $Result.DefaultSelection<Prisma.$OrderPayload>
+/**
+ * Model OrderItem
+ * 
+ */
+export type OrderItem = $Result.DefaultSelection<Prisma.$OrderItemPayload>
 
 /**
  * Enums
@@ -60,11 +80,108 @@ export namespace $Enums {
 
 export type ProductVariantStatus = (typeof ProductVariantStatus)[keyof typeof ProductVariantStatus]
 
+
+export const AddressType: {
+  Shipping: 'Shipping',
+  Billing: 'Billing',
+  Both: 'Both'
+};
+
+export type AddressType = (typeof AddressType)[keyof typeof AddressType]
+
+
+export const CustomerStatus: {
+  Active: 'Active',
+  Inactive: 'Inactive',
+  Banned: 'Banned',
+  Suspended: 'Suspended',
+  Deleted: 'Deleted'
+};
+
+export type CustomerStatus = (typeof CustomerStatus)[keyof typeof CustomerStatus]
+
+
+export const OrderStatus: {
+  Pending: 'Pending',
+  Processing: 'Processing',
+  Shipped: 'Shipped',
+  Delivered: 'Delivered',
+  Cancelled: 'Cancelled',
+  Returned: 'Returned',
+  Refunded: 'Refunded'
+};
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const PaymentStatus: {
+  Pending: 'Pending',
+  Paid: 'Paid',
+  Refunded: 'Refunded',
+  Partially_Refunded: 'Partially_Refunded',
+  Failed: 'Failed'
+};
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const PaymentMethod: {
+  COD: 'COD',
+  UPI: 'UPI',
+  Net_Banking: 'Net_Banking',
+  Credit_Card: 'Credit_Card',
+  Debit_Card: 'Debit_Card',
+  Wallet: 'Wallet',
+  EMI: 'EMI',
+  Gift_Card: 'Gift_Card'
+};
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const ShippingCarrier: {
+  FedEx: 'FedEx',
+  UPS: 'UPS',
+  USPS: 'USPS',
+  DHL: 'DHL',
+  BlueDart: 'BlueDart',
+  Delhivery: 'Delhivery',
+  Custom: 'Custom',
+  Porter: 'Porter',
+  Other: 'Other'
+};
+
+export type ShippingCarrier = (typeof ShippingCarrier)[keyof typeof ShippingCarrier]
+
 }
 
 export type ProductVariantStatus = $Enums.ProductVariantStatus
 
 export const ProductVariantStatus: typeof $Enums.ProductVariantStatus
+
+export type AddressType = $Enums.AddressType
+
+export const AddressType: typeof $Enums.AddressType
+
+export type CustomerStatus = $Enums.CustomerStatus
+
+export const CustomerStatus: typeof $Enums.CustomerStatus
+
+export type OrderStatus = $Enums.OrderStatus
+
+export const OrderStatus: typeof $Enums.OrderStatus
+
+export type PaymentStatus = $Enums.PaymentStatus
+
+export const PaymentStatus: typeof $Enums.PaymentStatus
+
+export type PaymentMethod = $Enums.PaymentMethod
+
+export const PaymentMethod: typeof $Enums.PaymentMethod
+
+export type ShippingCarrier = $Enums.ShippingCarrier
+
+export const ShippingCarrier: typeof $Enums.ShippingCarrier
 
 /**
  * ##  Prisma Client ʲˢ
@@ -250,6 +367,46 @@ export class PrismaClient<
     * ```
     */
   get attributeValue(): Prisma.AttributeValueDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customer`: Exposes CRUD operations for the **Customer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Customers
+    * const customers = await prisma.customer.findMany()
+    * ```
+    */
+  get customer(): Prisma.CustomerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.address`: Exposes CRUD operations for the **Address** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Addresses
+    * const addresses = await prisma.address.findMany()
+    * ```
+    */
+  get address(): Prisma.AddressDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.order`: Exposes CRUD operations for the **Order** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Orders
+    * const orders = await prisma.order.findMany()
+    * ```
+    */
+  get order(): Prisma.OrderDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.orderItem`: Exposes CRUD operations for the **OrderItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OrderItems
+    * const orderItems = await prisma.orderItem.findMany()
+    * ```
+    */
+  get orderItem(): Prisma.OrderItemDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -695,7 +852,11 @@ export namespace Prisma {
     ProductVariant: 'ProductVariant',
     ProductAttribute: 'ProductAttribute',
     Attribute: 'Attribute',
-    AttributeValue: 'AttributeValue'
+    AttributeValue: 'AttributeValue',
+    Customer: 'Customer',
+    Address: 'Address',
+    Order: 'Order',
+    OrderItem: 'OrderItem'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -714,7 +875,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "category" | "product" | "productVariant" | "productAttribute" | "attribute" | "attributeValue"
+      modelProps: "category" | "product" | "productVariant" | "productAttribute" | "attribute" | "attributeValue" | "customer" | "address" | "order" | "orderItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1162,6 +1323,302 @@ export namespace Prisma {
           }
         }
       }
+      Customer: {
+        payload: Prisma.$CustomerPayload<ExtArgs>
+        fields: Prisma.CustomerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CustomerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CustomerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          findFirst: {
+            args: Prisma.CustomerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CustomerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          findMany: {
+            args: Prisma.CustomerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+          }
+          create: {
+            args: Prisma.CustomerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          createMany: {
+            args: Prisma.CustomerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CustomerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+          }
+          delete: {
+            args: Prisma.CustomerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          update: {
+            args: Prisma.CustomerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          deleteMany: {
+            args: Prisma.CustomerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CustomerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CustomerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+          }
+          upsert: {
+            args: Prisma.CustomerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          aggregate: {
+            args: Prisma.CustomerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomer>
+          }
+          groupBy: {
+            args: Prisma.CustomerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CustomerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CustomerCountArgs<ExtArgs>
+            result: $Utils.Optional<CustomerCountAggregateOutputType> | number
+          }
+        }
+      }
+      Address: {
+        payload: Prisma.$AddressPayload<ExtArgs>
+        fields: Prisma.AddressFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AddressFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AddressFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>
+          }
+          findFirst: {
+            args: Prisma.AddressFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AddressFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>
+          }
+          findMany: {
+            args: Prisma.AddressFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>[]
+          }
+          create: {
+            args: Prisma.AddressCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>
+          }
+          createMany: {
+            args: Prisma.AddressCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AddressCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>[]
+          }
+          delete: {
+            args: Prisma.AddressDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>
+          }
+          update: {
+            args: Prisma.AddressUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>
+          }
+          deleteMany: {
+            args: Prisma.AddressDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AddressUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AddressUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>[]
+          }
+          upsert: {
+            args: Prisma.AddressUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AddressPayload>
+          }
+          aggregate: {
+            args: Prisma.AddressAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAddress>
+          }
+          groupBy: {
+            args: Prisma.AddressGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AddressGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AddressCountArgs<ExtArgs>
+            result: $Utils.Optional<AddressCountAggregateOutputType> | number
+          }
+        }
+      }
+      Order: {
+        payload: Prisma.$OrderPayload<ExtArgs>
+        fields: Prisma.OrderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OrderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OrderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>
+          }
+          findFirst: {
+            args: Prisma.OrderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OrderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>
+          }
+          findMany: {
+            args: Prisma.OrderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>[]
+          }
+          create: {
+            args: Prisma.OrderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>
+          }
+          createMany: {
+            args: Prisma.OrderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OrderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>[]
+          }
+          delete: {
+            args: Prisma.OrderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>
+          }
+          update: {
+            args: Prisma.OrderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>
+          }
+          deleteMany: {
+            args: Prisma.OrderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OrderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OrderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>[]
+          }
+          upsert: {
+            args: Prisma.OrderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderPayload>
+          }
+          aggregate: {
+            args: Prisma.OrderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOrder>
+          }
+          groupBy: {
+            args: Prisma.OrderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OrderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OrderCountArgs<ExtArgs>
+            result: $Utils.Optional<OrderCountAggregateOutputType> | number
+          }
+        }
+      }
+      OrderItem: {
+        payload: Prisma.$OrderItemPayload<ExtArgs>
+        fields: Prisma.OrderItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OrderItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OrderItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>
+          }
+          findFirst: {
+            args: Prisma.OrderItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OrderItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>
+          }
+          findMany: {
+            args: Prisma.OrderItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>[]
+          }
+          create: {
+            args: Prisma.OrderItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>
+          }
+          createMany: {
+            args: Prisma.OrderItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OrderItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>[]
+          }
+          delete: {
+            args: Prisma.OrderItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>
+          }
+          update: {
+            args: Prisma.OrderItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.OrderItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OrderItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OrderItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.OrderItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderItemPayload>
+          }
+          aggregate: {
+            args: Prisma.OrderItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOrderItem>
+          }
+          groupBy: {
+            args: Prisma.OrderItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OrderItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OrderItemCountArgs<ExtArgs>
+            result: $Utils.Optional<OrderItemCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1252,6 +1709,10 @@ export namespace Prisma {
     productAttribute?: ProductAttributeOmit
     attribute?: AttributeOmit
     attributeValue?: AttributeValueOmit
+    customer?: CustomerOmit
+    address?: AddressOmit
+    order?: OrderOmit
+    orderItem?: OrderItemOmit
   }
 
   /* Types for Logging */
@@ -1388,11 +1849,13 @@ export namespace Prisma {
   export type ProductCountOutputType = {
     variants: number
     attributes: number
+    OrderItem: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     variants?: boolean | ProductCountOutputTypeCountVariantsArgs
     attributes?: boolean | ProductCountOutputTypeCountAttributesArgs
+    OrderItem?: boolean | ProductCountOutputTypeCountOrderItemArgs
   }
 
   // Custom InputTypes
@@ -1420,6 +1883,13 @@ export namespace Prisma {
     where?: ProductAttributeWhereInput
   }
 
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountOrderItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderItemWhereInput
+  }
+
 
   /**
    * Count Type ProductVariantCountOutputType
@@ -1427,10 +1897,12 @@ export namespace Prisma {
 
   export type ProductVariantCountOutputType = {
     attribute_values: number
+    OrderItem: number
   }
 
   export type ProductVariantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     attribute_values?: boolean | ProductVariantCountOutputTypeCountAttribute_valuesArgs
+    OrderItem?: boolean | ProductVariantCountOutputTypeCountOrderItemArgs
   }
 
   // Custom InputTypes
@@ -1449,6 +1921,13 @@ export namespace Prisma {
    */
   export type ProductVariantCountOutputTypeCountAttribute_valuesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AttributeValueWhereInput
+  }
+
+  /**
+   * ProductVariantCountOutputType without action
+   */
+  export type ProductVariantCountOutputTypeCountOrderItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderItemWhereInput
   }
 
 
@@ -1560,6 +2039,77 @@ export namespace Prisma {
    */
   export type AttributeValueCountOutputTypeCountProductAttributesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductAttributeWhereInput
+  }
+
+
+  /**
+   * Count Type CustomerCountOutputType
+   */
+
+  export type CustomerCountOutputType = {
+    addresses: number
+    orders: number
+  }
+
+  export type CustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    addresses?: boolean | CustomerCountOutputTypeCountAddressesArgs
+    orders?: boolean | CustomerCountOutputTypeCountOrdersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCountOutputType
+     */
+    select?: CustomerCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountAddressesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AddressWhereInput
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderWhereInput
+  }
+
+
+  /**
+   * Count Type OrderCountOutputType
+   */
+
+  export type OrderCountOutputType = {
+    items: number
+  }
+
+  export type OrderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | OrderCountOutputTypeCountItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * OrderCountOutputType without action
+   */
+  export type OrderCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderCountOutputType
+     */
+    select?: OrderCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * OrderCountOutputType without action
+   */
+  export type OrderCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderItemWhereInput
   }
 
 
@@ -2951,6 +3501,7 @@ export namespace Prisma {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     variants?: boolean | Product$variantsArgs<ExtArgs>
     attributes?: boolean | Product$attributesArgs<ExtArgs>
+    OrderItem?: boolean | Product$OrderItemArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -3009,6 +3560,7 @@ export namespace Prisma {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     variants?: boolean | Product$variantsArgs<ExtArgs>
     attributes?: boolean | Product$attributesArgs<ExtArgs>
+    OrderItem?: boolean | Product$OrderItemArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3024,6 +3576,7 @@ export namespace Prisma {
       category: Prisma.$CategoryPayload<ExtArgs>
       variants: Prisma.$ProductVariantPayload<ExtArgs>[]
       attributes: Prisma.$ProductAttributePayload<ExtArgs>[]
+      OrderItem: Prisma.$OrderItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3436,6 +3989,7 @@ export namespace Prisma {
     category<T extends CategoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CategoryDefaultArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     variants<T extends Product$variantsArgs<ExtArgs> = {}>(args?: Subset<T, Product$variantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     attributes<T extends Product$attributesArgs<ExtArgs> = {}>(args?: Subset<T, Product$attributesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductAttributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    OrderItem<T extends Product$OrderItemArgs<ExtArgs> = {}>(args?: Subset<T, Product$OrderItemArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3922,6 +4476,30 @@ export namespace Prisma {
   }
 
   /**
+   * Product.OrderItem
+   */
+  export type Product$OrderItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    where?: OrderItemWhereInput
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    cursor?: OrderItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
    * Product without action
    */
   export type ProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4200,6 +4778,7 @@ export namespace Prisma {
     barcode?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
     attribute_values?: boolean | ProductVariant$attribute_valuesArgs<ExtArgs>
+    OrderItem?: boolean | ProductVariant$OrderItemArgs<ExtArgs>
     _count?: boolean | ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["productVariant"]>
 
@@ -4254,6 +4833,7 @@ export namespace Prisma {
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     attribute_values?: boolean | ProductVariant$attribute_valuesArgs<ExtArgs>
+    OrderItem?: boolean | ProductVariant$OrderItemArgs<ExtArgs>
     _count?: boolean | ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4268,6 +4848,7 @@ export namespace Prisma {
     objects: {
       product: Prisma.$ProductPayload<ExtArgs>
       attribute_values: Prisma.$AttributeValuePayload<ExtArgs>[]
+      OrderItem: Prisma.$OrderItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4678,6 +5259,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     attribute_values<T extends ProductVariant$attribute_valuesArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariant$attribute_valuesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttributeValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    OrderItem<T extends ProductVariant$OrderItemArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariant$OrderItemArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5136,6 +5718,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AttributeValueScalarFieldEnum | AttributeValueScalarFieldEnum[]
+  }
+
+  /**
+   * ProductVariant.OrderItem
+   */
+  export type ProductVariant$OrderItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    where?: OrderItemWhereInput
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    cursor?: OrderItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
   }
 
   /**
@@ -8549,6 +9155,4948 @@ export namespace Prisma {
 
 
   /**
+   * Model Customer
+   */
+
+  export type AggregateCustomer = {
+    _count: CustomerCountAggregateOutputType | null
+    _avg: CustomerAvgAggregateOutputType | null
+    _sum: CustomerSumAggregateOutputType | null
+    _min: CustomerMinAggregateOutputType | null
+    _max: CustomerMaxAggregateOutputType | null
+  }
+
+  export type CustomerAvgAggregateOutputType = {
+    total_spent: Decimal | null
+    order_count: number | null
+  }
+
+  export type CustomerSumAggregateOutputType = {
+    total_spent: Decimal | null
+    order_count: number | null
+  }
+
+  export type CustomerMinAggregateOutputType = {
+    id: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    first_name: string | null
+    last_name: string | null
+    name: string | null
+    email: string | null
+    cognito_id: string | null
+    phone: string | null
+    is_guest: boolean | null
+    status: $Enums.CustomerStatus | null
+    last_login: Date | null
+    total_spent: Decimal | null
+    order_count: number | null
+    notes: string | null
+  }
+
+  export type CustomerMaxAggregateOutputType = {
+    id: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    first_name: string | null
+    last_name: string | null
+    name: string | null
+    email: string | null
+    cognito_id: string | null
+    phone: string | null
+    is_guest: boolean | null
+    status: $Enums.CustomerStatus | null
+    last_login: Date | null
+    total_spent: Decimal | null
+    order_count: number | null
+    notes: string | null
+  }
+
+  export type CustomerCountAggregateOutputType = {
+    id: number
+    created_at: number
+    updated_at: number
+    first_name: number
+    last_name: number
+    name: number
+    email: number
+    cognito_id: number
+    phone: number
+    is_guest: number
+    status: number
+    last_login: number
+    total_spent: number
+    order_count: number
+    notes: number
+    _all: number
+  }
+
+
+  export type CustomerAvgAggregateInputType = {
+    total_spent?: true
+    order_count?: true
+  }
+
+  export type CustomerSumAggregateInputType = {
+    total_spent?: true
+    order_count?: true
+  }
+
+  export type CustomerMinAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    first_name?: true
+    last_name?: true
+    name?: true
+    email?: true
+    cognito_id?: true
+    phone?: true
+    is_guest?: true
+    status?: true
+    last_login?: true
+    total_spent?: true
+    order_count?: true
+    notes?: true
+  }
+
+  export type CustomerMaxAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    first_name?: true
+    last_name?: true
+    name?: true
+    email?: true
+    cognito_id?: true
+    phone?: true
+    is_guest?: true
+    status?: true
+    last_login?: true
+    total_spent?: true
+    order_count?: true
+    notes?: true
+  }
+
+  export type CustomerCountAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    first_name?: true
+    last_name?: true
+    name?: true
+    email?: true
+    cognito_id?: true
+    phone?: true
+    is_guest?: true
+    status?: true
+    last_login?: true
+    total_spent?: true
+    order_count?: true
+    notes?: true
+    _all?: true
+  }
+
+  export type CustomerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Customer to aggregate.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Customers
+    **/
+    _count?: true | CustomerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CustomerAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CustomerSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CustomerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CustomerMaxAggregateInputType
+  }
+
+  export type GetCustomerAggregateType<T extends CustomerAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomer[P]>
+      : GetScalarType<T[P], AggregateCustomer[P]>
+  }
+
+
+
+
+  export type CustomerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerWhereInput
+    orderBy?: CustomerOrderByWithAggregationInput | CustomerOrderByWithAggregationInput[]
+    by: CustomerScalarFieldEnum[] | CustomerScalarFieldEnum
+    having?: CustomerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CustomerCountAggregateInputType | true
+    _avg?: CustomerAvgAggregateInputType
+    _sum?: CustomerSumAggregateInputType
+    _min?: CustomerMinAggregateInputType
+    _max?: CustomerMaxAggregateInputType
+  }
+
+  export type CustomerGroupByOutputType = {
+    id: string
+    created_at: Date
+    updated_at: Date
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone: string | null
+    is_guest: boolean
+    status: $Enums.CustomerStatus
+    last_login: Date | null
+    total_spent: Decimal | null
+    order_count: number | null
+    notes: string | null
+    _count: CustomerCountAggregateOutputType | null
+    _avg: CustomerAvgAggregateOutputType | null
+    _sum: CustomerSumAggregateOutputType | null
+    _min: CustomerMinAggregateOutputType | null
+    _max: CustomerMaxAggregateOutputType | null
+  }
+
+  type GetCustomerGroupByPayload<T extends CustomerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CustomerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CustomerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CustomerGroupByOutputType[P]>
+            : GetScalarType<T[P], CustomerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CustomerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    name?: boolean
+    email?: boolean
+    cognito_id?: boolean
+    phone?: boolean
+    is_guest?: boolean
+    status?: boolean
+    last_login?: boolean
+    total_spent?: boolean
+    order_count?: boolean
+    notes?: boolean
+    addresses?: boolean | Customer$addressesArgs<ExtArgs>
+    orders?: boolean | Customer$ordersArgs<ExtArgs>
+    _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customer"]>
+
+  export type CustomerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    name?: boolean
+    email?: boolean
+    cognito_id?: boolean
+    phone?: boolean
+    is_guest?: boolean
+    status?: boolean
+    last_login?: boolean
+    total_spent?: boolean
+    order_count?: boolean
+    notes?: boolean
+  }, ExtArgs["result"]["customer"]>
+
+  export type CustomerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    name?: boolean
+    email?: boolean
+    cognito_id?: boolean
+    phone?: boolean
+    is_guest?: boolean
+    status?: boolean
+    last_login?: boolean
+    total_spent?: boolean
+    order_count?: boolean
+    notes?: boolean
+  }, ExtArgs["result"]["customer"]>
+
+  export type CustomerSelectScalar = {
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    name?: boolean
+    email?: boolean
+    cognito_id?: boolean
+    phone?: boolean
+    is_guest?: boolean
+    status?: boolean
+    last_login?: boolean
+    total_spent?: boolean
+    order_count?: boolean
+    notes?: boolean
+  }
+
+  export type CustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "updated_at" | "first_name" | "last_name" | "name" | "email" | "cognito_id" | "phone" | "is_guest" | "status" | "last_login" | "total_spent" | "order_count" | "notes", ExtArgs["result"]["customer"]>
+  export type CustomerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    addresses?: boolean | Customer$addressesArgs<ExtArgs>
+    orders?: boolean | Customer$ordersArgs<ExtArgs>
+    _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $CustomerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Customer"
+    objects: {
+      addresses: Prisma.$AddressPayload<ExtArgs>[]
+      orders: Prisma.$OrderPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      created_at: Date
+      updated_at: Date
+      first_name: string
+      last_name: string
+      name: string
+      email: string
+      cognito_id: string
+      phone: string | null
+      is_guest: boolean
+      status: $Enums.CustomerStatus
+      last_login: Date | null
+      total_spent: Prisma.Decimal | null
+      order_count: number | null
+      notes: string | null
+    }, ExtArgs["result"]["customer"]>
+    composites: {}
+  }
+
+  type CustomerGetPayload<S extends boolean | null | undefined | CustomerDefaultArgs> = $Result.GetResult<Prisma.$CustomerPayload, S>
+
+  type CustomerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CustomerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CustomerCountAggregateInputType | true
+    }
+
+  export interface CustomerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Customer'], meta: { name: 'Customer' } }
+    /**
+     * Find zero or one Customer that matches the filter.
+     * @param {CustomerFindUniqueArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CustomerFindUniqueArgs>(args: SelectSubset<T, CustomerFindUniqueArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Customer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CustomerFindUniqueOrThrowArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CustomerFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Customer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerFindFirstArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CustomerFindFirstArgs>(args?: SelectSubset<T, CustomerFindFirstArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Customer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerFindFirstOrThrowArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CustomerFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomerFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Customers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Customers
+     * const customers = await prisma.customer.findMany()
+     * 
+     * // Get first 10 Customers
+     * const customers = await prisma.customer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customerWithIdOnly = await prisma.customer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CustomerFindManyArgs>(args?: SelectSubset<T, CustomerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Customer.
+     * @param {CustomerCreateArgs} args - Arguments to create a Customer.
+     * @example
+     * // Create one Customer
+     * const Customer = await prisma.customer.create({
+     *   data: {
+     *     // ... data to create a Customer
+     *   }
+     * })
+     * 
+     */
+    create<T extends CustomerCreateArgs>(args: SelectSubset<T, CustomerCreateArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Customers.
+     * @param {CustomerCreateManyArgs} args - Arguments to create many Customers.
+     * @example
+     * // Create many Customers
+     * const customer = await prisma.customer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CustomerCreateManyArgs>(args?: SelectSubset<T, CustomerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Customers and returns the data saved in the database.
+     * @param {CustomerCreateManyAndReturnArgs} args - Arguments to create many Customers.
+     * @example
+     * // Create many Customers
+     * const customer = await prisma.customer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Customers and only return the `id`
+     * const customerWithIdOnly = await prisma.customer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CustomerCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Customer.
+     * @param {CustomerDeleteArgs} args - Arguments to delete one Customer.
+     * @example
+     * // Delete one Customer
+     * const Customer = await prisma.customer.delete({
+     *   where: {
+     *     // ... filter to delete one Customer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CustomerDeleteArgs>(args: SelectSubset<T, CustomerDeleteArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Customer.
+     * @param {CustomerUpdateArgs} args - Arguments to update one Customer.
+     * @example
+     * // Update one Customer
+     * const customer = await prisma.customer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CustomerUpdateArgs>(args: SelectSubset<T, CustomerUpdateArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Customers.
+     * @param {CustomerDeleteManyArgs} args - Arguments to filter Customers to delete.
+     * @example
+     * // Delete a few Customers
+     * const { count } = await prisma.customer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CustomerDeleteManyArgs>(args?: SelectSubset<T, CustomerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Customers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Customers
+     * const customer = await prisma.customer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CustomerUpdateManyArgs>(args: SelectSubset<T, CustomerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Customers and returns the data updated in the database.
+     * @param {CustomerUpdateManyAndReturnArgs} args - Arguments to update many Customers.
+     * @example
+     * // Update many Customers
+     * const customer = await prisma.customer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Customers and only return the `id`
+     * const customerWithIdOnly = await prisma.customer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CustomerUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Customer.
+     * @param {CustomerUpsertArgs} args - Arguments to update or create a Customer.
+     * @example
+     * // Update or create a Customer
+     * const customer = await prisma.customer.upsert({
+     *   create: {
+     *     // ... data to create a Customer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Customer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CustomerUpsertArgs>(args: SelectSubset<T, CustomerUpsertArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Customers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCountArgs} args - Arguments to filter Customers to count.
+     * @example
+     * // Count the number of Customers
+     * const count = await prisma.customer.count({
+     *   where: {
+     *     // ... the filter for the Customers we want to count
+     *   }
+     * })
+    **/
+    count<T extends CustomerCountArgs>(
+      args?: Subset<T, CustomerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CustomerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Customer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CustomerAggregateArgs>(args: Subset<T, CustomerAggregateArgs>): Prisma.PrismaPromise<GetCustomerAggregateType<T>>
+
+    /**
+     * Group by Customer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CustomerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CustomerGroupByArgs['orderBy'] }
+        : { orderBy?: CustomerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CustomerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Customer model
+   */
+  readonly fields: CustomerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Customer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    addresses<T extends Customer$addressesArgs<ExtArgs> = {}>(args?: Subset<T, Customer$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    orders<T extends Customer$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Customer$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Customer model
+   */
+  interface CustomerFieldRefs {
+    readonly id: FieldRef<"Customer", 'String'>
+    readonly created_at: FieldRef<"Customer", 'DateTime'>
+    readonly updated_at: FieldRef<"Customer", 'DateTime'>
+    readonly first_name: FieldRef<"Customer", 'String'>
+    readonly last_name: FieldRef<"Customer", 'String'>
+    readonly name: FieldRef<"Customer", 'String'>
+    readonly email: FieldRef<"Customer", 'String'>
+    readonly cognito_id: FieldRef<"Customer", 'String'>
+    readonly phone: FieldRef<"Customer", 'String'>
+    readonly is_guest: FieldRef<"Customer", 'Boolean'>
+    readonly status: FieldRef<"Customer", 'CustomerStatus'>
+    readonly last_login: FieldRef<"Customer", 'DateTime'>
+    readonly total_spent: FieldRef<"Customer", 'Decimal'>
+    readonly order_count: FieldRef<"Customer", 'Int'>
+    readonly notes: FieldRef<"Customer", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Customer findUnique
+   */
+  export type CustomerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer findUniqueOrThrow
+   */
+  export type CustomerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer findFirst
+   */
+  export type CustomerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Customers.
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Customers.
+     */
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * Customer findFirstOrThrow
+   */
+  export type CustomerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Customers.
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Customers.
+     */
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * Customer findMany
+   */
+  export type CustomerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customers to fetch.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Customers.
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * Customer create
+   */
+  export type CustomerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Customer.
+     */
+    data: XOR<CustomerCreateInput, CustomerUncheckedCreateInput>
+  }
+
+  /**
+   * Customer createMany
+   */
+  export type CustomerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Customers.
+     */
+    data: CustomerCreateManyInput | CustomerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Customer createManyAndReturn
+   */
+  export type CustomerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * The data used to create many Customers.
+     */
+    data: CustomerCreateManyInput | CustomerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Customer update
+   */
+  export type CustomerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Customer.
+     */
+    data: XOR<CustomerUpdateInput, CustomerUncheckedUpdateInput>
+    /**
+     * Choose, which Customer to update.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer updateMany
+   */
+  export type CustomerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Customers.
+     */
+    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyInput>
+    /**
+     * Filter which Customers to update
+     */
+    where?: CustomerWhereInput
+    /**
+     * Limit how many Customers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Customer updateManyAndReturn
+   */
+  export type CustomerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * The data used to update Customers.
+     */
+    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyInput>
+    /**
+     * Filter which Customers to update
+     */
+    where?: CustomerWhereInput
+    /**
+     * Limit how many Customers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Customer upsert
+   */
+  export type CustomerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Customer to update in case it exists.
+     */
+    where: CustomerWhereUniqueInput
+    /**
+     * In case the Customer found by the `where` argument doesn't exist, create a new Customer with this data.
+     */
+    create: XOR<CustomerCreateInput, CustomerUncheckedCreateInput>
+    /**
+     * In case the Customer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CustomerUpdateInput, CustomerUncheckedUpdateInput>
+  }
+
+  /**
+   * Customer delete
+   */
+  export type CustomerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter which Customer to delete.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer deleteMany
+   */
+  export type CustomerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Customers to delete
+     */
+    where?: CustomerWhereInput
+    /**
+     * Limit how many Customers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Customer.addresses
+   */
+  export type Customer$addressesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    where?: AddressWhereInput
+    orderBy?: AddressOrderByWithRelationInput | AddressOrderByWithRelationInput[]
+    cursor?: AddressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AddressScalarFieldEnum | AddressScalarFieldEnum[]
+  }
+
+  /**
+   * Customer.orders
+   */
+  export type Customer$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    where?: OrderWhereInput
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    cursor?: OrderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
+  }
+
+  /**
+   * Customer without action
+   */
+  export type CustomerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Address
+   */
+
+  export type AggregateAddress = {
+    _count: AddressCountAggregateOutputType | null
+    _min: AddressMinAggregateOutputType | null
+    _max: AddressMaxAggregateOutputType | null
+  }
+
+  export type AddressMinAggregateOutputType = {
+    id: string | null
+    customer_id: string | null
+    recipient_name: string | null
+    street: string | null
+    city: string | null
+    state: string | null
+    postal_code: string | null
+    country: string | null
+    contact_number: string | null
+    is_default: boolean | null
+    type: $Enums.AddressType | null
+  }
+
+  export type AddressMaxAggregateOutputType = {
+    id: string | null
+    customer_id: string | null
+    recipient_name: string | null
+    street: string | null
+    city: string | null
+    state: string | null
+    postal_code: string | null
+    country: string | null
+    contact_number: string | null
+    is_default: boolean | null
+    type: $Enums.AddressType | null
+  }
+
+  export type AddressCountAggregateOutputType = {
+    id: number
+    customer_id: number
+    recipient_name: number
+    street: number
+    city: number
+    state: number
+    postal_code: number
+    country: number
+    contact_number: number
+    is_default: number
+    type: number
+    _all: number
+  }
+
+
+  export type AddressMinAggregateInputType = {
+    id?: true
+    customer_id?: true
+    recipient_name?: true
+    street?: true
+    city?: true
+    state?: true
+    postal_code?: true
+    country?: true
+    contact_number?: true
+    is_default?: true
+    type?: true
+  }
+
+  export type AddressMaxAggregateInputType = {
+    id?: true
+    customer_id?: true
+    recipient_name?: true
+    street?: true
+    city?: true
+    state?: true
+    postal_code?: true
+    country?: true
+    contact_number?: true
+    is_default?: true
+    type?: true
+  }
+
+  export type AddressCountAggregateInputType = {
+    id?: true
+    customer_id?: true
+    recipient_name?: true
+    street?: true
+    city?: true
+    state?: true
+    postal_code?: true
+    country?: true
+    contact_number?: true
+    is_default?: true
+    type?: true
+    _all?: true
+  }
+
+  export type AddressAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Address to aggregate.
+     */
+    where?: AddressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Addresses to fetch.
+     */
+    orderBy?: AddressOrderByWithRelationInput | AddressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AddressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Addresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Addresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Addresses
+    **/
+    _count?: true | AddressCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AddressMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AddressMaxAggregateInputType
+  }
+
+  export type GetAddressAggregateType<T extends AddressAggregateArgs> = {
+        [P in keyof T & keyof AggregateAddress]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAddress[P]>
+      : GetScalarType<T[P], AggregateAddress[P]>
+  }
+
+
+
+
+  export type AddressGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AddressWhereInput
+    orderBy?: AddressOrderByWithAggregationInput | AddressOrderByWithAggregationInput[]
+    by: AddressScalarFieldEnum[] | AddressScalarFieldEnum
+    having?: AddressScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AddressCountAggregateInputType | true
+    _min?: AddressMinAggregateInputType
+    _max?: AddressMaxAggregateInputType
+  }
+
+  export type AddressGroupByOutputType = {
+    id: string
+    customer_id: string | null
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default: boolean | null
+    type: $Enums.AddressType | null
+    _count: AddressCountAggregateOutputType | null
+    _min: AddressMinAggregateOutputType | null
+    _max: AddressMaxAggregateOutputType | null
+  }
+
+  type GetAddressGroupByPayload<T extends AddressGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AddressGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AddressGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AddressGroupByOutputType[P]>
+            : GetScalarType<T[P], AddressGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AddressSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customer_id?: boolean
+    recipient_name?: boolean
+    street?: boolean
+    city?: boolean
+    state?: boolean
+    postal_code?: boolean
+    country?: boolean
+    contact_number?: boolean
+    is_default?: boolean
+    type?: boolean
+    customer?: boolean | Address$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["address"]>
+
+  export type AddressSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customer_id?: boolean
+    recipient_name?: boolean
+    street?: boolean
+    city?: boolean
+    state?: boolean
+    postal_code?: boolean
+    country?: boolean
+    contact_number?: boolean
+    is_default?: boolean
+    type?: boolean
+    customer?: boolean | Address$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["address"]>
+
+  export type AddressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customer_id?: boolean
+    recipient_name?: boolean
+    street?: boolean
+    city?: boolean
+    state?: boolean
+    postal_code?: boolean
+    country?: boolean
+    contact_number?: boolean
+    is_default?: boolean
+    type?: boolean
+    customer?: boolean | Address$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["address"]>
+
+  export type AddressSelectScalar = {
+    id?: boolean
+    customer_id?: boolean
+    recipient_name?: boolean
+    street?: boolean
+    city?: boolean
+    state?: boolean
+    postal_code?: boolean
+    country?: boolean
+    contact_number?: boolean
+    is_default?: boolean
+    type?: boolean
+  }
+
+  export type AddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customer_id" | "recipient_name" | "street" | "city" | "state" | "postal_code" | "country" | "contact_number" | "is_default" | "type", ExtArgs["result"]["address"]>
+  export type AddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | Address$customerArgs<ExtArgs>
+  }
+  export type AddressIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | Address$customerArgs<ExtArgs>
+  }
+  export type AddressIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | Address$customerArgs<ExtArgs>
+  }
+
+  export type $AddressPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Address"
+    objects: {
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      customer_id: string | null
+      recipient_name: string
+      street: string
+      city: string
+      state: string
+      postal_code: string
+      country: string
+      contact_number: string
+      is_default: boolean | null
+      type: $Enums.AddressType | null
+    }, ExtArgs["result"]["address"]>
+    composites: {}
+  }
+
+  type AddressGetPayload<S extends boolean | null | undefined | AddressDefaultArgs> = $Result.GetResult<Prisma.$AddressPayload, S>
+
+  type AddressCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AddressFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AddressCountAggregateInputType | true
+    }
+
+  export interface AddressDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Address'], meta: { name: 'Address' } }
+    /**
+     * Find zero or one Address that matches the filter.
+     * @param {AddressFindUniqueArgs} args - Arguments to find a Address
+     * @example
+     * // Get one Address
+     * const address = await prisma.address.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AddressFindUniqueArgs>(args: SelectSubset<T, AddressFindUniqueArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Address that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AddressFindUniqueOrThrowArgs} args - Arguments to find a Address
+     * @example
+     * // Get one Address
+     * const address = await prisma.address.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AddressFindUniqueOrThrowArgs>(args: SelectSubset<T, AddressFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Address that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressFindFirstArgs} args - Arguments to find a Address
+     * @example
+     * // Get one Address
+     * const address = await prisma.address.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AddressFindFirstArgs>(args?: SelectSubset<T, AddressFindFirstArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Address that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressFindFirstOrThrowArgs} args - Arguments to find a Address
+     * @example
+     * // Get one Address
+     * const address = await prisma.address.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AddressFindFirstOrThrowArgs>(args?: SelectSubset<T, AddressFindFirstOrThrowArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Addresses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Addresses
+     * const addresses = await prisma.address.findMany()
+     * 
+     * // Get first 10 Addresses
+     * const addresses = await prisma.address.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const addressWithIdOnly = await prisma.address.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AddressFindManyArgs>(args?: SelectSubset<T, AddressFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Address.
+     * @param {AddressCreateArgs} args - Arguments to create a Address.
+     * @example
+     * // Create one Address
+     * const Address = await prisma.address.create({
+     *   data: {
+     *     // ... data to create a Address
+     *   }
+     * })
+     * 
+     */
+    create<T extends AddressCreateArgs>(args: SelectSubset<T, AddressCreateArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Addresses.
+     * @param {AddressCreateManyArgs} args - Arguments to create many Addresses.
+     * @example
+     * // Create many Addresses
+     * const address = await prisma.address.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AddressCreateManyArgs>(args?: SelectSubset<T, AddressCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Addresses and returns the data saved in the database.
+     * @param {AddressCreateManyAndReturnArgs} args - Arguments to create many Addresses.
+     * @example
+     * // Create many Addresses
+     * const address = await prisma.address.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Addresses and only return the `id`
+     * const addressWithIdOnly = await prisma.address.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AddressCreateManyAndReturnArgs>(args?: SelectSubset<T, AddressCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Address.
+     * @param {AddressDeleteArgs} args - Arguments to delete one Address.
+     * @example
+     * // Delete one Address
+     * const Address = await prisma.address.delete({
+     *   where: {
+     *     // ... filter to delete one Address
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AddressDeleteArgs>(args: SelectSubset<T, AddressDeleteArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Address.
+     * @param {AddressUpdateArgs} args - Arguments to update one Address.
+     * @example
+     * // Update one Address
+     * const address = await prisma.address.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AddressUpdateArgs>(args: SelectSubset<T, AddressUpdateArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Addresses.
+     * @param {AddressDeleteManyArgs} args - Arguments to filter Addresses to delete.
+     * @example
+     * // Delete a few Addresses
+     * const { count } = await prisma.address.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AddressDeleteManyArgs>(args?: SelectSubset<T, AddressDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Addresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Addresses
+     * const address = await prisma.address.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AddressUpdateManyArgs>(args: SelectSubset<T, AddressUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Addresses and returns the data updated in the database.
+     * @param {AddressUpdateManyAndReturnArgs} args - Arguments to update many Addresses.
+     * @example
+     * // Update many Addresses
+     * const address = await prisma.address.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Addresses and only return the `id`
+     * const addressWithIdOnly = await prisma.address.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AddressUpdateManyAndReturnArgs>(args: SelectSubset<T, AddressUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Address.
+     * @param {AddressUpsertArgs} args - Arguments to update or create a Address.
+     * @example
+     * // Update or create a Address
+     * const address = await prisma.address.upsert({
+     *   create: {
+     *     // ... data to create a Address
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Address we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AddressUpsertArgs>(args: SelectSubset<T, AddressUpsertArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Addresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressCountArgs} args - Arguments to filter Addresses to count.
+     * @example
+     * // Count the number of Addresses
+     * const count = await prisma.address.count({
+     *   where: {
+     *     // ... the filter for the Addresses we want to count
+     *   }
+     * })
+    **/
+    count<T extends AddressCountArgs>(
+      args?: Subset<T, AddressCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AddressCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Address.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AddressAggregateArgs>(args: Subset<T, AddressAggregateArgs>): Prisma.PrismaPromise<GetAddressAggregateType<T>>
+
+    /**
+     * Group by Address.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AddressGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AddressGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AddressGroupByArgs['orderBy'] }
+        : { orderBy?: AddressGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AddressGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAddressGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Address model
+   */
+  readonly fields: AddressFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Address.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AddressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer<T extends Address$customerArgs<ExtArgs> = {}>(args?: Subset<T, Address$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Address model
+   */
+  interface AddressFieldRefs {
+    readonly id: FieldRef<"Address", 'String'>
+    readonly customer_id: FieldRef<"Address", 'String'>
+    readonly recipient_name: FieldRef<"Address", 'String'>
+    readonly street: FieldRef<"Address", 'String'>
+    readonly city: FieldRef<"Address", 'String'>
+    readonly state: FieldRef<"Address", 'String'>
+    readonly postal_code: FieldRef<"Address", 'String'>
+    readonly country: FieldRef<"Address", 'String'>
+    readonly contact_number: FieldRef<"Address", 'String'>
+    readonly is_default: FieldRef<"Address", 'Boolean'>
+    readonly type: FieldRef<"Address", 'AddressType'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Address findUnique
+   */
+  export type AddressFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * Filter, which Address to fetch.
+     */
+    where: AddressWhereUniqueInput
+  }
+
+  /**
+   * Address findUniqueOrThrow
+   */
+  export type AddressFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * Filter, which Address to fetch.
+     */
+    where: AddressWhereUniqueInput
+  }
+
+  /**
+   * Address findFirst
+   */
+  export type AddressFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * Filter, which Address to fetch.
+     */
+    where?: AddressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Addresses to fetch.
+     */
+    orderBy?: AddressOrderByWithRelationInput | AddressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Addresses.
+     */
+    cursor?: AddressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Addresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Addresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Addresses.
+     */
+    distinct?: AddressScalarFieldEnum | AddressScalarFieldEnum[]
+  }
+
+  /**
+   * Address findFirstOrThrow
+   */
+  export type AddressFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * Filter, which Address to fetch.
+     */
+    where?: AddressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Addresses to fetch.
+     */
+    orderBy?: AddressOrderByWithRelationInput | AddressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Addresses.
+     */
+    cursor?: AddressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Addresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Addresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Addresses.
+     */
+    distinct?: AddressScalarFieldEnum | AddressScalarFieldEnum[]
+  }
+
+  /**
+   * Address findMany
+   */
+  export type AddressFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * Filter, which Addresses to fetch.
+     */
+    where?: AddressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Addresses to fetch.
+     */
+    orderBy?: AddressOrderByWithRelationInput | AddressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Addresses.
+     */
+    cursor?: AddressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Addresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Addresses.
+     */
+    skip?: number
+    distinct?: AddressScalarFieldEnum | AddressScalarFieldEnum[]
+  }
+
+  /**
+   * Address create
+   */
+  export type AddressCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Address.
+     */
+    data: XOR<AddressCreateInput, AddressUncheckedCreateInput>
+  }
+
+  /**
+   * Address createMany
+   */
+  export type AddressCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Addresses.
+     */
+    data: AddressCreateManyInput | AddressCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Address createManyAndReturn
+   */
+  export type AddressCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * The data used to create many Addresses.
+     */
+    data: AddressCreateManyInput | AddressCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Address update
+   */
+  export type AddressUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Address.
+     */
+    data: XOR<AddressUpdateInput, AddressUncheckedUpdateInput>
+    /**
+     * Choose, which Address to update.
+     */
+    where: AddressWhereUniqueInput
+  }
+
+  /**
+   * Address updateMany
+   */
+  export type AddressUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Addresses.
+     */
+    data: XOR<AddressUpdateManyMutationInput, AddressUncheckedUpdateManyInput>
+    /**
+     * Filter which Addresses to update
+     */
+    where?: AddressWhereInput
+    /**
+     * Limit how many Addresses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Address updateManyAndReturn
+   */
+  export type AddressUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * The data used to update Addresses.
+     */
+    data: XOR<AddressUpdateManyMutationInput, AddressUncheckedUpdateManyInput>
+    /**
+     * Filter which Addresses to update
+     */
+    where?: AddressWhereInput
+    /**
+     * Limit how many Addresses to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Address upsert
+   */
+  export type AddressUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Address to update in case it exists.
+     */
+    where: AddressWhereUniqueInput
+    /**
+     * In case the Address found by the `where` argument doesn't exist, create a new Address with this data.
+     */
+    create: XOR<AddressCreateInput, AddressUncheckedCreateInput>
+    /**
+     * In case the Address was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AddressUpdateInput, AddressUncheckedUpdateInput>
+  }
+
+  /**
+   * Address delete
+   */
+  export type AddressDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+    /**
+     * Filter which Address to delete.
+     */
+    where: AddressWhereUniqueInput
+  }
+
+  /**
+   * Address deleteMany
+   */
+  export type AddressDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Addresses to delete
+     */
+    where?: AddressWhereInput
+    /**
+     * Limit how many Addresses to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Address.customer
+   */
+  export type Address$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
+   * Address without action
+   */
+  export type AddressDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Address
+     */
+    select?: AddressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Address
+     */
+    omit?: AddressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AddressInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Order
+   */
+
+  export type AggregateOrder = {
+    _count: OrderCountAggregateOutputType | null
+    _avg: OrderAvgAggregateOutputType | null
+    _sum: OrderSumAggregateOutputType | null
+    _min: OrderMinAggregateOutputType | null
+    _max: OrderMaxAggregateOutputType | null
+  }
+
+  export type OrderAvgAggregateOutputType = {
+    total_amount: Decimal | null
+    shipping_cost: Decimal | null
+    tax_amount: Decimal | null
+    discount_amount: Decimal | null
+  }
+
+  export type OrderSumAggregateOutputType = {
+    total_amount: Decimal | null
+    shipping_cost: Decimal | null
+    tax_amount: Decimal | null
+    discount_amount: Decimal | null
+  }
+
+  export type OrderMinAggregateOutputType = {
+    id: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    customer_id: string | null
+    status: $Enums.OrderStatus | null
+    total_amount: Decimal | null
+    payment_status: $Enums.PaymentStatus | null
+    payment_method: $Enums.PaymentMethod | null
+    shipping_cost: Decimal | null
+    tax_amount: Decimal | null
+    discount_amount: Decimal | null
+    tracking_number: string | null
+    carrier: $Enums.ShippingCarrier | null
+    notes: string | null
+    estimated_delivery: Date | null
+    coupon_code: string | null
+  }
+
+  export type OrderMaxAggregateOutputType = {
+    id: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    customer_id: string | null
+    status: $Enums.OrderStatus | null
+    total_amount: Decimal | null
+    payment_status: $Enums.PaymentStatus | null
+    payment_method: $Enums.PaymentMethod | null
+    shipping_cost: Decimal | null
+    tax_amount: Decimal | null
+    discount_amount: Decimal | null
+    tracking_number: string | null
+    carrier: $Enums.ShippingCarrier | null
+    notes: string | null
+    estimated_delivery: Date | null
+    coupon_code: string | null
+  }
+
+  export type OrderCountAggregateOutputType = {
+    id: number
+    created_at: number
+    updated_at: number
+    customer_id: number
+    status: number
+    total_amount: number
+    shipping_address: number
+    billing_address: number
+    payment_status: number
+    payment_method: number
+    shipping_cost: number
+    tax_amount: number
+    discount_amount: number
+    tracking_number: number
+    carrier: number
+    notes: number
+    estimated_delivery: number
+    coupon_code: number
+    _all: number
+  }
+
+
+  export type OrderAvgAggregateInputType = {
+    total_amount?: true
+    shipping_cost?: true
+    tax_amount?: true
+    discount_amount?: true
+  }
+
+  export type OrderSumAggregateInputType = {
+    total_amount?: true
+    shipping_cost?: true
+    tax_amount?: true
+    discount_amount?: true
+  }
+
+  export type OrderMinAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    customer_id?: true
+    status?: true
+    total_amount?: true
+    payment_status?: true
+    payment_method?: true
+    shipping_cost?: true
+    tax_amount?: true
+    discount_amount?: true
+    tracking_number?: true
+    carrier?: true
+    notes?: true
+    estimated_delivery?: true
+    coupon_code?: true
+  }
+
+  export type OrderMaxAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    customer_id?: true
+    status?: true
+    total_amount?: true
+    payment_status?: true
+    payment_method?: true
+    shipping_cost?: true
+    tax_amount?: true
+    discount_amount?: true
+    tracking_number?: true
+    carrier?: true
+    notes?: true
+    estimated_delivery?: true
+    coupon_code?: true
+  }
+
+  export type OrderCountAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    customer_id?: true
+    status?: true
+    total_amount?: true
+    shipping_address?: true
+    billing_address?: true
+    payment_status?: true
+    payment_method?: true
+    shipping_cost?: true
+    tax_amount?: true
+    discount_amount?: true
+    tracking_number?: true
+    carrier?: true
+    notes?: true
+    estimated_delivery?: true
+    coupon_code?: true
+    _all?: true
+  }
+
+  export type OrderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Order to aggregate.
+     */
+    where?: OrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Orders to fetch.
+     */
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Orders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Orders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Orders
+    **/
+    _count?: true | OrderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OrderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OrderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OrderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OrderMaxAggregateInputType
+  }
+
+  export type GetOrderAggregateType<T extends OrderAggregateArgs> = {
+        [P in keyof T & keyof AggregateOrder]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOrder[P]>
+      : GetScalarType<T[P], AggregateOrder[P]>
+  }
+
+
+
+
+  export type OrderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderWhereInput
+    orderBy?: OrderOrderByWithAggregationInput | OrderOrderByWithAggregationInput[]
+    by: OrderScalarFieldEnum[] | OrderScalarFieldEnum
+    having?: OrderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OrderCountAggregateInputType | true
+    _avg?: OrderAvgAggregateInputType
+    _sum?: OrderSumAggregateInputType
+    _min?: OrderMinAggregateInputType
+    _max?: OrderMaxAggregateInputType
+  }
+
+  export type OrderGroupByOutputType = {
+    id: string
+    created_at: Date
+    updated_at: Date
+    customer_id: string | null
+    status: $Enums.OrderStatus
+    total_amount: Decimal
+    shipping_address: JsonValue
+    billing_address: JsonValue | null
+    payment_status: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal
+    tax_amount: Decimal
+    discount_amount: Decimal | null
+    tracking_number: string | null
+    carrier: $Enums.ShippingCarrier | null
+    notes: string | null
+    estimated_delivery: Date | null
+    coupon_code: string | null
+    _count: OrderCountAggregateOutputType | null
+    _avg: OrderAvgAggregateOutputType | null
+    _sum: OrderSumAggregateOutputType | null
+    _min: OrderMinAggregateOutputType | null
+    _max: OrderMaxAggregateOutputType | null
+  }
+
+  type GetOrderGroupByPayload<T extends OrderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OrderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OrderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OrderGroupByOutputType[P]>
+            : GetScalarType<T[P], OrderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OrderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    customer_id?: boolean
+    status?: boolean
+    total_amount?: boolean
+    shipping_address?: boolean
+    billing_address?: boolean
+    payment_status?: boolean
+    payment_method?: boolean
+    shipping_cost?: boolean
+    tax_amount?: boolean
+    discount_amount?: boolean
+    tracking_number?: boolean
+    carrier?: boolean
+    notes?: boolean
+    estimated_delivery?: boolean
+    coupon_code?: boolean
+    customer?: boolean | Order$customerArgs<ExtArgs>
+    items?: boolean | Order$itemsArgs<ExtArgs>
+    _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["order"]>
+
+  export type OrderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    customer_id?: boolean
+    status?: boolean
+    total_amount?: boolean
+    shipping_address?: boolean
+    billing_address?: boolean
+    payment_status?: boolean
+    payment_method?: boolean
+    shipping_cost?: boolean
+    tax_amount?: boolean
+    discount_amount?: boolean
+    tracking_number?: boolean
+    carrier?: boolean
+    notes?: boolean
+    estimated_delivery?: boolean
+    coupon_code?: boolean
+    customer?: boolean | Order$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["order"]>
+
+  export type OrderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    customer_id?: boolean
+    status?: boolean
+    total_amount?: boolean
+    shipping_address?: boolean
+    billing_address?: boolean
+    payment_status?: boolean
+    payment_method?: boolean
+    shipping_cost?: boolean
+    tax_amount?: boolean
+    discount_amount?: boolean
+    tracking_number?: boolean
+    carrier?: boolean
+    notes?: boolean
+    estimated_delivery?: boolean
+    coupon_code?: boolean
+    customer?: boolean | Order$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["order"]>
+
+  export type OrderSelectScalar = {
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    customer_id?: boolean
+    status?: boolean
+    total_amount?: boolean
+    shipping_address?: boolean
+    billing_address?: boolean
+    payment_status?: boolean
+    payment_method?: boolean
+    shipping_cost?: boolean
+    tax_amount?: boolean
+    discount_amount?: boolean
+    tracking_number?: boolean
+    carrier?: boolean
+    notes?: boolean
+    estimated_delivery?: boolean
+    coupon_code?: boolean
+  }
+
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "updated_at" | "customer_id" | "status" | "total_amount" | "shipping_address" | "billing_address" | "payment_status" | "payment_method" | "shipping_cost" | "tax_amount" | "discount_amount" | "tracking_number" | "carrier" | "notes" | "estimated_delivery" | "coupon_code", ExtArgs["result"]["order"]>
+  export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | Order$customerArgs<ExtArgs>
+    items?: boolean | Order$itemsArgs<ExtArgs>
+    _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | Order$customerArgs<ExtArgs>
+  }
+  export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | Order$customerArgs<ExtArgs>
+  }
+
+  export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Order"
+    objects: {
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
+      items: Prisma.$OrderItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      created_at: Date
+      updated_at: Date
+      customer_id: string | null
+      status: $Enums.OrderStatus
+      total_amount: Prisma.Decimal
+      shipping_address: Prisma.JsonValue
+      billing_address: Prisma.JsonValue | null
+      payment_status: $Enums.PaymentStatus
+      payment_method: $Enums.PaymentMethod
+      shipping_cost: Prisma.Decimal
+      tax_amount: Prisma.Decimal
+      discount_amount: Prisma.Decimal | null
+      tracking_number: string | null
+      carrier: $Enums.ShippingCarrier | null
+      notes: string | null
+      estimated_delivery: Date | null
+      coupon_code: string | null
+    }, ExtArgs["result"]["order"]>
+    composites: {}
+  }
+
+  type OrderGetPayload<S extends boolean | null | undefined | OrderDefaultArgs> = $Result.GetResult<Prisma.$OrderPayload, S>
+
+  type OrderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OrderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OrderCountAggregateInputType | true
+    }
+
+  export interface OrderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Order'], meta: { name: 'Order' } }
+    /**
+     * Find zero or one Order that matches the filter.
+     * @param {OrderFindUniqueArgs} args - Arguments to find a Order
+     * @example
+     * // Get one Order
+     * const order = await prisma.order.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OrderFindUniqueArgs>(args: SelectSubset<T, OrderFindUniqueArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Order that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OrderFindUniqueOrThrowArgs} args - Arguments to find a Order
+     * @example
+     * // Get one Order
+     * const order = await prisma.order.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OrderFindUniqueOrThrowArgs>(args: SelectSubset<T, OrderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Order that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderFindFirstArgs} args - Arguments to find a Order
+     * @example
+     * // Get one Order
+     * const order = await prisma.order.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OrderFindFirstArgs>(args?: SelectSubset<T, OrderFindFirstArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Order that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderFindFirstOrThrowArgs} args - Arguments to find a Order
+     * @example
+     * // Get one Order
+     * const order = await prisma.order.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OrderFindFirstOrThrowArgs>(args?: SelectSubset<T, OrderFindFirstOrThrowArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Orders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Orders
+     * const orders = await prisma.order.findMany()
+     * 
+     * // Get first 10 Orders
+     * const orders = await prisma.order.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const orderWithIdOnly = await prisma.order.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OrderFindManyArgs>(args?: SelectSubset<T, OrderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Order.
+     * @param {OrderCreateArgs} args - Arguments to create a Order.
+     * @example
+     * // Create one Order
+     * const Order = await prisma.order.create({
+     *   data: {
+     *     // ... data to create a Order
+     *   }
+     * })
+     * 
+     */
+    create<T extends OrderCreateArgs>(args: SelectSubset<T, OrderCreateArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Orders.
+     * @param {OrderCreateManyArgs} args - Arguments to create many Orders.
+     * @example
+     * // Create many Orders
+     * const order = await prisma.order.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OrderCreateManyArgs>(args?: SelectSubset<T, OrderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Orders and returns the data saved in the database.
+     * @param {OrderCreateManyAndReturnArgs} args - Arguments to create many Orders.
+     * @example
+     * // Create many Orders
+     * const order = await prisma.order.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Orders and only return the `id`
+     * const orderWithIdOnly = await prisma.order.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OrderCreateManyAndReturnArgs>(args?: SelectSubset<T, OrderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Order.
+     * @param {OrderDeleteArgs} args - Arguments to delete one Order.
+     * @example
+     * // Delete one Order
+     * const Order = await prisma.order.delete({
+     *   where: {
+     *     // ... filter to delete one Order
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OrderDeleteArgs>(args: SelectSubset<T, OrderDeleteArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Order.
+     * @param {OrderUpdateArgs} args - Arguments to update one Order.
+     * @example
+     * // Update one Order
+     * const order = await prisma.order.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OrderUpdateArgs>(args: SelectSubset<T, OrderUpdateArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Orders.
+     * @param {OrderDeleteManyArgs} args - Arguments to filter Orders to delete.
+     * @example
+     * // Delete a few Orders
+     * const { count } = await prisma.order.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OrderDeleteManyArgs>(args?: SelectSubset<T, OrderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Orders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Orders
+     * const order = await prisma.order.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OrderUpdateManyArgs>(args: SelectSubset<T, OrderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Orders and returns the data updated in the database.
+     * @param {OrderUpdateManyAndReturnArgs} args - Arguments to update many Orders.
+     * @example
+     * // Update many Orders
+     * const order = await prisma.order.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Orders and only return the `id`
+     * const orderWithIdOnly = await prisma.order.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OrderUpdateManyAndReturnArgs>(args: SelectSubset<T, OrderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Order.
+     * @param {OrderUpsertArgs} args - Arguments to update or create a Order.
+     * @example
+     * // Update or create a Order
+     * const order = await prisma.order.upsert({
+     *   create: {
+     *     // ... data to create a Order
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Order we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OrderUpsertArgs>(args: SelectSubset<T, OrderUpsertArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Orders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderCountArgs} args - Arguments to filter Orders to count.
+     * @example
+     * // Count the number of Orders
+     * const count = await prisma.order.count({
+     *   where: {
+     *     // ... the filter for the Orders we want to count
+     *   }
+     * })
+    **/
+    count<T extends OrderCountArgs>(
+      args?: Subset<T, OrderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OrderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Order.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OrderAggregateArgs>(args: Subset<T, OrderAggregateArgs>): Prisma.PrismaPromise<GetOrderAggregateType<T>>
+
+    /**
+     * Group by Order.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OrderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OrderGroupByArgs['orderBy'] }
+        : { orderBy?: OrderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OrderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOrderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Order model
+   */
+  readonly fields: OrderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Order.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OrderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer<T extends Order$customerArgs<ExtArgs> = {}>(args?: Subset<T, Order$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    items<T extends Order$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Order model
+   */
+  interface OrderFieldRefs {
+    readonly id: FieldRef<"Order", 'String'>
+    readonly created_at: FieldRef<"Order", 'DateTime'>
+    readonly updated_at: FieldRef<"Order", 'DateTime'>
+    readonly customer_id: FieldRef<"Order", 'String'>
+    readonly status: FieldRef<"Order", 'OrderStatus'>
+    readonly total_amount: FieldRef<"Order", 'Decimal'>
+    readonly shipping_address: FieldRef<"Order", 'Json'>
+    readonly billing_address: FieldRef<"Order", 'Json'>
+    readonly payment_status: FieldRef<"Order", 'PaymentStatus'>
+    readonly payment_method: FieldRef<"Order", 'PaymentMethod'>
+    readonly shipping_cost: FieldRef<"Order", 'Decimal'>
+    readonly tax_amount: FieldRef<"Order", 'Decimal'>
+    readonly discount_amount: FieldRef<"Order", 'Decimal'>
+    readonly tracking_number: FieldRef<"Order", 'String'>
+    readonly carrier: FieldRef<"Order", 'ShippingCarrier'>
+    readonly notes: FieldRef<"Order", 'String'>
+    readonly estimated_delivery: FieldRef<"Order", 'DateTime'>
+    readonly coupon_code: FieldRef<"Order", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Order findUnique
+   */
+  export type OrderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * Filter, which Order to fetch.
+     */
+    where: OrderWhereUniqueInput
+  }
+
+  /**
+   * Order findUniqueOrThrow
+   */
+  export type OrderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * Filter, which Order to fetch.
+     */
+    where: OrderWhereUniqueInput
+  }
+
+  /**
+   * Order findFirst
+   */
+  export type OrderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * Filter, which Order to fetch.
+     */
+    where?: OrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Orders to fetch.
+     */
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Orders.
+     */
+    cursor?: OrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Orders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Orders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Orders.
+     */
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
+  }
+
+  /**
+   * Order findFirstOrThrow
+   */
+  export type OrderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * Filter, which Order to fetch.
+     */
+    where?: OrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Orders to fetch.
+     */
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Orders.
+     */
+    cursor?: OrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Orders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Orders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Orders.
+     */
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
+  }
+
+  /**
+   * Order findMany
+   */
+  export type OrderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * Filter, which Orders to fetch.
+     */
+    where?: OrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Orders to fetch.
+     */
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Orders.
+     */
+    cursor?: OrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Orders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Orders.
+     */
+    skip?: number
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
+  }
+
+  /**
+   * Order create
+   */
+  export type OrderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Order.
+     */
+    data: XOR<OrderCreateInput, OrderUncheckedCreateInput>
+  }
+
+  /**
+   * Order createMany
+   */
+  export type OrderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Orders.
+     */
+    data: OrderCreateManyInput | OrderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Order createManyAndReturn
+   */
+  export type OrderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * The data used to create many Orders.
+     */
+    data: OrderCreateManyInput | OrderCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Order update
+   */
+  export type OrderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Order.
+     */
+    data: XOR<OrderUpdateInput, OrderUncheckedUpdateInput>
+    /**
+     * Choose, which Order to update.
+     */
+    where: OrderWhereUniqueInput
+  }
+
+  /**
+   * Order updateMany
+   */
+  export type OrderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Orders.
+     */
+    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyInput>
+    /**
+     * Filter which Orders to update
+     */
+    where?: OrderWhereInput
+    /**
+     * Limit how many Orders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Order updateManyAndReturn
+   */
+  export type OrderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * The data used to update Orders.
+     */
+    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyInput>
+    /**
+     * Filter which Orders to update
+     */
+    where?: OrderWhereInput
+    /**
+     * Limit how many Orders to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Order upsert
+   */
+  export type OrderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Order to update in case it exists.
+     */
+    where: OrderWhereUniqueInput
+    /**
+     * In case the Order found by the `where` argument doesn't exist, create a new Order with this data.
+     */
+    create: XOR<OrderCreateInput, OrderUncheckedCreateInput>
+    /**
+     * In case the Order was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OrderUpdateInput, OrderUncheckedUpdateInput>
+  }
+
+  /**
+   * Order delete
+   */
+  export type OrderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    /**
+     * Filter which Order to delete.
+     */
+    where: OrderWhereUniqueInput
+  }
+
+  /**
+   * Order deleteMany
+   */
+  export type OrderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Orders to delete
+     */
+    where?: OrderWhereInput
+    /**
+     * Limit how many Orders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Order.customer
+   */
+  export type Order$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
+   * Order.items
+   */
+  export type Order$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    where?: OrderItemWhereInput
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    cursor?: OrderItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
+   * Order without action
+   */
+  export type OrderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model OrderItem
+   */
+
+  export type AggregateOrderItem = {
+    _count: OrderItemCountAggregateOutputType | null
+    _avg: OrderItemAvgAggregateOutputType | null
+    _sum: OrderItemSumAggregateOutputType | null
+    _min: OrderItemMinAggregateOutputType | null
+    _max: OrderItemMaxAggregateOutputType | null
+  }
+
+  export type OrderItemAvgAggregateOutputType = {
+    quantity: number | null
+    price_at_purchase: Decimal | null
+    refunded_quantity: number | null
+    refund_amount: Decimal | null
+  }
+
+  export type OrderItemSumAggregateOutputType = {
+    quantity: number | null
+    price_at_purchase: Decimal | null
+    refunded_quantity: number | null
+    refund_amount: Decimal | null
+  }
+
+  export type OrderItemMinAggregateOutputType = {
+    id: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    order_id: string | null
+    product_id: string | null
+    variant_id: string | null
+    quantity: number | null
+    price_at_purchase: Decimal | null
+    variant_sku: string | null
+    refunded_quantity: number | null
+    refund_amount: Decimal | null
+  }
+
+  export type OrderItemMaxAggregateOutputType = {
+    id: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    order_id: string | null
+    product_id: string | null
+    variant_id: string | null
+    quantity: number | null
+    price_at_purchase: Decimal | null
+    variant_sku: string | null
+    refunded_quantity: number | null
+    refund_amount: Decimal | null
+  }
+
+  export type OrderItemCountAggregateOutputType = {
+    id: number
+    created_at: number
+    updated_at: number
+    order_id: number
+    product_id: number
+    variant_id: number
+    quantity: number
+    price_at_purchase: number
+    variant_sku: number
+    variant_attributes: number
+    refunded_quantity: number
+    refund_amount: number
+    _all: number
+  }
+
+
+  export type OrderItemAvgAggregateInputType = {
+    quantity?: true
+    price_at_purchase?: true
+    refunded_quantity?: true
+    refund_amount?: true
+  }
+
+  export type OrderItemSumAggregateInputType = {
+    quantity?: true
+    price_at_purchase?: true
+    refunded_quantity?: true
+    refund_amount?: true
+  }
+
+  export type OrderItemMinAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    order_id?: true
+    product_id?: true
+    variant_id?: true
+    quantity?: true
+    price_at_purchase?: true
+    variant_sku?: true
+    refunded_quantity?: true
+    refund_amount?: true
+  }
+
+  export type OrderItemMaxAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    order_id?: true
+    product_id?: true
+    variant_id?: true
+    quantity?: true
+    price_at_purchase?: true
+    variant_sku?: true
+    refunded_quantity?: true
+    refund_amount?: true
+  }
+
+  export type OrderItemCountAggregateInputType = {
+    id?: true
+    created_at?: true
+    updated_at?: true
+    order_id?: true
+    product_id?: true
+    variant_id?: true
+    quantity?: true
+    price_at_purchase?: true
+    variant_sku?: true
+    variant_attributes?: true
+    refunded_quantity?: true
+    refund_amount?: true
+    _all?: true
+  }
+
+  export type OrderItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OrderItem to aggregate.
+     */
+    where?: OrderItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderItems to fetch.
+     */
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OrderItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OrderItems
+    **/
+    _count?: true | OrderItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OrderItemAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OrderItemSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OrderItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OrderItemMaxAggregateInputType
+  }
+
+  export type GetOrderItemAggregateType<T extends OrderItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateOrderItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOrderItem[P]>
+      : GetScalarType<T[P], AggregateOrderItem[P]>
+  }
+
+
+
+
+  export type OrderItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderItemWhereInput
+    orderBy?: OrderItemOrderByWithAggregationInput | OrderItemOrderByWithAggregationInput[]
+    by: OrderItemScalarFieldEnum[] | OrderItemScalarFieldEnum
+    having?: OrderItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OrderItemCountAggregateInputType | true
+    _avg?: OrderItemAvgAggregateInputType
+    _sum?: OrderItemSumAggregateInputType
+    _min?: OrderItemMinAggregateInputType
+    _max?: OrderItemMaxAggregateInputType
+  }
+
+  export type OrderItemGroupByOutputType = {
+    id: string
+    created_at: Date
+    updated_at: Date
+    order_id: string
+    product_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal
+    variant_sku: string
+    variant_attributes: JsonValue
+    refunded_quantity: number | null
+    refund_amount: Decimal | null
+    _count: OrderItemCountAggregateOutputType | null
+    _avg: OrderItemAvgAggregateOutputType | null
+    _sum: OrderItemSumAggregateOutputType | null
+    _min: OrderItemMinAggregateOutputType | null
+    _max: OrderItemMaxAggregateOutputType | null
+  }
+
+  type GetOrderItemGroupByPayload<T extends OrderItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OrderItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OrderItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OrderItemGroupByOutputType[P]>
+            : GetScalarType<T[P], OrderItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OrderItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    order_id?: boolean
+    product_id?: boolean
+    variant_id?: boolean
+    quantity?: boolean
+    price_at_purchase?: boolean
+    variant_sku?: boolean
+    variant_attributes?: boolean
+    refunded_quantity?: boolean
+    refund_amount?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["orderItem"]>
+
+  export type OrderItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    order_id?: boolean
+    product_id?: boolean
+    variant_id?: boolean
+    quantity?: boolean
+    price_at_purchase?: boolean
+    variant_sku?: boolean
+    variant_attributes?: boolean
+    refunded_quantity?: boolean
+    refund_amount?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["orderItem"]>
+
+  export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    order_id?: boolean
+    product_id?: boolean
+    variant_id?: boolean
+    quantity?: boolean
+    price_at_purchase?: boolean
+    variant_sku?: boolean
+    variant_attributes?: boolean
+    refunded_quantity?: boolean
+    refund_amount?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["orderItem"]>
+
+  export type OrderItemSelectScalar = {
+    id?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    order_id?: boolean
+    product_id?: boolean
+    variant_id?: boolean
+    quantity?: boolean
+    price_at_purchase?: boolean
+    variant_sku?: boolean
+    variant_attributes?: boolean
+    refunded_quantity?: boolean
+    refund_amount?: boolean
+  }
+
+  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "updated_at" | "order_id" | "product_id" | "variant_id" | "quantity" | "price_at_purchase" | "variant_sku" | "variant_attributes" | "refunded_quantity" | "refund_amount", ExtArgs["result"]["orderItem"]>
+  export type OrderItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
+  }
+  export type OrderItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
+  }
+  export type OrderItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
+  }
+
+  export type $OrderItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OrderItem"
+    objects: {
+      order: Prisma.$OrderPayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs>
+      variant: Prisma.$ProductVariantPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      created_at: Date
+      updated_at: Date
+      order_id: string
+      product_id: string
+      variant_id: string
+      quantity: number
+      price_at_purchase: Prisma.Decimal
+      variant_sku: string
+      variant_attributes: Prisma.JsonValue
+      refunded_quantity: number | null
+      refund_amount: Prisma.Decimal | null
+    }, ExtArgs["result"]["orderItem"]>
+    composites: {}
+  }
+
+  type OrderItemGetPayload<S extends boolean | null | undefined | OrderItemDefaultArgs> = $Result.GetResult<Prisma.$OrderItemPayload, S>
+
+  type OrderItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OrderItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OrderItemCountAggregateInputType | true
+    }
+
+  export interface OrderItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OrderItem'], meta: { name: 'OrderItem' } }
+    /**
+     * Find zero or one OrderItem that matches the filter.
+     * @param {OrderItemFindUniqueArgs} args - Arguments to find a OrderItem
+     * @example
+     * // Get one OrderItem
+     * const orderItem = await prisma.orderItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OrderItemFindUniqueArgs>(args: SelectSubset<T, OrderItemFindUniqueArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OrderItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OrderItemFindUniqueOrThrowArgs} args - Arguments to find a OrderItem
+     * @example
+     * // Get one OrderItem
+     * const orderItem = await prisma.orderItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OrderItemFindUniqueOrThrowArgs>(args: SelectSubset<T, OrderItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OrderItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemFindFirstArgs} args - Arguments to find a OrderItem
+     * @example
+     * // Get one OrderItem
+     * const orderItem = await prisma.orderItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OrderItemFindFirstArgs>(args?: SelectSubset<T, OrderItemFindFirstArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OrderItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemFindFirstOrThrowArgs} args - Arguments to find a OrderItem
+     * @example
+     * // Get one OrderItem
+     * const orderItem = await prisma.orderItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OrderItemFindFirstOrThrowArgs>(args?: SelectSubset<T, OrderItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OrderItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OrderItems
+     * const orderItems = await prisma.orderItem.findMany()
+     * 
+     * // Get first 10 OrderItems
+     * const orderItems = await prisma.orderItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const orderItemWithIdOnly = await prisma.orderItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OrderItemFindManyArgs>(args?: SelectSubset<T, OrderItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OrderItem.
+     * @param {OrderItemCreateArgs} args - Arguments to create a OrderItem.
+     * @example
+     * // Create one OrderItem
+     * const OrderItem = await prisma.orderItem.create({
+     *   data: {
+     *     // ... data to create a OrderItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends OrderItemCreateArgs>(args: SelectSubset<T, OrderItemCreateArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OrderItems.
+     * @param {OrderItemCreateManyArgs} args - Arguments to create many OrderItems.
+     * @example
+     * // Create many OrderItems
+     * const orderItem = await prisma.orderItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OrderItemCreateManyArgs>(args?: SelectSubset<T, OrderItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OrderItems and returns the data saved in the database.
+     * @param {OrderItemCreateManyAndReturnArgs} args - Arguments to create many OrderItems.
+     * @example
+     * // Create many OrderItems
+     * const orderItem = await prisma.orderItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OrderItems and only return the `id`
+     * const orderItemWithIdOnly = await prisma.orderItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OrderItemCreateManyAndReturnArgs>(args?: SelectSubset<T, OrderItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OrderItem.
+     * @param {OrderItemDeleteArgs} args - Arguments to delete one OrderItem.
+     * @example
+     * // Delete one OrderItem
+     * const OrderItem = await prisma.orderItem.delete({
+     *   where: {
+     *     // ... filter to delete one OrderItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OrderItemDeleteArgs>(args: SelectSubset<T, OrderItemDeleteArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OrderItem.
+     * @param {OrderItemUpdateArgs} args - Arguments to update one OrderItem.
+     * @example
+     * // Update one OrderItem
+     * const orderItem = await prisma.orderItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OrderItemUpdateArgs>(args: SelectSubset<T, OrderItemUpdateArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OrderItems.
+     * @param {OrderItemDeleteManyArgs} args - Arguments to filter OrderItems to delete.
+     * @example
+     * // Delete a few OrderItems
+     * const { count } = await prisma.orderItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OrderItemDeleteManyArgs>(args?: SelectSubset<T, OrderItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OrderItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OrderItems
+     * const orderItem = await prisma.orderItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OrderItemUpdateManyArgs>(args: SelectSubset<T, OrderItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OrderItems and returns the data updated in the database.
+     * @param {OrderItemUpdateManyAndReturnArgs} args - Arguments to update many OrderItems.
+     * @example
+     * // Update many OrderItems
+     * const orderItem = await prisma.orderItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OrderItems and only return the `id`
+     * const orderItemWithIdOnly = await prisma.orderItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OrderItemUpdateManyAndReturnArgs>(args: SelectSubset<T, OrderItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OrderItem.
+     * @param {OrderItemUpsertArgs} args - Arguments to update or create a OrderItem.
+     * @example
+     * // Update or create a OrderItem
+     * const orderItem = await prisma.orderItem.upsert({
+     *   create: {
+     *     // ... data to create a OrderItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OrderItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OrderItemUpsertArgs>(args: SelectSubset<T, OrderItemUpsertArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OrderItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemCountArgs} args - Arguments to filter OrderItems to count.
+     * @example
+     * // Count the number of OrderItems
+     * const count = await prisma.orderItem.count({
+     *   where: {
+     *     // ... the filter for the OrderItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends OrderItemCountArgs>(
+      args?: Subset<T, OrderItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OrderItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OrderItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OrderItemAggregateArgs>(args: Subset<T, OrderItemAggregateArgs>): Prisma.PrismaPromise<GetOrderItemAggregateType<T>>
+
+    /**
+     * Group by OrderItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OrderItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OrderItemGroupByArgs['orderBy'] }
+        : { orderBy?: OrderItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OrderItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOrderItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OrderItem model
+   */
+  readonly fields: OrderItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OrderItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OrderItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    order<T extends OrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderDefaultArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    variant<T extends ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariantDefaultArgs<ExtArgs>>): Prisma__ProductVariantClient<$Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OrderItem model
+   */
+  interface OrderItemFieldRefs {
+    readonly id: FieldRef<"OrderItem", 'String'>
+    readonly created_at: FieldRef<"OrderItem", 'DateTime'>
+    readonly updated_at: FieldRef<"OrderItem", 'DateTime'>
+    readonly order_id: FieldRef<"OrderItem", 'String'>
+    readonly product_id: FieldRef<"OrderItem", 'String'>
+    readonly variant_id: FieldRef<"OrderItem", 'String'>
+    readonly quantity: FieldRef<"OrderItem", 'Int'>
+    readonly price_at_purchase: FieldRef<"OrderItem", 'Decimal'>
+    readonly variant_sku: FieldRef<"OrderItem", 'String'>
+    readonly variant_attributes: FieldRef<"OrderItem", 'Json'>
+    readonly refunded_quantity: FieldRef<"OrderItem", 'Int'>
+    readonly refund_amount: FieldRef<"OrderItem", 'Decimal'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OrderItem findUnique
+   */
+  export type OrderItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderItem to fetch.
+     */
+    where: OrderItemWhereUniqueInput
+  }
+
+  /**
+   * OrderItem findUniqueOrThrow
+   */
+  export type OrderItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderItem to fetch.
+     */
+    where: OrderItemWhereUniqueInput
+  }
+
+  /**
+   * OrderItem findFirst
+   */
+  export type OrderItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderItem to fetch.
+     */
+    where?: OrderItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderItems to fetch.
+     */
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OrderItems.
+     */
+    cursor?: OrderItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrderItems.
+     */
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
+   * OrderItem findFirstOrThrow
+   */
+  export type OrderItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderItem to fetch.
+     */
+    where?: OrderItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderItems to fetch.
+     */
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OrderItems.
+     */
+    cursor?: OrderItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrderItems.
+     */
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
+   * OrderItem findMany
+   */
+  export type OrderItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderItems to fetch.
+     */
+    where?: OrderItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderItems to fetch.
+     */
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OrderItems.
+     */
+    cursor?: OrderItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderItems.
+     */
+    skip?: number
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
+   * OrderItem create
+   */
+  export type OrderItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OrderItem.
+     */
+    data: XOR<OrderItemCreateInput, OrderItemUncheckedCreateInput>
+  }
+
+  /**
+   * OrderItem createMany
+   */
+  export type OrderItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OrderItems.
+     */
+    data: OrderItemCreateManyInput | OrderItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OrderItem createManyAndReturn
+   */
+  export type OrderItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many OrderItems.
+     */
+    data: OrderItemCreateManyInput | OrderItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OrderItem update
+   */
+  export type OrderItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OrderItem.
+     */
+    data: XOR<OrderItemUpdateInput, OrderItemUncheckedUpdateInput>
+    /**
+     * Choose, which OrderItem to update.
+     */
+    where: OrderItemWhereUniqueInput
+  }
+
+  /**
+   * OrderItem updateMany
+   */
+  export type OrderItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OrderItems.
+     */
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyInput>
+    /**
+     * Filter which OrderItems to update
+     */
+    where?: OrderItemWhereInput
+    /**
+     * Limit how many OrderItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OrderItem updateManyAndReturn
+   */
+  export type OrderItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * The data used to update OrderItems.
+     */
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyInput>
+    /**
+     * Filter which OrderItems to update
+     */
+    where?: OrderItemWhereInput
+    /**
+     * Limit how many OrderItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OrderItem upsert
+   */
+  export type OrderItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OrderItem to update in case it exists.
+     */
+    where: OrderItemWhereUniqueInput
+    /**
+     * In case the OrderItem found by the `where` argument doesn't exist, create a new OrderItem with this data.
+     */
+    create: XOR<OrderItemCreateInput, OrderItemUncheckedCreateInput>
+    /**
+     * In case the OrderItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OrderItemUpdateInput, OrderItemUncheckedUpdateInput>
+  }
+
+  /**
+   * OrderItem delete
+   */
+  export type OrderItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    /**
+     * Filter which OrderItem to delete.
+     */
+    where: OrderItemWhereUniqueInput
+  }
+
+  /**
+   * OrderItem deleteMany
+   */
+  export type OrderItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OrderItems to delete
+     */
+    where?: OrderItemWhereInput
+    /**
+     * Limit how many OrderItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OrderItem without action
+   */
+  export type OrderItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -8646,6 +14194,86 @@ export namespace Prisma {
   export type AttributeValueScalarFieldEnum = (typeof AttributeValueScalarFieldEnum)[keyof typeof AttributeValueScalarFieldEnum]
 
 
+  export const CustomerScalarFieldEnum: {
+    id: 'id',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    name: 'name',
+    email: 'email',
+    cognito_id: 'cognito_id',
+    phone: 'phone',
+    is_guest: 'is_guest',
+    status: 'status',
+    last_login: 'last_login',
+    total_spent: 'total_spent',
+    order_count: 'order_count',
+    notes: 'notes'
+  };
+
+  export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
+  export const AddressScalarFieldEnum: {
+    id: 'id',
+    customer_id: 'customer_id',
+    recipient_name: 'recipient_name',
+    street: 'street',
+    city: 'city',
+    state: 'state',
+    postal_code: 'postal_code',
+    country: 'country',
+    contact_number: 'contact_number',
+    is_default: 'is_default',
+    type: 'type'
+  };
+
+  export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeof AddressScalarFieldEnum]
+
+
+  export const OrderScalarFieldEnum: {
+    id: 'id',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    customer_id: 'customer_id',
+    status: 'status',
+    total_amount: 'total_amount',
+    shipping_address: 'shipping_address',
+    billing_address: 'billing_address',
+    payment_status: 'payment_status',
+    payment_method: 'payment_method',
+    shipping_cost: 'shipping_cost',
+    tax_amount: 'tax_amount',
+    discount_amount: 'discount_amount',
+    tracking_number: 'tracking_number',
+    carrier: 'carrier',
+    notes: 'notes',
+    estimated_delivery: 'estimated_delivery',
+    coupon_code: 'coupon_code'
+  };
+
+  export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+  export const OrderItemScalarFieldEnum: {
+    id: 'id',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    order_id: 'order_id',
+    product_id: 'product_id',
+    variant_id: 'variant_id',
+    quantity: 'quantity',
+    price_at_purchase: 'price_at_purchase',
+    variant_sku: 'variant_sku',
+    variant_attributes: 'variant_attributes',
+    refunded_quantity: 'refunded_quantity',
+    refund_amount: 'refund_amount'
+  };
+
+  export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -8659,6 +14287,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -8776,6 +14412,97 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'CustomerStatus'
+   */
+  export type EnumCustomerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CustomerStatus[]'
+   */
+  export type ListEnumCustomerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AddressType'
+   */
+  export type EnumAddressTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AddressType'>
+    
+
+
+  /**
+   * Reference to a field of type 'AddressType[]'
+   */
+  export type ListEnumAddressTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AddressType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'OrderStatus'
+   */
+  export type EnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'OrderStatus[]'
+   */
+  export type ListEnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentStatus'
+   */
+  export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentStatus[]'
+   */
+  export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentMethod'
+   */
+  export type EnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentMethod[]'
+   */
+  export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ShippingCarrier'
+   */
+  export type EnumShippingCarrierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShippingCarrier'>
+    
+
+
+  /**
+   * Reference to a field of type 'ShippingCarrier[]'
+   */
+  export type ListEnumShippingCarrierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShippingCarrier[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -8883,6 +14610,7 @@ export namespace Prisma {
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     variants?: ProductVariantListRelationFilter
     attributes?: ProductAttributeListRelationFilter
+    OrderItem?: OrderItemListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -8902,6 +14630,7 @@ export namespace Prisma {
     category?: CategoryOrderByWithRelationInput
     variants?: ProductVariantOrderByRelationAggregateInput
     attributes?: ProductAttributeOrderByRelationAggregateInput
+    OrderItem?: OrderItemOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -8924,6 +14653,7 @@ export namespace Prisma {
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     variants?: ProductVariantListRelationFilter
     attributes?: ProductAttributeListRelationFilter
+    OrderItem?: OrderItemListRelationFilter
   }, "id" | "slug">
 
   export type ProductOrderByWithAggregationInput = {
@@ -8982,6 +14712,7 @@ export namespace Prisma {
     barcode?: StringNullableFilter<"ProductVariant"> | string | null
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     attribute_values?: AttributeValueListRelationFilter
+    OrderItem?: OrderItemListRelationFilter
   }
 
   export type ProductVariantOrderByWithRelationInput = {
@@ -8999,6 +14730,7 @@ export namespace Prisma {
     barcode?: SortOrderInput | SortOrder
     product?: ProductOrderByWithRelationInput
     attribute_values?: AttributeValueOrderByRelationAggregateInput
+    OrderItem?: OrderItemOrderByRelationAggregateInput
   }
 
   export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
@@ -9019,6 +14751,7 @@ export namespace Prisma {
     barcode?: StringNullableFilter<"ProductVariant"> | string | null
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     attribute_values?: AttributeValueListRelationFilter
+    OrderItem?: OrderItemListRelationFilter
   }, "id" | "sku">
 
   export type ProductVariantOrderByWithAggregationInput = {
@@ -9250,6 +14983,424 @@ export namespace Prisma {
     display_order?: IntNullableWithAggregatesFilter<"AttributeValue"> | number | null
   }
 
+  export type CustomerWhereInput = {
+    AND?: CustomerWhereInput | CustomerWhereInput[]
+    OR?: CustomerWhereInput[]
+    NOT?: CustomerWhereInput | CustomerWhereInput[]
+    id?: StringFilter<"Customer"> | string
+    created_at?: DateTimeFilter<"Customer"> | Date | string
+    updated_at?: DateTimeFilter<"Customer"> | Date | string
+    first_name?: StringFilter<"Customer"> | string
+    last_name?: StringFilter<"Customer"> | string
+    name?: StringFilter<"Customer"> | string
+    email?: StringFilter<"Customer"> | string
+    cognito_id?: StringFilter<"Customer"> | string
+    phone?: StringNullableFilter<"Customer"> | string | null
+    is_guest?: BoolFilter<"Customer"> | boolean
+    status?: EnumCustomerStatusFilter<"Customer"> | $Enums.CustomerStatus
+    last_login?: DateTimeNullableFilter<"Customer"> | Date | string | null
+    total_spent?: DecimalNullableFilter<"Customer"> | Decimal | DecimalJsLike | number | string | null
+    order_count?: IntNullableFilter<"Customer"> | number | null
+    notes?: StringNullableFilter<"Customer"> | string | null
+    addresses?: AddressListRelationFilter
+    orders?: OrderListRelationFilter
+  }
+
+  export type CustomerOrderByWithRelationInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    cognito_id?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    is_guest?: SortOrder
+    status?: SortOrder
+    last_login?: SortOrderInput | SortOrder
+    total_spent?: SortOrderInput | SortOrder
+    order_count?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    addresses?: AddressOrderByRelationAggregateInput
+    orders?: OrderOrderByRelationAggregateInput
+  }
+
+  export type CustomerWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    email?: string
+    cognito_id?: string
+    AND?: CustomerWhereInput | CustomerWhereInput[]
+    OR?: CustomerWhereInput[]
+    NOT?: CustomerWhereInput | CustomerWhereInput[]
+    created_at?: DateTimeFilter<"Customer"> | Date | string
+    updated_at?: DateTimeFilter<"Customer"> | Date | string
+    first_name?: StringFilter<"Customer"> | string
+    last_name?: StringFilter<"Customer"> | string
+    name?: StringFilter<"Customer"> | string
+    phone?: StringNullableFilter<"Customer"> | string | null
+    is_guest?: BoolFilter<"Customer"> | boolean
+    status?: EnumCustomerStatusFilter<"Customer"> | $Enums.CustomerStatus
+    last_login?: DateTimeNullableFilter<"Customer"> | Date | string | null
+    total_spent?: DecimalNullableFilter<"Customer"> | Decimal | DecimalJsLike | number | string | null
+    order_count?: IntNullableFilter<"Customer"> | number | null
+    notes?: StringNullableFilter<"Customer"> | string | null
+    addresses?: AddressListRelationFilter
+    orders?: OrderListRelationFilter
+  }, "id" | "email" | "cognito_id">
+
+  export type CustomerOrderByWithAggregationInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    cognito_id?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    is_guest?: SortOrder
+    status?: SortOrder
+    last_login?: SortOrderInput | SortOrder
+    total_spent?: SortOrderInput | SortOrder
+    order_count?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    _count?: CustomerCountOrderByAggregateInput
+    _avg?: CustomerAvgOrderByAggregateInput
+    _max?: CustomerMaxOrderByAggregateInput
+    _min?: CustomerMinOrderByAggregateInput
+    _sum?: CustomerSumOrderByAggregateInput
+  }
+
+  export type CustomerScalarWhereWithAggregatesInput = {
+    AND?: CustomerScalarWhereWithAggregatesInput | CustomerScalarWhereWithAggregatesInput[]
+    OR?: CustomerScalarWhereWithAggregatesInput[]
+    NOT?: CustomerScalarWhereWithAggregatesInput | CustomerScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Customer"> | string
+    created_at?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
+    first_name?: StringWithAggregatesFilter<"Customer"> | string
+    last_name?: StringWithAggregatesFilter<"Customer"> | string
+    name?: StringWithAggregatesFilter<"Customer"> | string
+    email?: StringWithAggregatesFilter<"Customer"> | string
+    cognito_id?: StringWithAggregatesFilter<"Customer"> | string
+    phone?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    is_guest?: BoolWithAggregatesFilter<"Customer"> | boolean
+    status?: EnumCustomerStatusWithAggregatesFilter<"Customer"> | $Enums.CustomerStatus
+    last_login?: DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
+    total_spent?: DecimalNullableWithAggregatesFilter<"Customer"> | Decimal | DecimalJsLike | number | string | null
+    order_count?: IntNullableWithAggregatesFilter<"Customer"> | number | null
+    notes?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+  }
+
+  export type AddressWhereInput = {
+    AND?: AddressWhereInput | AddressWhereInput[]
+    OR?: AddressWhereInput[]
+    NOT?: AddressWhereInput | AddressWhereInput[]
+    id?: StringFilter<"Address"> | string
+    customer_id?: StringNullableFilter<"Address"> | string | null
+    recipient_name?: StringFilter<"Address"> | string
+    street?: StringFilter<"Address"> | string
+    city?: StringFilter<"Address"> | string
+    state?: StringFilter<"Address"> | string
+    postal_code?: StringFilter<"Address"> | string
+    country?: StringFilter<"Address"> | string
+    contact_number?: StringFilter<"Address"> | string
+    is_default?: BoolNullableFilter<"Address"> | boolean | null
+    type?: EnumAddressTypeNullableFilter<"Address"> | $Enums.AddressType | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+  }
+
+  export type AddressOrderByWithRelationInput = {
+    id?: SortOrder
+    customer_id?: SortOrderInput | SortOrder
+    recipient_name?: SortOrder
+    street?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postal_code?: SortOrder
+    country?: SortOrder
+    contact_number?: SortOrder
+    is_default?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    customer?: CustomerOrderByWithRelationInput
+  }
+
+  export type AddressWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AddressWhereInput | AddressWhereInput[]
+    OR?: AddressWhereInput[]
+    NOT?: AddressWhereInput | AddressWhereInput[]
+    customer_id?: StringNullableFilter<"Address"> | string | null
+    recipient_name?: StringFilter<"Address"> | string
+    street?: StringFilter<"Address"> | string
+    city?: StringFilter<"Address"> | string
+    state?: StringFilter<"Address"> | string
+    postal_code?: StringFilter<"Address"> | string
+    country?: StringFilter<"Address"> | string
+    contact_number?: StringFilter<"Address"> | string
+    is_default?: BoolNullableFilter<"Address"> | boolean | null
+    type?: EnumAddressTypeNullableFilter<"Address"> | $Enums.AddressType | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+  }, "id">
+
+  export type AddressOrderByWithAggregationInput = {
+    id?: SortOrder
+    customer_id?: SortOrderInput | SortOrder
+    recipient_name?: SortOrder
+    street?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postal_code?: SortOrder
+    country?: SortOrder
+    contact_number?: SortOrder
+    is_default?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    _count?: AddressCountOrderByAggregateInput
+    _max?: AddressMaxOrderByAggregateInput
+    _min?: AddressMinOrderByAggregateInput
+  }
+
+  export type AddressScalarWhereWithAggregatesInput = {
+    AND?: AddressScalarWhereWithAggregatesInput | AddressScalarWhereWithAggregatesInput[]
+    OR?: AddressScalarWhereWithAggregatesInput[]
+    NOT?: AddressScalarWhereWithAggregatesInput | AddressScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Address"> | string
+    customer_id?: StringNullableWithAggregatesFilter<"Address"> | string | null
+    recipient_name?: StringWithAggregatesFilter<"Address"> | string
+    street?: StringWithAggregatesFilter<"Address"> | string
+    city?: StringWithAggregatesFilter<"Address"> | string
+    state?: StringWithAggregatesFilter<"Address"> | string
+    postal_code?: StringWithAggregatesFilter<"Address"> | string
+    country?: StringWithAggregatesFilter<"Address"> | string
+    contact_number?: StringWithAggregatesFilter<"Address"> | string
+    is_default?: BoolNullableWithAggregatesFilter<"Address"> | boolean | null
+    type?: EnumAddressTypeNullableWithAggregatesFilter<"Address"> | $Enums.AddressType | null
+  }
+
+  export type OrderWhereInput = {
+    AND?: OrderWhereInput | OrderWhereInput[]
+    OR?: OrderWhereInput[]
+    NOT?: OrderWhereInput | OrderWhereInput[]
+    id?: StringFilter<"Order"> | string
+    created_at?: DateTimeFilter<"Order"> | Date | string
+    updated_at?: DateTimeFilter<"Order"> | Date | string
+    customer_id?: StringNullableFilter<"Order"> | string | null
+    status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
+    total_amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonFilter<"Order">
+    billing_address?: JsonNullableFilter<"Order">
+    payment_status?: EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
+    shipping_cost?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalNullableFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: StringNullableFilter<"Order"> | string | null
+    carrier?: EnumShippingCarrierNullableFilter<"Order"> | $Enums.ShippingCarrier | null
+    notes?: StringNullableFilter<"Order"> | string | null
+    estimated_delivery?: DateTimeNullableFilter<"Order"> | Date | string | null
+    coupon_code?: StringNullableFilter<"Order"> | string | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    items?: OrderItemListRelationFilter
+  }
+
+  export type OrderOrderByWithRelationInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    customer_id?: SortOrderInput | SortOrder
+    status?: SortOrder
+    total_amount?: SortOrder
+    shipping_address?: SortOrder
+    billing_address?: SortOrderInput | SortOrder
+    payment_status?: SortOrder
+    payment_method?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrderInput | SortOrder
+    tracking_number?: SortOrderInput | SortOrder
+    carrier?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    estimated_delivery?: SortOrderInput | SortOrder
+    coupon_code?: SortOrderInput | SortOrder
+    customer?: CustomerOrderByWithRelationInput
+    items?: OrderItemOrderByRelationAggregateInput
+  }
+
+  export type OrderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OrderWhereInput | OrderWhereInput[]
+    OR?: OrderWhereInput[]
+    NOT?: OrderWhereInput | OrderWhereInput[]
+    created_at?: DateTimeFilter<"Order"> | Date | string
+    updated_at?: DateTimeFilter<"Order"> | Date | string
+    customer_id?: StringNullableFilter<"Order"> | string | null
+    status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
+    total_amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonFilter<"Order">
+    billing_address?: JsonNullableFilter<"Order">
+    payment_status?: EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
+    shipping_cost?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalNullableFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: StringNullableFilter<"Order"> | string | null
+    carrier?: EnumShippingCarrierNullableFilter<"Order"> | $Enums.ShippingCarrier | null
+    notes?: StringNullableFilter<"Order"> | string | null
+    estimated_delivery?: DateTimeNullableFilter<"Order"> | Date | string | null
+    coupon_code?: StringNullableFilter<"Order"> | string | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    items?: OrderItemListRelationFilter
+  }, "id">
+
+  export type OrderOrderByWithAggregationInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    customer_id?: SortOrderInput | SortOrder
+    status?: SortOrder
+    total_amount?: SortOrder
+    shipping_address?: SortOrder
+    billing_address?: SortOrderInput | SortOrder
+    payment_status?: SortOrder
+    payment_method?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrderInput | SortOrder
+    tracking_number?: SortOrderInput | SortOrder
+    carrier?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    estimated_delivery?: SortOrderInput | SortOrder
+    coupon_code?: SortOrderInput | SortOrder
+    _count?: OrderCountOrderByAggregateInput
+    _avg?: OrderAvgOrderByAggregateInput
+    _max?: OrderMaxOrderByAggregateInput
+    _min?: OrderMinOrderByAggregateInput
+    _sum?: OrderSumOrderByAggregateInput
+  }
+
+  export type OrderScalarWhereWithAggregatesInput = {
+    AND?: OrderScalarWhereWithAggregatesInput | OrderScalarWhereWithAggregatesInput[]
+    OR?: OrderScalarWhereWithAggregatesInput[]
+    NOT?: OrderScalarWhereWithAggregatesInput | OrderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Order"> | string
+    created_at?: DateTimeWithAggregatesFilter<"Order"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"Order"> | Date | string
+    customer_id?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
+    total_amount?: DecimalWithAggregatesFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonWithAggregatesFilter<"Order">
+    billing_address?: JsonNullableWithAggregatesFilter<"Order">
+    payment_status?: EnumPaymentStatusWithAggregatesFilter<"Order"> | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodWithAggregatesFilter<"Order"> | $Enums.PaymentMethod
+    shipping_cost?: DecimalWithAggregatesFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalWithAggregatesFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalNullableWithAggregatesFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    carrier?: EnumShippingCarrierNullableWithAggregatesFilter<"Order"> | $Enums.ShippingCarrier | null
+    notes?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    estimated_delivery?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    coupon_code?: StringNullableWithAggregatesFilter<"Order"> | string | null
+  }
+
+  export type OrderItemWhereInput = {
+    AND?: OrderItemWhereInput | OrderItemWhereInput[]
+    OR?: OrderItemWhereInput[]
+    NOT?: OrderItemWhereInput | OrderItemWhereInput[]
+    id?: StringFilter<"OrderItem"> | string
+    created_at?: DateTimeFilter<"OrderItem"> | Date | string
+    updated_at?: DateTimeFilter<"OrderItem"> | Date | string
+    order_id?: StringFilter<"OrderItem"> | string
+    product_id?: StringFilter<"OrderItem"> | string
+    variant_id?: StringFilter<"OrderItem"> | string
+    quantity?: IntFilter<"OrderItem"> | number
+    price_at_purchase?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFilter<"OrderItem"> | string
+    variant_attributes?: JsonFilter<"OrderItem">
+    refunded_quantity?: IntNullableFilter<"OrderItem"> | number | null
+    refund_amount?: DecimalNullableFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string | null
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductVariantScalarRelationFilter, ProductVariantWhereInput>
+  }
+
+  export type OrderItemOrderByWithRelationInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    order_id?: SortOrder
+    product_id?: SortOrder
+    variant_id?: SortOrder
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    variant_sku?: SortOrder
+    variant_attributes?: SortOrder
+    refunded_quantity?: SortOrderInput | SortOrder
+    refund_amount?: SortOrderInput | SortOrder
+    order?: OrderOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+    variant?: ProductVariantOrderByWithRelationInput
+  }
+
+  export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OrderItemWhereInput | OrderItemWhereInput[]
+    OR?: OrderItemWhereInput[]
+    NOT?: OrderItemWhereInput | OrderItemWhereInput[]
+    created_at?: DateTimeFilter<"OrderItem"> | Date | string
+    updated_at?: DateTimeFilter<"OrderItem"> | Date | string
+    order_id?: StringFilter<"OrderItem"> | string
+    product_id?: StringFilter<"OrderItem"> | string
+    variant_id?: StringFilter<"OrderItem"> | string
+    quantity?: IntFilter<"OrderItem"> | number
+    price_at_purchase?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFilter<"OrderItem"> | string
+    variant_attributes?: JsonFilter<"OrderItem">
+    refunded_quantity?: IntNullableFilter<"OrderItem"> | number | null
+    refund_amount?: DecimalNullableFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string | null
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductVariantScalarRelationFilter, ProductVariantWhereInput>
+  }, "id">
+
+  export type OrderItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    order_id?: SortOrder
+    product_id?: SortOrder
+    variant_id?: SortOrder
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    variant_sku?: SortOrder
+    variant_attributes?: SortOrder
+    refunded_quantity?: SortOrderInput | SortOrder
+    refund_amount?: SortOrderInput | SortOrder
+    _count?: OrderItemCountOrderByAggregateInput
+    _avg?: OrderItemAvgOrderByAggregateInput
+    _max?: OrderItemMaxOrderByAggregateInput
+    _min?: OrderItemMinOrderByAggregateInput
+    _sum?: OrderItemSumOrderByAggregateInput
+  }
+
+  export type OrderItemScalarWhereWithAggregatesInput = {
+    AND?: OrderItemScalarWhereWithAggregatesInput | OrderItemScalarWhereWithAggregatesInput[]
+    OR?: OrderItemScalarWhereWithAggregatesInput[]
+    NOT?: OrderItemScalarWhereWithAggregatesInput | OrderItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OrderItem"> | string
+    created_at?: DateTimeWithAggregatesFilter<"OrderItem"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"OrderItem"> | Date | string
+    order_id?: StringWithAggregatesFilter<"OrderItem"> | string
+    product_id?: StringWithAggregatesFilter<"OrderItem"> | string
+    variant_id?: StringWithAggregatesFilter<"OrderItem"> | string
+    quantity?: IntWithAggregatesFilter<"OrderItem"> | number
+    price_at_purchase?: DecimalWithAggregatesFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringWithAggregatesFilter<"OrderItem"> | string
+    variant_attributes?: JsonWithAggregatesFilter<"OrderItem">
+    refunded_quantity?: IntNullableWithAggregatesFilter<"OrderItem"> | number | null
+    refund_amount?: DecimalNullableWithAggregatesFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string | null
+  }
+
   export type CategoryCreateInput = {
     id?: string
     created_at?: Date | string
@@ -9343,6 +15494,7 @@ export namespace Prisma {
     category: CategoryCreateNestedOneWithoutProductsInput
     variants?: ProductVariantCreateNestedManyWithoutProductInput
     attributes?: ProductAttributeCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -9361,6 +15513,7 @@ export namespace Prisma {
     related_products?: ProductCreaterelated_productsInput | string[]
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
     attributes?: ProductAttributeUncheckedCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -9379,6 +15532,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
     attributes?: ProductAttributeUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -9397,6 +15551,7 @@ export namespace Prisma {
     related_products?: ProductUpdaterelated_productsInput | string[]
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
     attributes?: ProductAttributeUncheckedUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -9460,6 +15615,7 @@ export namespace Prisma {
     barcode?: string | null
     product: ProductCreateNestedOneWithoutVariantsInput
     attribute_values?: AttributeValueCreateNestedManyWithoutVariantsInput
+    OrderItem?: OrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateInput = {
@@ -9476,6 +15632,7 @@ export namespace Prisma {
     image_url?: string | null
     barcode?: string | null
     attribute_values?: AttributeValueUncheckedCreateNestedManyWithoutVariantsInput
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUpdateInput = {
@@ -9492,6 +15649,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
     attribute_values?: AttributeValueUpdateManyWithoutVariantsNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateInput = {
@@ -9508,6 +15666,7 @@ export namespace Prisma {
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     attribute_values?: AttributeValueUncheckedUpdateManyWithoutVariantsNestedInput
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantCreateManyInput = {
@@ -9746,6 +15905,489 @@ export namespace Prisma {
     display_order?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type CustomerCreateInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+    addresses?: AddressCreateNestedManyWithoutCustomerInput
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+    addresses?: AddressUncheckedCreateNestedManyWithoutCustomerInput
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addresses?: AddressUpdateManyWithoutCustomerNestedInput
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addresses?: AddressUncheckedUpdateManyWithoutCustomerNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerCreateManyInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+  }
+
+  export type CustomerUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CustomerUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AddressCreateInput = {
+    id?: string
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default?: boolean | null
+    type?: $Enums.AddressType | null
+    customer?: CustomerCreateNestedOneWithoutAddressesInput
+  }
+
+  export type AddressUncheckedCreateInput = {
+    id?: string
+    customer_id?: string | null
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default?: boolean | null
+    type?: $Enums.AddressType | null
+  }
+
+  export type AddressUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+    customer?: CustomerUpdateOneWithoutAddressesNestedInput
+  }
+
+  export type AddressUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+  }
+
+  export type AddressCreateManyInput = {
+    id?: string
+    customer_id?: string | null
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default?: boolean | null
+    type?: $Enums.AddressType | null
+  }
+
+  export type AddressUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+  }
+
+  export type AddressUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+  }
+
+  export type OrderCreateInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+    customer?: CustomerCreateNestedOneWithoutOrdersInput
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    customer_id?: string | null
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+    customer?: CustomerUpdateOneWithoutOrdersNestedInput
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderCreateManyInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    customer_id?: string | null
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+  }
+
+  export type OrderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OrderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OrderItemCreateInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+    order: OrderCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOrderItemInput
+    variant: ProductVariantCreateNestedOneWithoutOrderItemInput
+  }
+
+  export type OrderItemUncheckedCreateInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    order_id: string
+    product_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+    variant?: ProductVariantUpdateOneRequiredWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    order_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    variant_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemCreateManyInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    order_id: string
+    product_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    order_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    variant_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -9922,11 +16564,21 @@ export namespace Prisma {
     none?: ProductAttributeWhereInput
   }
 
+  export type OrderItemListRelationFilter = {
+    every?: OrderItemWhereInput
+    some?: OrderItemWhereInput
+    none?: OrderItemWhereInput
+  }
+
   export type ProductVariantOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type ProductAttributeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OrderItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10324,6 +16976,479 @@ export namespace Prisma {
     display_order?: SortOrder
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type EnumCustomerStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CustomerStatus | EnumCustomerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCustomerStatusFilter<$PrismaModel> | $Enums.CustomerStatus
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type AddressListRelationFilter = {
+    every?: AddressWhereInput
+    some?: AddressWhereInput
+    none?: AddressWhereInput
+  }
+
+  export type OrderListRelationFilter = {
+    every?: OrderWhereInput
+    some?: OrderWhereInput
+    none?: OrderWhereInput
+  }
+
+  export type AddressOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OrderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CustomerCountOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    cognito_id?: SortOrder
+    phone?: SortOrder
+    is_guest?: SortOrder
+    status?: SortOrder
+    last_login?: SortOrder
+    total_spent?: SortOrder
+    order_count?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type CustomerAvgOrderByAggregateInput = {
+    total_spent?: SortOrder
+    order_count?: SortOrder
+  }
+
+  export type CustomerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    cognito_id?: SortOrder
+    phone?: SortOrder
+    is_guest?: SortOrder
+    status?: SortOrder
+    last_login?: SortOrder
+    total_spent?: SortOrder
+    order_count?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type CustomerMinOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    cognito_id?: SortOrder
+    phone?: SortOrder
+    is_guest?: SortOrder
+    status?: SortOrder
+    last_login?: SortOrder
+    total_spent?: SortOrder
+    order_count?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type CustomerSumOrderByAggregateInput = {
+    total_spent?: SortOrder
+    order_count?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EnumCustomerStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CustomerStatus | EnumCustomerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCustomerStatusWithAggregatesFilter<$PrismaModel> | $Enums.CustomerStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCustomerStatusFilter<$PrismaModel>
+    _max?: NestedEnumCustomerStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type BoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
+
+  export type EnumAddressTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.AddressType | EnumAddressTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAddressTypeNullableFilter<$PrismaModel> | $Enums.AddressType | null
+  }
+
+  export type CustomerNullableScalarRelationFilter = {
+    is?: CustomerWhereInput | null
+    isNot?: CustomerWhereInput | null
+  }
+
+  export type AddressCountOrderByAggregateInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    recipient_name?: SortOrder
+    street?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postal_code?: SortOrder
+    country?: SortOrder
+    contact_number?: SortOrder
+    is_default?: SortOrder
+    type?: SortOrder
+  }
+
+  export type AddressMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    recipient_name?: SortOrder
+    street?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postal_code?: SortOrder
+    country?: SortOrder
+    contact_number?: SortOrder
+    is_default?: SortOrder
+    type?: SortOrder
+  }
+
+  export type AddressMinOrderByAggregateInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    recipient_name?: SortOrder
+    street?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postal_code?: SortOrder
+    country?: SortOrder
+    contact_number?: SortOrder
+    is_default?: SortOrder
+    type?: SortOrder
+  }
+
+  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+
+  export type EnumAddressTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AddressType | EnumAddressTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAddressTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.AddressType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumAddressTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumAddressTypeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumOrderStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type EnumPaymentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
+  }
+
+  export type EnumPaymentMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentMethod | EnumPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentMethodFilter<$PrismaModel> | $Enums.PaymentMethod
+  }
+
+  export type EnumShippingCarrierNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShippingCarrier | EnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumShippingCarrierNullableFilter<$PrismaModel> | $Enums.ShippingCarrier | null
+  }
+
+  export type OrderCountOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    customer_id?: SortOrder
+    status?: SortOrder
+    total_amount?: SortOrder
+    shipping_address?: SortOrder
+    billing_address?: SortOrder
+    payment_status?: SortOrder
+    payment_method?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrder
+    tracking_number?: SortOrder
+    carrier?: SortOrder
+    notes?: SortOrder
+    estimated_delivery?: SortOrder
+    coupon_code?: SortOrder
+  }
+
+  export type OrderAvgOrderByAggregateInput = {
+    total_amount?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrder
+  }
+
+  export type OrderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    customer_id?: SortOrder
+    status?: SortOrder
+    total_amount?: SortOrder
+    payment_status?: SortOrder
+    payment_method?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrder
+    tracking_number?: SortOrder
+    carrier?: SortOrder
+    notes?: SortOrder
+    estimated_delivery?: SortOrder
+    coupon_code?: SortOrder
+  }
+
+  export type OrderMinOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    customer_id?: SortOrder
+    status?: SortOrder
+    total_amount?: SortOrder
+    payment_status?: SortOrder
+    payment_method?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrder
+    tracking_number?: SortOrder
+    carrier?: SortOrder
+    notes?: SortOrder
+    estimated_delivery?: SortOrder
+    coupon_code?: SortOrder
+  }
+
+  export type OrderSumOrderByAggregateInput = {
+    total_amount?: SortOrder
+    shipping_cost?: SortOrder
+    tax_amount?: SortOrder
+    discount_amount?: SortOrder
+  }
+
+  export type EnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrderStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrderStatusFilter<$PrismaModel>
+    _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type EnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type EnumPaymentMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentMethod | EnumPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentMethodWithAggregatesFilter<$PrismaModel> | $Enums.PaymentMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentMethodFilter<$PrismaModel>
+    _max?: NestedEnumPaymentMethodFilter<$PrismaModel>
+  }
+
+  export type EnumShippingCarrierNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShippingCarrier | EnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumShippingCarrierNullableWithAggregatesFilter<$PrismaModel> | $Enums.ShippingCarrier | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumShippingCarrierNullableFilter<$PrismaModel>
+    _max?: NestedEnumShippingCarrierNullableFilter<$PrismaModel>
+  }
+
+  export type OrderScalarRelationFilter = {
+    is?: OrderWhereInput
+    isNot?: OrderWhereInput
+  }
+
+  export type ProductVariantScalarRelationFilter = {
+    is?: ProductVariantWhereInput
+    isNot?: ProductVariantWhereInput
+  }
+
+  export type OrderItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    order_id?: SortOrder
+    product_id?: SortOrder
+    variant_id?: SortOrder
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    variant_sku?: SortOrder
+    variant_attributes?: SortOrder
+    refunded_quantity?: SortOrder
+    refund_amount?: SortOrder
+  }
+
+  export type OrderItemAvgOrderByAggregateInput = {
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    refunded_quantity?: SortOrder
+    refund_amount?: SortOrder
+  }
+
+  export type OrderItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    order_id?: SortOrder
+    product_id?: SortOrder
+    variant_id?: SortOrder
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    variant_sku?: SortOrder
+    refunded_quantity?: SortOrder
+    refund_amount?: SortOrder
+  }
+
+  export type OrderItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    order_id?: SortOrder
+    product_id?: SortOrder
+    variant_id?: SortOrder
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    variant_sku?: SortOrder
+    refunded_quantity?: SortOrder
+    refund_amount?: SortOrder
+  }
+
+  export type OrderItemSumOrderByAggregateInput = {
+    quantity?: SortOrder
+    price_at_purchase?: SortOrder
+    refunded_quantity?: SortOrder
+    refund_amount?: SortOrder
+  }
+
   export type CategoryCreateNestedOneWithoutChildrenInput = {
     create?: XOR<CategoryCreateWithoutChildrenInput, CategoryUncheckedCreateWithoutChildrenInput>
     connectOrCreate?: CategoryCreateOrConnectWithoutChildrenInput
@@ -10464,6 +17589,13 @@ export namespace Prisma {
     connect?: ProductAttributeWhereUniqueInput | ProductAttributeWhereUniqueInput[]
   }
 
+  export type OrderItemCreateNestedManyWithoutProductInput = {
+    create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
+    createMany?: OrderItemCreateManyProductInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
   export type ProductVariantUncheckedCreateNestedManyWithoutProductInput = {
     create?: XOR<ProductVariantCreateWithoutProductInput, ProductVariantUncheckedCreateWithoutProductInput> | ProductVariantCreateWithoutProductInput[] | ProductVariantUncheckedCreateWithoutProductInput[]
     connectOrCreate?: ProductVariantCreateOrConnectWithoutProductInput | ProductVariantCreateOrConnectWithoutProductInput[]
@@ -10476,6 +17608,13 @@ export namespace Prisma {
     connectOrCreate?: ProductAttributeCreateOrConnectWithoutProductInput | ProductAttributeCreateOrConnectWithoutProductInput[]
     createMany?: ProductAttributeCreateManyProductInputEnvelope
     connect?: ProductAttributeWhereUniqueInput | ProductAttributeWhereUniqueInput[]
+  }
+
+  export type OrderItemUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
+    createMany?: OrderItemCreateManyProductInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
   }
 
   export type ProductUpdateimages_urlInput = {
@@ -10524,6 +17663,20 @@ export namespace Prisma {
     deleteMany?: ProductAttributeScalarWhereInput | ProductAttributeScalarWhereInput[]
   }
 
+  export type OrderItemUpdateManyWithoutProductNestedInput = {
+    create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutProductInput | OrderItemUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: OrderItemCreateManyProductInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutProductInput | OrderItemUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutProductInput | OrderItemUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
   export type ProductVariantUncheckedUpdateManyWithoutProductNestedInput = {
     create?: XOR<ProductVariantCreateWithoutProductInput, ProductVariantUncheckedCreateWithoutProductInput> | ProductVariantCreateWithoutProductInput[] | ProductVariantUncheckedCreateWithoutProductInput[]
     connectOrCreate?: ProductVariantCreateOrConnectWithoutProductInput | ProductVariantCreateOrConnectWithoutProductInput[]
@@ -10552,6 +17705,20 @@ export namespace Prisma {
     deleteMany?: ProductAttributeScalarWhereInput | ProductAttributeScalarWhereInput[]
   }
 
+  export type OrderItemUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutProductInput | OrderItemUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: OrderItemCreateManyProductInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutProductInput | OrderItemUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutProductInput | OrderItemUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
   export type ProductCreateNestedOneWithoutVariantsInput = {
     create?: XOR<ProductCreateWithoutVariantsInput, ProductUncheckedCreateWithoutVariantsInput>
     connectOrCreate?: ProductCreateOrConnectWithoutVariantsInput
@@ -10564,10 +17731,24 @@ export namespace Prisma {
     connect?: AttributeValueWhereUniqueInput | AttributeValueWhereUniqueInput[]
   }
 
+  export type OrderItemCreateNestedManyWithoutVariantInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
   export type AttributeValueUncheckedCreateNestedManyWithoutVariantsInput = {
     create?: XOR<AttributeValueCreateWithoutVariantsInput, AttributeValueUncheckedCreateWithoutVariantsInput> | AttributeValueCreateWithoutVariantsInput[] | AttributeValueUncheckedCreateWithoutVariantsInput[]
     connectOrCreate?: AttributeValueCreateOrConnectWithoutVariantsInput | AttributeValueCreateOrConnectWithoutVariantsInput[]
     connect?: AttributeValueWhereUniqueInput | AttributeValueWhereUniqueInput[]
+  }
+
+  export type OrderItemUncheckedCreateNestedManyWithoutVariantInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -10619,6 +17800,20 @@ export namespace Prisma {
     deleteMany?: AttributeValueScalarWhereInput | AttributeValueScalarWhereInput[]
   }
 
+  export type OrderItemUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutVariantInput | OrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutVariantInput | OrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutVariantInput | OrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
   export type AttributeValueUncheckedUpdateManyWithoutVariantsNestedInput = {
     create?: XOR<AttributeValueCreateWithoutVariantsInput, AttributeValueUncheckedCreateWithoutVariantsInput> | AttributeValueCreateWithoutVariantsInput[] | AttributeValueUncheckedCreateWithoutVariantsInput[]
     connectOrCreate?: AttributeValueCreateOrConnectWithoutVariantsInput | AttributeValueCreateOrConnectWithoutVariantsInput[]
@@ -10630,6 +17825,20 @@ export namespace Prisma {
     update?: AttributeValueUpdateWithWhereUniqueWithoutVariantsInput | AttributeValueUpdateWithWhereUniqueWithoutVariantsInput[]
     updateMany?: AttributeValueUpdateManyWithWhereWithoutVariantsInput | AttributeValueUpdateManyWithWhereWithoutVariantsInput[]
     deleteMany?: AttributeValueScalarWhereInput | AttributeValueScalarWhereInput[]
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutVariantInput | OrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutVariantInput | OrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutVariantInput | OrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
   }
 
   export type ProductCreateNestedOneWithoutAttributesInput = {
@@ -10878,6 +18087,242 @@ export namespace Prisma {
     update?: ProductAttributeUpdateWithWhereUniqueWithoutValuesInput | ProductAttributeUpdateWithWhereUniqueWithoutValuesInput[]
     updateMany?: ProductAttributeUpdateManyWithWhereWithoutValuesInput | ProductAttributeUpdateManyWithWhereWithoutValuesInput[]
     deleteMany?: ProductAttributeScalarWhereInput | ProductAttributeScalarWhereInput[]
+  }
+
+  export type AddressCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<AddressCreateWithoutCustomerInput, AddressUncheckedCreateWithoutCustomerInput> | AddressCreateWithoutCustomerInput[] | AddressUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: AddressCreateOrConnectWithoutCustomerInput | AddressCreateOrConnectWithoutCustomerInput[]
+    createMany?: AddressCreateManyCustomerInputEnvelope
+    connect?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+  }
+
+  export type OrderCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
+    createMany?: OrderCreateManyCustomerInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type AddressUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<AddressCreateWithoutCustomerInput, AddressUncheckedCreateWithoutCustomerInput> | AddressCreateWithoutCustomerInput[] | AddressUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: AddressCreateOrConnectWithoutCustomerInput | AddressCreateOrConnectWithoutCustomerInput[]
+    createMany?: AddressCreateManyCustomerInputEnvelope
+    connect?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+  }
+
+  export type OrderUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
+    createMany?: OrderCreateManyCustomerInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type EnumCustomerStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CustomerStatus
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type AddressUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<AddressCreateWithoutCustomerInput, AddressUncheckedCreateWithoutCustomerInput> | AddressCreateWithoutCustomerInput[] | AddressUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: AddressCreateOrConnectWithoutCustomerInput | AddressCreateOrConnectWithoutCustomerInput[]
+    upsert?: AddressUpsertWithWhereUniqueWithoutCustomerInput | AddressUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: AddressCreateManyCustomerInputEnvelope
+    set?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    disconnect?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    delete?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    connect?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    update?: AddressUpdateWithWhereUniqueWithoutCustomerInput | AddressUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: AddressUpdateManyWithWhereWithoutCustomerInput | AddressUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: AddressScalarWhereInput | AddressScalarWhereInput[]
+  }
+
+  export type OrderUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutCustomerInput | OrderUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: OrderCreateManyCustomerInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutCustomerInput | OrderUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutCustomerInput | OrderUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
+  export type AddressUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<AddressCreateWithoutCustomerInput, AddressUncheckedCreateWithoutCustomerInput> | AddressCreateWithoutCustomerInput[] | AddressUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: AddressCreateOrConnectWithoutCustomerInput | AddressCreateOrConnectWithoutCustomerInput[]
+    upsert?: AddressUpsertWithWhereUniqueWithoutCustomerInput | AddressUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: AddressCreateManyCustomerInputEnvelope
+    set?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    disconnect?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    delete?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    connect?: AddressWhereUniqueInput | AddressWhereUniqueInput[]
+    update?: AddressUpdateWithWhereUniqueWithoutCustomerInput | AddressUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: AddressUpdateManyWithWhereWithoutCustomerInput | AddressUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: AddressScalarWhereInput | AddressScalarWhereInput[]
+  }
+
+  export type OrderUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutCustomerInput | OrderUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: OrderCreateManyCustomerInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutCustomerInput | OrderUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutCustomerInput | OrderUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
+  export type CustomerCreateNestedOneWithoutAddressesInput = {
+    create?: XOR<CustomerCreateWithoutAddressesInput, CustomerUncheckedCreateWithoutAddressesInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutAddressesInput
+    connect?: CustomerWhereUniqueInput
+  }
+
+  export type NullableBoolFieldUpdateOperationsInput = {
+    set?: boolean | null
+  }
+
+  export type NullableEnumAddressTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AddressType | null
+  }
+
+  export type CustomerUpdateOneWithoutAddressesNestedInput = {
+    create?: XOR<CustomerCreateWithoutAddressesInput, CustomerUncheckedCreateWithoutAddressesInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutAddressesInput
+    upsert?: CustomerUpsertWithoutAddressesInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutAddressesInput, CustomerUpdateWithoutAddressesInput>, CustomerUncheckedUpdateWithoutAddressesInput>
+  }
+
+  export type CustomerCreateNestedOneWithoutOrdersInput = {
+    create?: XOR<CustomerCreateWithoutOrdersInput, CustomerUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutOrdersInput
+    connect?: CustomerWhereUniqueInput
+  }
+
+  export type OrderItemCreateNestedManyWithoutOrderInput = {
+    create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
+    createMany?: OrderItemCreateManyOrderInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
+  export type OrderItemUncheckedCreateNestedManyWithoutOrderInput = {
+    create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
+    createMany?: OrderItemCreateManyOrderInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
+  export type EnumOrderStatusFieldUpdateOperationsInput = {
+    set?: $Enums.OrderStatus
+  }
+
+  export type EnumPaymentStatusFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentStatus
+  }
+
+  export type EnumPaymentMethodFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentMethod
+  }
+
+  export type NullableEnumShippingCarrierFieldUpdateOperationsInput = {
+    set?: $Enums.ShippingCarrier | null
+  }
+
+  export type CustomerUpdateOneWithoutOrdersNestedInput = {
+    create?: XOR<CustomerCreateWithoutOrdersInput, CustomerUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutOrdersInput
+    upsert?: CustomerUpsertWithoutOrdersInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutOrdersInput, CustomerUpdateWithoutOrdersInput>, CustomerUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type OrderItemUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutOrderInput | OrderItemUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: OrderItemCreateManyOrderInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutOrderInput | OrderItemUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutOrderInput | OrderItemUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutOrderInput | OrderItemUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: OrderItemCreateManyOrderInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutOrderInput | OrderItemUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutOrderInput | OrderItemUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
+  export type OrderCreateNestedOneWithoutItemsInput = {
+    create?: XOR<OrderCreateWithoutItemsInput, OrderUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutItemsInput
+    connect?: OrderWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutOrderItemInput = {
+    create?: XOR<ProductCreateWithoutOrderItemInput, ProductUncheckedCreateWithoutOrderItemInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutOrderItemInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type ProductVariantCreateNestedOneWithoutOrderItemInput = {
+    create?: XOR<ProductVariantCreateWithoutOrderItemInput, ProductVariantUncheckedCreateWithoutOrderItemInput>
+    connectOrCreate?: ProductVariantCreateOrConnectWithoutOrderItemInput
+    connect?: ProductVariantWhereUniqueInput
+  }
+
+  export type OrderUpdateOneRequiredWithoutItemsNestedInput = {
+    create?: XOR<OrderCreateWithoutItemsInput, OrderUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutItemsInput
+    upsert?: OrderUpsertWithoutItemsInput
+    connect?: OrderWhereUniqueInput
+    update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutItemsInput, OrderUpdateWithoutItemsInput>, OrderUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type ProductUpdateOneRequiredWithoutOrderItemNestedInput = {
+    create?: XOR<ProductCreateWithoutOrderItemInput, ProductUncheckedCreateWithoutOrderItemInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutOrderItemInput
+    upsert?: ProductUpsertWithoutOrderItemInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOrderItemInput, ProductUpdateWithoutOrderItemInput>, ProductUncheckedUpdateWithoutOrderItemInput>
+  }
+
+  export type ProductVariantUpdateOneRequiredWithoutOrderItemNestedInput = {
+    create?: XOR<ProductVariantCreateWithoutOrderItemInput, ProductVariantUncheckedCreateWithoutOrderItemInput>
+    connectOrCreate?: ProductVariantCreateOrConnectWithoutOrderItemInput
+    upsert?: ProductVariantUpsertWithoutOrderItemInput
+    connect?: ProductVariantWhereUniqueInput
+    update?: XOR<XOR<ProductVariantUpdateToOneWithWhereWithoutOrderItemInput, ProductVariantUpdateWithoutOrderItemInput>, ProductVariantUncheckedUpdateWithoutOrderItemInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -11137,6 +18582,182 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumCustomerStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CustomerStatus | EnumCustomerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCustomerStatusFilter<$PrismaModel> | $Enums.CustomerStatus
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCustomerStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CustomerStatus | EnumCustomerStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CustomerStatus[] | ListEnumCustomerStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCustomerStatusWithAggregatesFilter<$PrismaModel> | $Enums.CustomerStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCustomerStatusFilter<$PrismaModel>
+    _max?: NestedEnumCustomerStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
+
+  export type NestedEnumAddressTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.AddressType | EnumAddressTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAddressTypeNullableFilter<$PrismaModel> | $Enums.AddressType | null
+  }
+
+  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAddressTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AddressType | EnumAddressTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AddressType[] | ListEnumAddressTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAddressTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.AddressType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumAddressTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumAddressTypeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOrderStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
+  }
+
+  export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
+  }
+
+  export type NestedEnumPaymentMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentMethod | EnumPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentMethodFilter<$PrismaModel> | $Enums.PaymentMethod
+  }
+
+  export type NestedEnumShippingCarrierNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShippingCarrier | EnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumShippingCarrierNullableFilter<$PrismaModel> | $Enums.ShippingCarrier | null
+  }
+
+  export type NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrderStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrderStatusFilter<$PrismaModel>
+    _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPaymentMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentMethod | EnumPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentMethodWithAggregatesFilter<$PrismaModel> | $Enums.PaymentMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentMethodFilter<$PrismaModel>
+    _max?: NestedEnumPaymentMethodFilter<$PrismaModel>
+  }
+
+  export type NestedEnumShippingCarrierNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShippingCarrier | EnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ShippingCarrier[] | ListEnumShippingCarrierFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumShippingCarrierNullableWithAggregatesFilter<$PrismaModel> | $Enums.ShippingCarrier | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumShippingCarrierNullableFilter<$PrismaModel>
+    _max?: NestedEnumShippingCarrierNullableFilter<$PrismaModel>
+  }
+
   export type CategoryCreateWithoutChildrenInput = {
     id?: string
     created_at?: Date | string
@@ -11211,6 +18832,7 @@ export namespace Prisma {
     related_products?: ProductCreaterelated_productsInput | string[]
     variants?: ProductVariantCreateNestedManyWithoutProductInput
     attributes?: ProductAttributeCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutCategoryInput = {
@@ -11228,6 +18850,7 @@ export namespace Prisma {
     related_products?: ProductCreaterelated_productsInput | string[]
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
     attributes?: ProductAttributeUncheckedCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCategoryInput = {
@@ -11377,6 +19000,7 @@ export namespace Prisma {
     image_url?: string | null
     barcode?: string | null
     attribute_values?: AttributeValueCreateNestedManyWithoutVariantsInput
+    OrderItem?: OrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateWithoutProductInput = {
@@ -11392,6 +19016,7 @@ export namespace Prisma {
     image_url?: string | null
     barcode?: string | null
     attribute_values?: AttributeValueUncheckedCreateNestedManyWithoutVariantsInput
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -11427,6 +19052,44 @@ export namespace Prisma {
 
   export type ProductAttributeCreateManyProductInputEnvelope = {
     data: ProductAttributeCreateManyProductInput | ProductAttributeCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrderItemCreateWithoutProductInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+    order: OrderCreateNestedOneWithoutItemsInput
+    variant: ProductVariantCreateNestedOneWithoutOrderItemInput
+  }
+
+  export type OrderItemUncheckedCreateWithoutProductInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    order_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemCreateOrConnectWithoutProductInput = {
+    where: OrderItemWhereUniqueInput
+    create: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput>
+  }
+
+  export type OrderItemCreateManyProductInputEnvelope = {
+    data: OrderItemCreateManyProductInput | OrderItemCreateManyProductInput[]
     skipDuplicates?: boolean
   }
 
@@ -11524,6 +19187,40 @@ export namespace Prisma {
     attribute_id?: StringFilter<"ProductAttribute"> | string
   }
 
+  export type OrderItemUpsertWithWhereUniqueWithoutProductInput = {
+    where: OrderItemWhereUniqueInput
+    update: XOR<OrderItemUpdateWithoutProductInput, OrderItemUncheckedUpdateWithoutProductInput>
+    create: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput>
+  }
+
+  export type OrderItemUpdateWithWhereUniqueWithoutProductInput = {
+    where: OrderItemWhereUniqueInput
+    data: XOR<OrderItemUpdateWithoutProductInput, OrderItemUncheckedUpdateWithoutProductInput>
+  }
+
+  export type OrderItemUpdateManyWithWhereWithoutProductInput = {
+    where: OrderItemScalarWhereInput
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type OrderItemScalarWhereInput = {
+    AND?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+    OR?: OrderItemScalarWhereInput[]
+    NOT?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+    id?: StringFilter<"OrderItem"> | string
+    created_at?: DateTimeFilter<"OrderItem"> | Date | string
+    updated_at?: DateTimeFilter<"OrderItem"> | Date | string
+    order_id?: StringFilter<"OrderItem"> | string
+    product_id?: StringFilter<"OrderItem"> | string
+    variant_id?: StringFilter<"OrderItem"> | string
+    quantity?: IntFilter<"OrderItem"> | number
+    price_at_purchase?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFilter<"OrderItem"> | string
+    variant_attributes?: JsonFilter<"OrderItem">
+    refunded_quantity?: IntNullableFilter<"OrderItem"> | number | null
+    refund_amount?: DecimalNullableFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string | null
+  }
+
   export type ProductCreateWithoutVariantsInput = {
     id?: string
     created_at?: Date | string
@@ -11539,6 +19236,7 @@ export namespace Prisma {
     related_products?: ProductCreaterelated_productsInput | string[]
     category: CategoryCreateNestedOneWithoutProductsInput
     attributes?: ProductAttributeCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutVariantsInput = {
@@ -11556,6 +19254,7 @@ export namespace Prisma {
     slug?: string | null
     related_products?: ProductCreaterelated_productsInput | string[]
     attributes?: ProductAttributeUncheckedCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutVariantsInput = {
@@ -11588,6 +19287,44 @@ export namespace Prisma {
     create: XOR<AttributeValueCreateWithoutVariantsInput, AttributeValueUncheckedCreateWithoutVariantsInput>
   }
 
+  export type OrderItemCreateWithoutVariantInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+    order: OrderCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOrderItemInput
+  }
+
+  export type OrderItemUncheckedCreateWithoutVariantInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    order_id: string
+    product_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemCreateOrConnectWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    create: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type OrderItemCreateManyVariantInputEnvelope = {
+    data: OrderItemCreateManyVariantInput | OrderItemCreateManyVariantInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProductUpsertWithoutVariantsInput = {
     update: XOR<ProductUpdateWithoutVariantsInput, ProductUncheckedUpdateWithoutVariantsInput>
     create: XOR<ProductCreateWithoutVariantsInput, ProductUncheckedCreateWithoutVariantsInput>
@@ -11614,6 +19351,7 @@ export namespace Prisma {
     related_products?: ProductUpdaterelated_productsInput | string[]
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     attributes?: ProductAttributeUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutVariantsInput = {
@@ -11631,6 +19369,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     related_products?: ProductUpdaterelated_productsInput | string[]
     attributes?: ProductAttributeUncheckedUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type AttributeValueUpsertWithWhereUniqueWithoutVariantsInput = {
@@ -11661,6 +19400,22 @@ export namespace Prisma {
     display_order?: IntNullableFilter<"AttributeValue"> | number | null
   }
 
+  export type OrderItemUpsertWithWhereUniqueWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    update: XOR<OrderItemUpdateWithoutVariantInput, OrderItemUncheckedUpdateWithoutVariantInput>
+    create: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type OrderItemUpdateWithWhereUniqueWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    data: XOR<OrderItemUpdateWithoutVariantInput, OrderItemUncheckedUpdateWithoutVariantInput>
+  }
+
+  export type OrderItemUpdateManyWithWhereWithoutVariantInput = {
+    where: OrderItemScalarWhereInput
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyWithoutVariantInput>
+  }
+
   export type ProductCreateWithoutAttributesInput = {
     id?: string
     created_at?: Date | string
@@ -11676,6 +19431,7 @@ export namespace Prisma {
     related_products?: ProductCreaterelated_productsInput | string[]
     category: CategoryCreateNestedOneWithoutProductsInput
     variants?: ProductVariantCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutAttributesInput = {
@@ -11693,6 +19449,7 @@ export namespace Prisma {
     slug?: string | null
     related_products?: ProductCreaterelated_productsInput | string[]
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutAttributesInput = {
@@ -11774,6 +19531,7 @@ export namespace Prisma {
     related_products?: ProductUpdaterelated_productsInput | string[]
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutAttributesInput = {
@@ -11791,6 +19549,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     related_products?: ProductUpdaterelated_productsInput | string[]
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type AttributeUpsertWithoutProductsInput = {
@@ -11962,6 +19721,7 @@ export namespace Prisma {
     image_url?: string | null
     barcode?: string | null
     product: ProductCreateNestedOneWithoutVariantsInput
+    OrderItem?: OrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateWithoutAttribute_valuesInput = {
@@ -11977,6 +19737,7 @@ export namespace Prisma {
     size: JsonNullValueInput | InputJsonValue
     image_url?: string | null
     barcode?: string | null
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantCreateOrConnectWithoutAttribute_valuesInput = {
@@ -12066,6 +19827,673 @@ export namespace Prisma {
     data: XOR<ProductAttributeUpdateManyMutationInput, ProductAttributeUncheckedUpdateManyWithoutValuesInput>
   }
 
+  export type AddressCreateWithoutCustomerInput = {
+    id?: string
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default?: boolean | null
+    type?: $Enums.AddressType | null
+  }
+
+  export type AddressUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default?: boolean | null
+    type?: $Enums.AddressType | null
+  }
+
+  export type AddressCreateOrConnectWithoutCustomerInput = {
+    where: AddressWhereUniqueInput
+    create: XOR<AddressCreateWithoutCustomerInput, AddressUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type AddressCreateManyCustomerInputEnvelope = {
+    data: AddressCreateManyCustomerInput | AddressCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrderCreateWithoutCustomerInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutCustomerInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type OrderCreateManyCustomerInputEnvelope = {
+    data: OrderCreateManyCustomerInput | OrderCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AddressUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: AddressWhereUniqueInput
+    update: XOR<AddressUpdateWithoutCustomerInput, AddressUncheckedUpdateWithoutCustomerInput>
+    create: XOR<AddressCreateWithoutCustomerInput, AddressUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type AddressUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: AddressWhereUniqueInput
+    data: XOR<AddressUpdateWithoutCustomerInput, AddressUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type AddressUpdateManyWithWhereWithoutCustomerInput = {
+    where: AddressScalarWhereInput
+    data: XOR<AddressUpdateManyMutationInput, AddressUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type AddressScalarWhereInput = {
+    AND?: AddressScalarWhereInput | AddressScalarWhereInput[]
+    OR?: AddressScalarWhereInput[]
+    NOT?: AddressScalarWhereInput | AddressScalarWhereInput[]
+    id?: StringFilter<"Address"> | string
+    customer_id?: StringNullableFilter<"Address"> | string | null
+    recipient_name?: StringFilter<"Address"> | string
+    street?: StringFilter<"Address"> | string
+    city?: StringFilter<"Address"> | string
+    state?: StringFilter<"Address"> | string
+    postal_code?: StringFilter<"Address"> | string
+    country?: StringFilter<"Address"> | string
+    contact_number?: StringFilter<"Address"> | string
+    is_default?: BoolNullableFilter<"Address"> | boolean | null
+    type?: EnumAddressTypeNullableFilter<"Address"> | $Enums.AddressType | null
+  }
+
+  export type OrderUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: OrderWhereUniqueInput
+    update: XOR<OrderUpdateWithoutCustomerInput, OrderUncheckedUpdateWithoutCustomerInput>
+    create: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type OrderUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: OrderWhereUniqueInput
+    data: XOR<OrderUpdateWithoutCustomerInput, OrderUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type OrderUpdateManyWithWhereWithoutCustomerInput = {
+    where: OrderScalarWhereInput
+    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type OrderScalarWhereInput = {
+    AND?: OrderScalarWhereInput | OrderScalarWhereInput[]
+    OR?: OrderScalarWhereInput[]
+    NOT?: OrderScalarWhereInput | OrderScalarWhereInput[]
+    id?: StringFilter<"Order"> | string
+    created_at?: DateTimeFilter<"Order"> | Date | string
+    updated_at?: DateTimeFilter<"Order"> | Date | string
+    customer_id?: StringNullableFilter<"Order"> | string | null
+    status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
+    total_amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonFilter<"Order">
+    billing_address?: JsonNullableFilter<"Order">
+    payment_status?: EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
+    shipping_cost?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalNullableFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: StringNullableFilter<"Order"> | string | null
+    carrier?: EnumShippingCarrierNullableFilter<"Order"> | $Enums.ShippingCarrier | null
+    notes?: StringNullableFilter<"Order"> | string | null
+    estimated_delivery?: DateTimeNullableFilter<"Order"> | Date | string | null
+    coupon_code?: StringNullableFilter<"Order"> | string | null
+  }
+
+  export type CustomerCreateWithoutAddressesInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutAddressesInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutAddressesInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutAddressesInput, CustomerUncheckedCreateWithoutAddressesInput>
+  }
+
+  export type CustomerUpsertWithoutAddressesInput = {
+    update: XOR<CustomerUpdateWithoutAddressesInput, CustomerUncheckedUpdateWithoutAddressesInput>
+    create: XOR<CustomerCreateWithoutAddressesInput, CustomerUncheckedCreateWithoutAddressesInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutAddressesInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutAddressesInput, CustomerUncheckedUpdateWithoutAddressesInput>
+  }
+
+  export type CustomerUpdateWithoutAddressesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutAddressesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerCreateWithoutOrdersInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+    addresses?: AddressCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutOrdersInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    first_name: string
+    last_name: string
+    name: string
+    email: string
+    cognito_id: string
+    phone?: string | null
+    is_guest?: boolean
+    status?: $Enums.CustomerStatus
+    last_login?: Date | string | null
+    total_spent?: Decimal | DecimalJsLike | number | string | null
+    order_count?: number | null
+    notes?: string | null
+    addresses?: AddressUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutOrdersInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutOrdersInput, CustomerUncheckedCreateWithoutOrdersInput>
+  }
+
+  export type OrderItemCreateWithoutOrderInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+    product: ProductCreateNestedOneWithoutOrderItemInput
+    variant: ProductVariantCreateNestedOneWithoutOrderItemInput
+  }
+
+  export type OrderItemUncheckedCreateWithoutOrderInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    product_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemCreateOrConnectWithoutOrderInput = {
+    where: OrderItemWhereUniqueInput
+    create: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput>
+  }
+
+  export type OrderItemCreateManyOrderInputEnvelope = {
+    data: OrderItemCreateManyOrderInput | OrderItemCreateManyOrderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CustomerUpsertWithoutOrdersInput = {
+    update: XOR<CustomerUpdateWithoutOrdersInput, CustomerUncheckedUpdateWithoutOrdersInput>
+    create: XOR<CustomerCreateWithoutOrdersInput, CustomerUncheckedCreateWithoutOrdersInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutOrdersInput, CustomerUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type CustomerUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addresses?: AddressUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cognito_id?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    is_guest?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumCustomerStatusFieldUpdateOperationsInput | $Enums.CustomerStatus
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    total_spent?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order_count?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addresses?: AddressUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {
+    where: OrderItemWhereUniqueInput
+    update: XOR<OrderItemUpdateWithoutOrderInput, OrderItemUncheckedUpdateWithoutOrderInput>
+    create: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput>
+  }
+
+  export type OrderItemUpdateWithWhereUniqueWithoutOrderInput = {
+    where: OrderItemWhereUniqueInput
+    data: XOR<OrderItemUpdateWithoutOrderInput, OrderItemUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type OrderItemUpdateManyWithWhereWithoutOrderInput = {
+    where: OrderItemScalarWhereInput
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyWithoutOrderInput>
+  }
+
+  export type OrderCreateWithoutItemsInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+    customer?: CustomerCreateNestedOneWithoutOrdersInput
+  }
+
+  export type OrderUncheckedCreateWithoutItemsInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    customer_id?: string | null
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+  }
+
+  export type OrderCreateOrConnectWithoutItemsInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutItemsInput, OrderUncheckedCreateWithoutItemsInput>
+  }
+
+  export type ProductCreateWithoutOrderItemInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    name: string
+    description: string
+    thumbnail_image_url: string
+    images_url?: ProductCreateimages_urlInput | string[]
+    brand_id?: string | null
+    meta_title?: string | null
+    meta_description?: string | null
+    slug?: string | null
+    related_products?: ProductCreaterelated_productsInput | string[]
+    category: CategoryCreateNestedOneWithoutProductsInput
+    variants?: ProductVariantCreateNestedManyWithoutProductInput
+    attributes?: ProductAttributeCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutOrderItemInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    name: string
+    description: string
+    category_id: string
+    thumbnail_image_url: string
+    images_url?: ProductCreateimages_urlInput | string[]
+    brand_id?: string | null
+    meta_title?: string | null
+    meta_description?: string | null
+    slug?: string | null
+    related_products?: ProductCreaterelated_productsInput | string[]
+    variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
+    attributes?: ProductAttributeUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutOrderItemInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutOrderItemInput, ProductUncheckedCreateWithoutOrderItemInput>
+  }
+
+  export type ProductVariantCreateWithoutOrderItemInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    sku: string
+    price: Decimal | DecimalJsLike | number | string
+    sale_price?: Decimal | DecimalJsLike | number | string | null
+    stock: number
+    status?: $Enums.ProductVariantStatus
+    size: JsonNullValueInput | InputJsonValue
+    image_url?: string | null
+    barcode?: string | null
+    product: ProductCreateNestedOneWithoutVariantsInput
+    attribute_values?: AttributeValueCreateNestedManyWithoutVariantsInput
+  }
+
+  export type ProductVariantUncheckedCreateWithoutOrderItemInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    product_id: string
+    sku: string
+    price: Decimal | DecimalJsLike | number | string
+    sale_price?: Decimal | DecimalJsLike | number | string | null
+    stock: number
+    status?: $Enums.ProductVariantStatus
+    size: JsonNullValueInput | InputJsonValue
+    image_url?: string | null
+    barcode?: string | null
+    attribute_values?: AttributeValueUncheckedCreateNestedManyWithoutVariantsInput
+  }
+
+  export type ProductVariantCreateOrConnectWithoutOrderItemInput = {
+    where: ProductVariantWhereUniqueInput
+    create: XOR<ProductVariantCreateWithoutOrderItemInput, ProductVariantUncheckedCreateWithoutOrderItemInput>
+  }
+
+  export type OrderUpsertWithoutItemsInput = {
+    update: XOR<OrderUpdateWithoutItemsInput, OrderUncheckedUpdateWithoutItemsInput>
+    create: XOR<OrderCreateWithoutItemsInput, OrderUncheckedCreateWithoutItemsInput>
+    where?: OrderWhereInput
+  }
+
+  export type OrderUpdateToOneWithWhereWithoutItemsInput = {
+    where?: OrderWhereInput
+    data: XOR<OrderUpdateWithoutItemsInput, OrderUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type OrderUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+    customer?: CustomerUpdateOneWithoutOrdersNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProductUpsertWithoutOrderItemInput = {
+    update: XOR<ProductUpdateWithoutOrderItemInput, ProductUncheckedUpdateWithoutOrderItemInput>
+    create: XOR<ProductCreateWithoutOrderItemInput, ProductUncheckedCreateWithoutOrderItemInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutOrderItemInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutOrderItemInput, ProductUncheckedUpdateWithoutOrderItemInput>
+  }
+
+  export type ProductUpdateWithoutOrderItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    thumbnail_image_url?: StringFieldUpdateOperationsInput | string
+    images_url?: ProductUpdateimages_urlInput | string[]
+    brand_id?: NullableStringFieldUpdateOperationsInput | string | null
+    meta_title?: NullableStringFieldUpdateOperationsInput | string | null
+    meta_description?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    related_products?: ProductUpdaterelated_productsInput | string[]
+    category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
+    variants?: ProductVariantUpdateManyWithoutProductNestedInput
+    attributes?: ProductAttributeUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutOrderItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    category_id?: StringFieldUpdateOperationsInput | string
+    thumbnail_image_url?: StringFieldUpdateOperationsInput | string
+    images_url?: ProductUpdateimages_urlInput | string[]
+    brand_id?: NullableStringFieldUpdateOperationsInput | string | null
+    meta_title?: NullableStringFieldUpdateOperationsInput | string | null
+    meta_description?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    related_products?: ProductUpdaterelated_productsInput | string[]
+    variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+    attributes?: ProductAttributeUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductVariantUpsertWithoutOrderItemInput = {
+    update: XOR<ProductVariantUpdateWithoutOrderItemInput, ProductVariantUncheckedUpdateWithoutOrderItemInput>
+    create: XOR<ProductVariantCreateWithoutOrderItemInput, ProductVariantUncheckedCreateWithoutOrderItemInput>
+    where?: ProductVariantWhereInput
+  }
+
+  export type ProductVariantUpdateToOneWithWhereWithoutOrderItemInput = {
+    where?: ProductVariantWhereInput
+    data: XOR<ProductVariantUpdateWithoutOrderItemInput, ProductVariantUncheckedUpdateWithoutOrderItemInput>
+  }
+
+  export type ProductVariantUpdateWithoutOrderItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    sku?: StringFieldUpdateOperationsInput | string
+    price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
+    size?: JsonNullValueInput | InputJsonValue
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
+    attribute_values?: AttributeValueUpdateManyWithoutVariantsNestedInput
+  }
+
+  export type ProductVariantUncheckedUpdateWithoutOrderItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    sku?: StringFieldUpdateOperationsInput | string
+    price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sale_price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    stock?: IntFieldUpdateOperationsInput | number
+    status?: EnumProductVariantStatusFieldUpdateOperationsInput | $Enums.ProductVariantStatus
+    size?: JsonNullValueInput | InputJsonValue
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    attribute_values?: AttributeValueUncheckedUpdateManyWithoutVariantsNestedInput
+  }
+
   export type CategoryCreateManyParentInput = {
     id?: string
     created_at?: Date | string
@@ -12136,6 +20564,7 @@ export namespace Prisma {
     related_products?: ProductUpdaterelated_productsInput | string[]
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
     attributes?: ProductAttributeUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCategoryInput = {
@@ -12153,6 +20582,7 @@ export namespace Prisma {
     related_products?: ProductUpdaterelated_productsInput | string[]
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
     attributes?: ProductAttributeUncheckedUpdateManyWithoutProductNestedInput
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutCategoryInput = {
@@ -12191,6 +20621,20 @@ export namespace Prisma {
     attribute_id: string
   }
 
+  export type OrderItemCreateManyProductInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    order_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
   export type ProductVariantUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12204,6 +20648,7 @@ export namespace Prisma {
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     attribute_values?: AttributeValueUpdateManyWithoutVariantsNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateWithoutProductInput = {
@@ -12219,6 +20664,7 @@ export namespace Prisma {
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     attribute_values?: AttributeValueUncheckedUpdateManyWithoutVariantsNestedInput
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -12258,6 +20704,62 @@ export namespace Prisma {
     attribute_id?: StringFieldUpdateOperationsInput | string
   }
 
+  export type OrderItemUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    variant?: ProductVariantUpdateOneRequiredWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    order_id?: StringFieldUpdateOperationsInput | string
+    variant_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    order_id?: StringFieldUpdateOperationsInput | string
+    variant_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemCreateManyVariantInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    order_id: string
+    product_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
   export type AttributeValueUpdateWithoutVariantsInput = {
     id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12285,6 +20787,48 @@ export namespace Prisma {
     attribute_id?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
     display_order?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type OrderItemUpdateWithoutVariantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateWithoutVariantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    order_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutVariantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    order_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
   }
 
   export type AttributeValueUpdateWithoutProductAttributesInput = {
@@ -12395,6 +20939,7 @@ export namespace Prisma {
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateWithoutAttribute_valuesInput = {
@@ -12410,6 +20955,7 @@ export namespace Prisma {
     size?: JsonNullValueInput | InputJsonValue
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateManyWithoutAttribute_valuesInput = {
@@ -12449,6 +20995,196 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     product_id?: StringFieldUpdateOperationsInput | string
     attribute_id?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AddressCreateManyCustomerInput = {
+    id?: string
+    recipient_name: string
+    street: string
+    city: string
+    state: string
+    postal_code: string
+    country: string
+    contact_number: string
+    is_default?: boolean | null
+    type?: $Enums.AddressType | null
+  }
+
+  export type OrderCreateManyCustomerInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    status?: $Enums.OrderStatus
+    total_amount: Decimal | DecimalJsLike | number | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: $Enums.PaymentStatus
+    payment_method: $Enums.PaymentMethod
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    tax_amount: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string | null
+    tracking_number?: string | null
+    carrier?: $Enums.ShippingCarrier | null
+    notes?: string | null
+    estimated_delivery?: Date | string | null
+    coupon_code?: string | null
+  }
+
+  export type AddressUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+  }
+
+  export type AddressUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+  }
+
+  export type AddressUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recipient_name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    state?: StringFieldUpdateOperationsInput | string
+    postal_code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    contact_number?: StringFieldUpdateOperationsInput | string
+    is_default?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    type?: NullableEnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType | null
+  }
+
+  export type OrderUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    billing_address?: NullableJsonNullValueInput | InputJsonValue
+    payment_status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    payment_method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tax_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    carrier?: NullableEnumShippingCarrierFieldUpdateOperationsInput | $Enums.ShippingCarrier | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    estimated_delivery?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coupon_code?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OrderItemCreateManyOrderInput = {
+    id?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    product_id: string
+    variant_id: string
+    quantity: number
+    price_at_purchase: Decimal | DecimalJsLike | number | string
+    variant_sku: string
+    variant_attributes: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: number | null
+    refund_amount?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+    variant?: ProductVariantUpdateOneRequiredWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    variant_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    variant_id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    price_at_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    variant_sku?: StringFieldUpdateOperationsInput | string
+    variant_attributes?: JsonNullValueInput | InputJsonValue
+    refunded_quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    refund_amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
   }
 
 
