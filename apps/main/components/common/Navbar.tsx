@@ -2,12 +2,12 @@
 
 import {
   EllipsisVerticalIcon,
+  LogInIcon,
   LogOutIcon,
   MailIcon,
   MenuIcon,
   PhoneIcon,
   SearchIcon,
-  Settings2Icon,
   ShoppingBagIcon,
   UserRoundIcon,
 } from "lucide-react";
@@ -56,6 +56,10 @@ import {
 } from "@/components/ui/card";
 import useDataStore from "@/lib/store/dataStore";
 import { CartItemCard } from "./CartItemCard";
+import useUserProfileStore from "@/lib/store/user-profile-store";
+import { cn } from "@/lib/utils";
+import { signOut } from "aws-amplify/auth";
+import { toast } from "sonner";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -72,13 +76,21 @@ const Navbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { products: productsApi, fetchProducts } = useDataStore();
   const { cart, removeFromCart, updateQuantity } = useCartStore();
+  const checkAuthStatus = useUserProfileStore((state) => state.checkAuthStatus);
+  const isAuthenticated = useUserProfileStore((state) => state.isAuthenticated);
+  // Add loading state at the top of the component
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   // --- Effect to fetch base data ---
   useEffect(() => {
     if (!productsApi || productsApi.length === 0) {
       fetchProducts();
     }
-  }, [productsApi, fetchProducts]);
+    // Check authentication status on initial load
+    if (!isAuthenticated) {
+      checkAuthStatus();
+    }
+  }, [productsApi, fetchProducts, checkAuthStatus, isAuthenticated]);
 
   const products = useMemo(() => {
     if (!productsApi) {
@@ -100,6 +112,37 @@ const Navbar = () => {
     }
     return null; // Not a product details page with a category in the URL
   }, [pathname]);
+
+  // Update the handleSignOut function
+  const handleSignOut = async () => {
+    try {
+      setIsSigningOut(true);
+
+      // Sign out from Cognito
+      await signOut();
+
+      // Reset auth state using your store
+      useUserProfileStore.getState().setAuthStatus(false);
+      useUserProfileStore.getState().setUser(null);
+
+      // Clear any other relevant stores (cart, etc)
+      useCartStore.getState().clearCart();
+
+      // Show success message
+      toast.success("Signed out successfully");
+
+      // Redirect to home page
+      router.push("/");
+    } catch (error) {
+      console.error("Sign out error:", error);
+      toast.error("Failed to sign out", {
+        description:
+          error instanceof Error ? error.message : "Please try again",
+      });
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <nav className="bg-background sticky top-0 z-50 text-black">
@@ -233,7 +276,14 @@ const Navbar = () => {
 
                       <DropdownMenuSeparator />
 
-                      <DropdownMenuItem>Profile</DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          router.push("/profile");
+                        }}
+                      >
+                        Profile
+                      </DropdownMenuItem>
 
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
@@ -378,41 +428,51 @@ const Navbar = () => {
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar> */}
-              <UserRoundIcon className='hidden sm:block cursor-pointer'/>
+              <div className={cn(isAuthenticated ? "bg-green-700/20" : "bg-red-500/20","relative border rounded-md p-1 cursor-pointer hover:bg-gray-100 transition-colors")}>
+                <UserRoundIcon className="hidden sm:block cursor-pointer" />
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="font-semibold">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push("/");
-                }}
-              >
-                <UserRoundIcon />
-                Profile
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push("/login");
-                }}
-              >
-                <LogOutIcon />
-                Log-In
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push("/login");
-                }}
-              >
-                <Settings2Icon />
-                Settings
-              </DropdownMenuItem>
+              {isAuthenticated ? (
+                <>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      router.push("/profile");
+                    }}
+                  >
+                    <UserRoundIcon />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={handleSignOut}
+                  >
+                    {isSigningOut ? (
+                      <span className="animate-spin">
+                        <LogOutIcon className="inline" />
+                      </span>
+                    ) : (
+                      <span className="inline">
+                        <LogOutIcon className="inline" />
+                      </span>
+                    )}
+                    Log Out
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push("/login");
+                  }}
+                >
+                  <LogInIcon />
+                  Log In
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

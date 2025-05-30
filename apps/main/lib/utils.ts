@@ -58,3 +58,20 @@ export const generateHash = (value: string): string => {
 
   return createHash('sha256').update(value).digest('hex');
 };
+
+export function formatDate(date: Date | undefined): string {
+  if (!date) return "";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
+export function formatCurrency(amount: number | undefined): string {
+  if (amount === undefined) return "";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+}

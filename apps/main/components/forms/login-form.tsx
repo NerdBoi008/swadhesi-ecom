@@ -20,10 +20,14 @@ import { Checkbox } from "../ui/checkbox";
 import { GoogleIcon } from "@/public/icons/google-logo-color";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { customerSignInAction } from "@repo/db";
+import { fetchUserProfile } from "@repo/db";
 import { useRouter } from "next/navigation";
-import useAuthStore from "@/lib/store/userAuthStore";
 import useUserProfileStore from "@/lib/store/user-profile-store";
+import {
+  fetchAuthSession,
+  signIn,
+  signOut,
+} from "aws-amplify/auth";
 
 const logInFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -49,8 +53,8 @@ export function LoginForm({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const user = useAuthStore((state) => state.user);
-  const checkAuthStatus = useUserProfileStore((state) => state.checkAuthStatus);
+  const setUser = useUserProfileStore((state) => state.setUser);
+  const setAuthStatus = useUserProfileStore((state) => state.setAuthStatus);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(logInFormSchema),
@@ -63,34 +67,93 @@ export function LoginForm({
 
   async function onSubmit(values: LoginFormValues) {
     startTransition(async () => {
-      const result = await customerSignInAction(values);
-
-      if (result.success) {
-        toast("Sign In Successful!", {
-          description: result.message,
+      try {
+        const { nextStep } = await signIn({
+          username: values.email,
+          password: values.password,
         });
-        form.reset();
-        // After successful server-side sign-in, revalidate auth status
-        await checkAuthStatus(); // Ensure profile data is fetched
-        router.push("/"); // Redirect to home/dashboard
-      } else {
-        if (result.codeRequired && result.email) {
-          // Redirect to confirmation page if account is not confirmed
-          toast.warning(result.message, {
+
+        if (nextStep.signInStep === "DONE") {
+          toast("Sign In Successful!", { description: "Welcome back!" });
+          form.reset();
+
+          const idToken = (
+            await fetchAuthSession()
+          ).tokens?.idToken?.toString();
+
+          if (!idToken) {
+            throw new Error("Could not retrieve ID token after sign in.");
+          }
+
+          const profileResult = await fetchUserProfile(idToken); // Pass headers to server action
+
+          if (profileResult.success && profileResult.user) {
+            const transformedUser = {
+              ...profileResult.user,
+              phone:
+                profileResult.user.phone === null
+                  ? undefined
+                  : profileResult.user.phone,
+              notes:
+                profileResult.user.notes === null
+                  ? undefined
+                  : profileResult.user.notes,
+              last_login:
+                profileResult.user.last_login === null
+                  ? undefined
+                  : profileResult.user.last_login,
+              status:
+                typeof profileResult.user.status === "string"
+                  ? (profileResult.user.status.toLowerCase() as
+                      | "active"
+                      | "inactive"
+                      | "banned")
+                  : profileResult.user.status,
+              total_spent:
+                profileResult.user.total_spent === null
+                  ? undefined
+                  : typeof profileResult.user.total_spent === "object" &&
+                      "toNumber" in profileResult.user.total_spent
+                    ? profileResult.user.total_spent.toNumber()
+                    : Number(profileResult.user.total_spent),
+              order_count:
+                profileResult.user.order_count === null
+                  ? undefined
+                  : profileResult.user.order_count,
+            };
+            setUser(transformedUser);
+            setAuthStatus(true);
+            router.push("/");
+          } else {
+            // Handle failure to fetch profile after sign-in
+            toast.error("Failed to load profile", {
+              description: profileResult.message,
+            });
+            // You might want to sign out here if profile fetch fails
+            await signOut();
+          }
+        } else if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
+          toast.warning("Account not confirmed.", {
             description: "Please confirm your account to sign in.",
           });
           router.push(
-            `confirm-signup?email=${encodeURIComponent(result.email)}`
+            `confirm-signup?email=${encodeURIComponent(values.email)}`
           );
         } else {
           toast.error("Sign In Failed", {
-            description: result.message,
-          });
-          form.setError("root.serverError", {
-            type: "manual",
-            message: result.message,
+            description: `Additional steps required: ${nextStep.signInStep}`,
           });
         }
+      } catch (error: any) {
+        console.error("Client-side Sign In Error:", error);
+        toast.error("Sign In Failed", {
+          description:
+            error.message || "An unexpected error occurred during sign in.",
+        });
+        form.setError("root.serverError", {
+          type: "manual",
+          message: error.message,
+        });
       }
     });
   }

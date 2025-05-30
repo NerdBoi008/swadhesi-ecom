@@ -46,12 +46,6 @@ export { generateBucketKey, extractKeyFromUrl } from "./util/bucket-utils";
 
 export {
   customerSignUpAction,
-  customerSignInAction,
-  confirmCustomerSignUpAction,
-  resendSignUpCodeAction,
-  // customerLogoutAction,
-  // customerGetProfileAction,
-  // customerUpdateProfileAction,
   fetchUserProfile,
   updateUserProfile,
   addAddress,
