@@ -102,24 +102,31 @@ export function LoginForm({
                 profileResult.user.last_login === null
                   ? undefined
                   : profileResult.user.last_login,
-              status:
-                typeof profileResult.user.status === "string"
-                  ? (profileResult.user.status.toLowerCase() as
-                      | "active"
-                      | "inactive"
-                      | "banned")
-                  : profileResult.user.status,
+              status: profileResult.user.status,
               total_spent:
                 profileResult.user.total_spent === null
                   ? undefined
                   : typeof profileResult.user.total_spent === "object" &&
                       "toNumber" in profileResult.user.total_spent
-                    ? profileResult.user.total_spent.toNumber()
+                    ? profileResult.user.total_spent
                     : Number(profileResult.user.total_spent),
               order_count:
                 profileResult.user.order_count === null
                   ? undefined
                   : profileResult.user.order_count,
+              notification_preferences: profileResult.notificationPreferences || {
+                id: "",
+                customer_id: "",
+                email: false,
+                sms: false,
+                marketing: false,
+                order_updates: false,
+                promotions: false,
+                newsletters: false,
+                feedback_requests: false,
+                account_notifications: false,
+              },
+              
             };
             setUser(transformedUser);
             setAuthStatus(true);
@@ -203,7 +210,7 @@ export function LoginForm({
               <div className="flex items-center">
                 <FormLabel>Password</FormLabel>
                 <Link
-                  href="#" // Use a real path
+                  href="/forgot-password" // Use a real path
                   className="ml-auto text-sm underline-offset-4 hover:underline"
                 >
                   Forgot your password?

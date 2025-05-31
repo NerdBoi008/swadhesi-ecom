@@ -9,7 +9,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useRouter } from 'next/navigation';
-import { buildUrl, cn } from '@/lib/utils';
+import { buildUrl } from '@/lib/utils';
 import {
     AlertDialog,
     AlertDialogAction,

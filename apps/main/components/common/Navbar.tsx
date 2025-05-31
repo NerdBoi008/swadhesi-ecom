@@ -15,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { Separator } from "../ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -78,6 +77,7 @@ const Navbar = () => {
   const { cart, removeFromCart, updateQuantity } = useCartStore();
   const checkAuthStatus = useUserProfileStore((state) => state.checkAuthStatus);
   const isAuthenticated = useUserProfileStore((state) => state.isAuthenticated);
+  const user = useUserProfileStore((state) => state.user);
   // Add loading state at the top of the component
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -233,63 +233,75 @@ const Navbar = () => {
                 <Separator className="mt-5" />
                 <p className="text-sm font-bold my-3">Quick Contact</p>
                 <div className="space-y-2">
-                  <Link href={`mailto:${supportEmail}`} className="block">
+                  <Link href={`mailto:${supportEmail}`} className="flex items-center">
                     <MailIcon className="inline mr-3 size-4.5" />
-                    {supportEmail}
+                    <p className="text-sm">{supportEmail}</p>
                   </Link>
-                  <Link href={`mailto:${supportPhone}`} className="block">
+                  <Link href={`mailto:${supportPhone}`} className="flex items-center">
                     <PhoneIcon className="inline mr-3 size-4.5" />
-                    {supportPhone}
+                    <p className="text-sm">{supportPhone}</p>
                   </Link>
                 </div>
               </div>
               <SheetFooter>
-                <div className="bg-gray-100 p-3 rounded-md flex justify-between">
+                <div className="bg-gray-100 rounded-md flex justify-between">
                   <div className="flex gap-2 items-center">
-                    {/* <Avatar className='cursor-pointer size-11'>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar> */}
                     <UserRoundIcon />
-                    <div>
-                      <p className="font-bold">{"user name"}</p>
-                      <p className="text-xs">{"you@email.com"}</p>
-                    </div>
+                    {isAuthenticated ? (
+                      <div>
+                        <p className="font-bold text-sm">{user?.name}</p>
+                        <p className="text-xs">{user?.email}</p>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Not signed in
+                      </p>
+                    )}
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger>
                       <EllipsisVerticalIcon />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>
-                        <div className="flex gap-2 items-center">
-                          <Avatar className="cursor-pointer size-11">
-                            <AvatarImage src="https://github.com/shadcn.png" />
-                            <AvatarFallback>CN</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-bold">{"user name"}</p>
-                            <p className="text-xs">{"you@email.com"}</p>
-                          </div>
-                        </div>
-                      </DropdownMenuLabel>
-
+                      <DropdownMenuLabel className="font-bold">My Account</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => {
-                          router.push("/profile");
-                        }}
-                      >
-                        Profile
-                      </DropdownMenuItem>
-
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <LogOutIcon />
-                        Log out
-                      </DropdownMenuItem>
+                      {isAuthenticated ? (
+                        <>
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onClick={() => {
+                              router.push("/profile");
+                            }}
+                          >
+                            <UserRoundIcon />
+                            Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onClick={handleSignOut}
+                          >
+                            {isSigningOut ? (
+                              <span className="animate-spin">
+                                <LogOutIcon className="inline" />
+                              </span>
+                            ) : (
+                              <span className="inline">
+                                <LogOutIcon className="inline" />
+                              </span>
+                            )}
+                            Log Out
+                          </DropdownMenuItem>
+                        </>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            router.push("/login");
+                          }}
+                        >
+                          <LogInIcon />
+                          Log In
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -428,8 +440,13 @@ const Navbar = () => {
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar> */}
-              <div className={cn(isAuthenticated ? "bg-green-700/20" : "bg-red-500/20","relative border rounded-md p-1 cursor-pointer hover:bg-gray-100 transition-colors")}>
-                <UserRoundIcon className="hidden sm:block cursor-pointer" />
+              <div
+                className={cn(
+                  isAuthenticated ? "bg-green-700/20" : "bg-red-500/20",
+                  "relative border rounded-md p-1 cursor-pointer hover:bg-gray-100 transition-colors hidden sm:block"
+                )}
+              >
+                <UserRoundIcon className="" />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="font-semibold">

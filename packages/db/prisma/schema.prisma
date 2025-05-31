@@ -10,44 +10,44 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = "postgresql://postgres.rvlnsqeskhcmpyynqxbv:Nerdboi@supabase5678@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+  provider = "postgresql"
+  url      = "postgresql://postgres.rvlnsqeskhcmpyynqxbv:Nerdboi@supabase5678@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 }
 
 model Category {
-  id            String     @id @default(uuid())
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
-  name          String
-  parent_id     String?    @map("parent_id") // Foreign key to the parent category
-  parent        Category?  @relation("CategoryChildren", fields: [parent_id], references: [id]) // Self-referencing many-to-one
-  children      Category[] @relation("CategoryChildren") // Self-referencing one-to-many
-  products      Product[]  // One-to-many relationship with Product
-  image_url     String?
-  description   String?
+  id          String     @id @default(uuid())
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  name        String
+  parent_id   String?    @map("parent_id") // Foreign key to the parent category
+  parent      Category?  @relation("CategoryChildren", fields: [parent_id], references: [id]) // Self-referencing many-to-one
+  children    Category[] @relation("CategoryChildren") // Self-referencing one-to-many
+  products    Product[] // One-to-many relationship with Product
+  image_url   String?
+  description String?
 
   @@map("categories") // Map model name to table name
 }
 
 model Product {
-  id                  String            @id @default(uuid())
-  created_at          DateTime          @default(now())
-  updated_at          DateTime          @updatedAt
+  id                  String             @id @default(uuid())
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
   name                String
   description         String
-  category_id         String            @map("category_id") // Foreign key to the Category
-  category            Category          @relation(fields: [category_id], references: [id]) // Many-to-one relationship with Category
+  category_id         String             @map("category_id") // Foreign key to the Category
+  category            Category           @relation(fields: [category_id], references: [id]) // Many-to-one relationship with Category
   thumbnail_image_url String
   images_url          String[] // Using String[] for array of URLs
-  variants            ProductVariant[]  // One-to-many relationship with ProductVariant
+  variants            ProductVariant[] // One-to-many relationship with ProductVariant
   attributes          ProductAttribute[] // One-to-many relationship with ProductAttribute
-  brand_id            String?           @map("brand_id") // Optional foreign key for Brand (if you create a Brand model)
+  brand_id            String?            @map("brand_id") // Optional foreign key for Brand (if you create a Brand model)
   // brand              Brand?            @relation(fields: [brand_id], references: [id]) // Example relation if Brand model exists
   meta_title          String?
   meta_description    String?
-  slug                String?           @unique // Slugs are typically unique
+  slug                String?            @unique // Slugs are typically unique
   related_products    String[] // Using String[] for array of related product IDs
-  OrderItem OrderItem[]
+  OrderItem           OrderItem[]
 
   @@map("products") // Map model name to table name
 }
@@ -63,34 +63,34 @@ enum ProductVariantStatus {
 }
 
 model ProductVariant {
-  id              String           @id @default(uuid())
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  product_id      String           @map("product_id") // Foreign key to the Product
-  product         Product          @relation(fields: [product_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Product
-  sku             String           @unique // SKUs are typically unique
-  price           Decimal // Use Decimal for monetary values
-  sale_price      Decimal? // Use Decimal for monetary values
-  stock           Int
-  status          ProductVariantStatus @default(ACTIVE)
-  size            Json // Store the ProductSize structure as JSON
-  image_url       String?
-  barcode         String?
-  attribute_values AttributeValue[] @relation("VariantAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
-  OrderItem OrderItem[]
+  id               String               @id @default(uuid())
+  created_at       DateTime             @default(now())
+  updated_at       DateTime             @updatedAt
+  product_id       String               @map("product_id") // Foreign key to the Product
+  product          Product              @relation(fields: [product_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Product
+  sku              String               @unique // SKUs are typically unique
+  price            Decimal // Use Decimal for monetary values
+  sale_price       Decimal? // Use Decimal for monetary values
+  stock            Int
+  status           ProductVariantStatus @default(ACTIVE)
+  size             Json // Store the ProductSize structure as JSON
+  image_url        String?
+  barcode          String?
+  attribute_values AttributeValue[]     @relation("VariantAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
+  OrderItem        OrderItem[]
 
   @@map("product_variants") // Map model name to table name
 }
 
 model ProductAttribute {
-  id            String         @id @default(uuid()) // Adding an ID for this join table equivalent
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  product_id    String         @map("product_id") // Foreign key to the Product
-  product       Product        @relation(fields: [product_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Product
-  attribute_id  String         @map("attribute_id") // Foreign key to the Attribute
-  attribute     Attribute      @relation(fields: [attribute_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Attribute
-  values        AttributeValue[] @relation("ProductAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
+  id           String           @id @default(uuid()) // Adding an ID for this join table equivalent
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  product_id   String           @map("product_id") // Foreign key to the Product
+  product      Product          @relation(fields: [product_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Product
+  attribute_id String           @map("attribute_id") // Foreign key to the Attribute
+  attribute    Attribute        @relation(fields: [attribute_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Attribute
+  values       AttributeValue[] @relation("ProductAttributeValue") // Many-to-many relationship with AttributeValue (through an implicit join table)
 
   @@unique([product_id, attribute_id]) // A product should have a unique entry for each attribute
   @@map("product_attributes") // Map model name to table name
@@ -98,11 +98,11 @@ model ProductAttribute {
 
 // e.g. Color, Size
 model Attribute {
-  id            String            @id @default(uuid())
-  created_at    DateTime          @default(now())
-  updated_at    DateTime          @updatedAt
-  name          String            @unique // Attribute names are typically unique
-  values        AttributeValue[]  // One-to-many relationship with AttributeValue
+  id            String             @id @default(uuid())
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+  name          String             @unique // Attribute names are typically unique
+  values        AttributeValue[] // One-to-many relationship with AttributeValue
   display_order Int?
   products      ProductAttribute[] // One-to-many relationship with ProductAttribute
 
@@ -111,14 +111,14 @@ model Attribute {
 
 // Values for attributes above like Red, Green, L, M, S, etc.
 model AttributeValue {
-  id              String           @id @default(uuid())
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  attribute_id    String           @map("attribute_id") // Foreign key to the Attribute
-  attribute       Attribute        @relation(fields: [attribute_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Attribute
-  value           String
-  display_order   Int?
-  variants        ProductVariant[]  @relation("VariantAttributeValue")// Many-to-many relationship with ProductVariant (through an implicit join table)
+  id                String             @id @default(uuid())
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  attribute_id      String             @map("attribute_id") // Foreign key to the Attribute
+  attribute         Attribute          @relation(fields: [attribute_id], references: [id], onDelete: Cascade) // Many-to-one relationship with Attribute
+  value             String
+  display_order     Int?
+  variants          ProductVariant[]   @relation("VariantAttributeValue") // Many-to-many relationship with ProductVariant (through an implicit join table)
   productAttributes ProductAttribute[] @relation("ProductAttributeValue") // Many-to-many relationship with ProductAttribute (through an implicit join table)
 
   @@unique([attribute_id, value]) // An attribute value is unique within its attribute
@@ -126,85 +126,104 @@ model AttributeValue {
 }
 
 model Customer {
-  id            String    @id @default(uuid())
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  first_name    String
-  last_name     String
-  name          String
-  email         String    @unique // Email should still be unique for customer records
-  cognito_id    String    @unique @map("cognito_id") // Link to Cognito User ID
-  phone         String?
-  addresses     Address[]
-  orders        Order[]
-  is_guest      Boolean   @default(false)
-  status        CustomerStatus   @default(Active) // Using String for enum in Prisma
-  last_login    DateTime?
-  total_spent   Decimal?  @default(0) // Use Decimal for monetary values
-  order_count   Int?      @default(0)
-  notes         String?
+  id                          String                   @id @default(uuid())
+  created_at                  DateTime                 @default(now())
+  updated_at                  DateTime                 @updatedAt
+  deleted_at                  DateTime?
+  first_name                  String
+  last_name                   String
+  name                        String
+  email                       String                   @unique // Email should still be unique for customer records
+  cognito_id                  String                   @unique @map("cognito_id") // Link to Cognito User ID
+  phone                       String?
+  addresses                   Address[]
+  orders                      Order[]
+  is_guest                    Boolean                  @default(false)
+  status                      CustomerStatus           @default(Active) // Using String for enum in Prisma
+  last_login                  DateTime?
+  total_spent                 Decimal?                 @default(0) // Use Decimal for monetary values
+  order_count                 Int?                     @default(0)
+  notes                       String?
+  notification_preferences    NotificationPreferences? @relation(fields: [notification_preferences_id], references: [id], onDelete: Cascade)
+  notification_preferences_id String?                  @unique @map("notification_preferences_id")
 
   @@map("customers")
 }
 
+model NotificationPreferences {
+  id                    String    @id @default(uuid())
+  customer              Customer?
+  customer_id           String    @unique @map("customer_id") // One-to-one relation, so customer_id is unique here
+  email                 Boolean   @default(true) // General email preference
+  sms                   Boolean   @default(false) // SMS notifications
+  marketing             Boolean   @default(true) // General marketing communications
+  order_updates         Boolean   @default(true) // Updates on order status
+  promotions            Boolean   @default(true) // Promotional offers
+  newsletters           Boolean   @default(true) // Newsletters
+  feedback_requests     Boolean   @default(true) // Requests for feedback
+  account_notifications Boolean   @default(true) // Essential account-related notifications (e.g., password changes)
+
+  @@map("notification_preferences") // Maps this model to the 'notification_preferences' table
+}
+
 model Address {
-  id           String    @id @default(uuid())
-  customer_id  String?   @map("customer_id") // Changed to String to match Customer.id
-  customer     Customer? @relation(fields: [customer_id], references: [id])
+  id             String       @id @default(uuid())
+  customer_id    String?      @map("customer_id") // Changed to String to match Customer.id
+  customer       Customer?    @relation(fields: [customer_id], references: [id])
   recipient_name String
-  street       String
-  city         String
-  state        String
-  postal_code  String
-  country      String
+  street         String
+  city           String
+  state          String
+  postal_code    String
+  country        String
   contact_number String
-  is_default   Boolean?  @default(false)
-  type         AddressType?   @default(Shipping) // 'shipping' | 'billing'
+  is_default     Boolean?     @default(false)
+  type           AddressType? @default(Shipping) // 'shipping' | 'billing'
 
   @@map("addresses")
 }
 
 model Order {
-  id              String         @id @default(uuid())
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
-  customer_id     String?        @map("customer_id") // Changed to String to match Customer.id
-  customer        Customer?      @relation(fields: [customer_id], references: [id])
-  status          OrderStatus    @default(Pending)
-  total_amount    Decimal
-  shipping_address Json // Store Address object as JSON
-  billing_address Json? // Store Address object as JSON
-  payment_status  PaymentStatus  @default(Pending)
-  payment_method  PaymentMethod
-  shipping_cost   Decimal
-  tax_amount      Decimal
-  discount_amount Decimal?
-  tracking_number String?
-  carrier         ShippingCarrier?
-  notes           String?
+  id                 String           @id @default(uuid())
+  created_at         DateTime         @default(now())
+  updated_at         DateTime         @updatedAt
+  customer_id        String?          @map("customer_id") // Changed to String to match Customer.id
+  customer           Customer?        @relation(fields: [customer_id], references: [id])
+  status             OrderStatus      @default(Pending)
+  total_amount       Decimal
+  shipping_address   Json // Store Address object as JSON
+  billing_address    Json? // Store Address object as JSON
+  payment_status     PaymentStatus    @default(Pending)
+  payment_method     PaymentMethod
+  shipping_cost      Decimal
+  tax_amount         Decimal
+  discount_amount    Decimal?
+  tracking_number    String?
+  carrier            ShippingCarrier?
+  notes              String?
   estimated_delivery DateTime?
-  items           OrderItem[]
-  coupon_code     String?
+  items              OrderItem[]
+  coupon_code        String?
 
   @@map("orders")
 }
 
 model OrderItem {
-  id                String    @id @default(uuid())
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
-  order_id          String    @map("order_id")
-  order             Order     @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  product_id        String    @map("product_id")
-  product           Product   @relation(fields: [product_id], references: [id])
-  variant_id        String    @map("variant_id")
-  variant           ProductVariant @relation(fields: [variant_id], references: [id])
-  quantity          Int
-  price_at_purchase Decimal
-  variant_sku       String
+  id                 String         @id @default(uuid())
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  order_id           String         @map("order_id")
+  order              Order          @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product_id         String         @map("product_id")
+  product            Product        @relation(fields: [product_id], references: [id])
+  variant_id         String         @map("variant_id")
+  variant            ProductVariant @relation(fields: [variant_id], references: [id])
+  quantity           Int
+  price_at_purchase  Decimal
+  variant_sku        String
   variant_attributes Json // Store as JSON
-  refunded_quantity Int?
-  refund_amount     Decimal?
+  refunded_quantity  Int?
+  refund_amount      Decimal?
 
   @@map("order_items")
 }

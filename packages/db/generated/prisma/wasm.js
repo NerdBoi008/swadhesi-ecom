@@ -190,6 +190,7 @@ exports.Prisma.CustomerScalarFieldEnum = {
   id: 'id',
   created_at: 'created_at',
   updated_at: 'updated_at',
+  deleted_at: 'deleted_at',
   first_name: 'first_name',
   last_name: 'last_name',
   name: 'name',
@@ -201,7 +202,21 @@ exports.Prisma.CustomerScalarFieldEnum = {
   last_login: 'last_login',
   total_spent: 'total_spent',
   order_count: 'order_count',
-  notes: 'notes'
+  notes: 'notes',
+  notification_preferences_id: 'notification_preferences_id'
+};
+
+exports.Prisma.NotificationPreferencesScalarFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  email: 'email',
+  sms: 'sms',
+  marketing: 'marketing',
+  order_updates: 'order_updates',
+  promotions: 'promotions',
+  newsletters: 'newsletters',
+  feedback_requests: 'feedback_requests',
+  account_notifications: 'account_notifications'
 };
 
 exports.Prisma.AddressScalarFieldEnum = {
@@ -356,6 +371,7 @@ exports.Prisma.ModelName = {
   Attribute: 'Attribute',
   AttributeValue: 'AttributeValue',
   Customer: 'Customer',
+  NotificationPreferences: 'NotificationPreferences',
   Address: 'Address',
   Order: 'Order',
   OrderItem: 'OrderItem'

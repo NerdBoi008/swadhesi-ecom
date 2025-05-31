@@ -10,16 +10,37 @@ export interface Customer extends BaseEntity {
   addresses?: Address[];
   orders?: Order[];
   is_guest: boolean;
-  status?: 'active' | 'inactive' | 'banned';
+  status?: CustomerStatus;
   last_login?: Date;
   total_spent?: number;
   order_count?: number;
   notes?: string;
+  notification_preferences: NotificationPreferences;
+}
+
+export enum CustomerStatus {
+  Active,
+  Inactive,
+  Banned,
+  Suspended
+}
+
+export interface NotificationPreferences {
+  id: string;
+  customer_id: string;
+  email: boolean;
+  sms: boolean;
+  marketing: boolean;
+  order_updates: boolean;
+  promotions: boolean;
+  newsletters: boolean;
+  feedback_requests: boolean;
+  account_notifications: boolean;
 }
 
 export interface Address {
-  id?: string;
-  customer_id?: string;
+  id: string;
+  customer_id: string;
   recipient_name: string;
   street: string;
   city: string;

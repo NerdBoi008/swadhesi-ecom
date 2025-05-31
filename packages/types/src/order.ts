@@ -37,37 +37,43 @@ interface OrderItem {
   refund_amount?: number;
 }
 
-export type OrderStatus = 
-  | 'Pending' 
-  | 'Processing' 
-  | 'Shipped' 
-  | 'Delivered' 
-  | 'Cancelled'
-  | 'Returned'
-  | 'Refunded';
+export enum OrderStatus {
+  Pending,
+  Processing,
+  Shipped,
+  Delivered,
+  Cancelled,
+  Returned,
+  Refunded,
+}
 
-export type PaymentStatus = 
-  | 'Pending' 
-  | 'Paid' 
-  | 'Refunded'
-  | 'Partially_Refunded'
-  | 'Failed';
+export enum PaymentStatus {
+  Pending,
+  Paid,
+  Refunded,
+  Partially_Refunded,
+  Failed,
+}
 
-export type PaymentMethod = 
-  | 'COD' 
-  | 'UPI' 
-  | 'Net_Banking'
-  | 'Credit_Card'
-  | 'Debit_Card'
-  | 'Wallet' 
-  | 'EMI'
-  | 'Gift_Card';
+export enum PaymentMethod {
+  COD,
+  UPI,
+  Net_Banking,
+  Credit_Card,
+  Debit_Card,
+  Wallet,
+  EMI,
+  Gift_Card,
+}
 
-export type ShippingCarrier = 
-  | 'FedEx'
-  | 'UPS'
-  | 'USPS'
-  | 'DHL'
-  | 'BlueDart' 
-  | 'Delhivery'
-  | 'Custom';
+export enum ShippingCarrier {
+  FedEx,
+  UPS,
+  USPS,
+  DHL,
+  BlueDart,
+  Delhivery,
+  Custom,
+  Porter,
+  Other,
+}

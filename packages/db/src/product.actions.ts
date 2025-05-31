@@ -5,6 +5,7 @@ import { Attribute, AttributeValue, Category, Prisma, Product, ProductAttribute,
 import { prismaClient } from './prismaClient';
 import { deleteImageFromS3 } from './aws/bucket.actions';
 import { extractKeyFromUrl } from './util/bucket-utils';
+import { Product as LocalProductType } from "@repo/types";
 
 /*--------------------- Product functions --------------------------------------*/
 
@@ -66,7 +67,7 @@ export async function fetchAllProducts(
   limit: number = 10,
   categoryId?: string,
   includeRelations: boolean = false
-): Promise<Product[]> {
+): Promise<LocalProductType[]> {
   const queryOptions: any = {
     where: {
       category_id: categoryId,
@@ -106,7 +107,7 @@ export async function fetchAllProducts(
 
   const response = await prismaClient.product.findMany(queryOptions);
 
-  return JSON.parse(JSON.stringify(response)) as Product[];
+  return response as unknown as LocalProductType[];
 }
 
 /**

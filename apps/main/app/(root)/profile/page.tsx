@@ -18,20 +18,40 @@ import {
 import { formatDate, formatCurrency } from "@/lib/utils";
 import useUserProfileStore from "@/lib/store/user-profile-store";
 import { useEffect } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { PasswordUpdateForm } from "@/components/forms/password-update-form";
+import { Customer, CustomerStatus, Order, OrderStatus } from "@repo/types";
+import { NotificationPreferencesForm } from "@/components/forms/notification-preferences-form";
 
 export default function ProfilePage() {
-  const customer = useUserProfileStore((state) => state.user);
-  const orders = customer?.orders || [];
+  const router = useRouter();
 
-  const fetchUserProfile = useUserProfileStore((state) => state.fetchUserProfile);
+  const isLodaing = useUserProfileStore((state) => state.isLoading);
+  const customer: Customer | null = useUserProfileStore((state) => state.user);
+  const deleteUser = useUserProfileStore((state) => state.deleteUser);
+  const orders: Order[] = customer?.orders || [];
+
+  const fetchUserProfile = useUserProfileStore(
+    (state) => state.fetchUserProfile
+  );
 
   useEffect(() => {
     fetchUserProfile();
-    
   }, [fetchUserProfile]);
-  console.log("Fetching user profile on mount", customer);
-  
 
+  
   if (!customer) {
     return (
       <div className="container mx-auto py-8">
@@ -45,26 +65,26 @@ export default function ProfilePage() {
                 <div className="h-4 w-1/2 rounded bg-muted" />
                 <div className="h-5 w-1/4 rounded bg-muted" />
               </div>
-              
+
               <div className="mt-6 space-y-4">
                 <div className="space-y-2">
                   <div className="h-4 w-1/3 rounded bg-muted" />
                   <div className="h-3 w-full rounded bg-muted" />
                   <div className="h-3 w-4/5 rounded bg-muted" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="h-4 w-1/4 rounded bg-muted" />
                   <div className="h-3 w-3/4 rounded bg-muted" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="h-4 w-1/3 rounded bg-muted" />
                   <div className="h-3 w-full rounded bg-muted" />
                 </div>
-                
+
                 <div className="h-[1px] w-full bg-muted my-4" />
-                
+
                 <div className="h-9 w-full rounded bg-muted" />
               </div>
             </div>
@@ -74,11 +94,11 @@ export default function ProfilePage() {
           <div className="w-full md:w-2/3 space-y-6">
             {/* Tabs Skeleton */}
             <div className="h-10 w-full rounded-md bg-muted animate-pulse" />
-            
+
             {/* Overview Tab Skeleton */}
             <div className="rounded-lg border bg-card p-6 animate-pulse">
               <div className="h-7 w-1/3 rounded bg-muted mb-6" />
-              
+
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -90,23 +110,23 @@ export default function ProfilePage() {
                     <div className="h-9 w-full rounded bg-muted" />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="h-4 w-1/6 rounded bg-muted" />
                   <div className="h-9 w-full rounded bg-muted" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="h-4 w-1/6 rounded bg-muted" />
                   <div className="h-9 w-full rounded bg-muted" />
                 </div>
               </div>
             </div>
-            
+
             {/* Orders Tab Skeleton (hidden by default but included for completeness) */}
             <div className="hidden rounded-lg border bg-card p-6 animate-pulse">
               <div className="h-7 w-1/4 rounded bg-muted mb-6" />
-              
+
               <div className="space-y-4">
                 <div className="h-10 w-full rounded bg-muted" />
                 {[...Array(3)].map((_, i) => (
@@ -114,11 +134,11 @@ export default function ProfilePage() {
                 ))}
               </div>
             </div>
-            
+
             {/* Addresses Tab Skeleton (hidden by default) */}
             <div className="hidden rounded-lg border bg-card p-6 animate-pulse">
               <div className="h-7 w-1/4 rounded bg-muted mb-6" />
-              
+
               <div className="space-y-4">
                 {[...Array(2)].map((_, i) => (
                   <div key={i} className="h-32 w-full rounded bg-muted" />
@@ -130,8 +150,30 @@ export default function ProfilePage() {
         </div>
       </div>
     );
-
   }
+
+  const handleDeleteAccount = async () => {
+    if (isLodaing) return;
+
+    try {
+      const result = await deleteUser();
+
+      if (result.success) {
+        toast.success("Account Deleted", {
+          description: "Your account has been successfully deleted.",
+        });
+        router.push("/");
+        router.refresh();
+      } else {
+        throw new Error(result.message || "Failed to delete account");
+      }
+    } catch (error: any) {
+      console.error("Account deletion error:", error);
+      toast.error("Failed to Delete Account", {
+        description: error.message || "Please try again later",
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -144,10 +186,9 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold">{customer.name}</h2>
                 <p className="text-muted-foreground">{customer.email}</p>
                 <Badge
-                  variant={
-                    customer.status === "active"
+                  variant={ (customer.status === CustomerStatus.Active && !customer.is_guest)
                       ? "default"
-                      : customer.status === "inactive"
+                      : customer.status === CustomerStatus.Inactive
                         ? "secondary"
                         : "destructive"
                   }
@@ -160,10 +201,10 @@ export default function ProfilePage() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-bold ">Account Information</h3>
-                {/* <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Member since {formatDate(customer.created_at)}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                {/* <p className="text-sm text-muted-foreground">
                   Last login {formatDate(customer.last_login)}
                 </p> */}
               </div>
@@ -231,7 +272,7 @@ export default function ProfilePage() {
             <TabsContent value="orders">
               <Card>
                 <CardHeader>
-                  <CardTitle>Order History</CardTitle>
+                  <CardTitle className="font-bold">Order History</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -245,37 +286,41 @@ export default function ProfilePage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-
-                      {(orders.length > 0) ? orders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-medium">
-                            #
-                            {order?.id?.split("_")?.[1]?.toUpperCase() ?? "N/A"}
-                          </TableCell>
-                          <TableCell>{formatDate(order.created_at)}</TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                order.status === "Delivered"
-                                  ? "default"
-                                  : order.status === "Cancelled"
-                                    ? "destructive"
-                                    : "secondary"
-                              }
-                            >
-                              {order.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {formatCurrency(order.total_amount)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm">
-                              View
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )): (
+                      {orders.length > 0 ? (
+                        orders.map((order) => (
+                          <TableRow key={order.id}>
+                            <TableCell className="font-medium">
+                              #
+                              {order?.id?.split("_")?.[1]?.toUpperCase() ??
+                                "N/A"}
+                            </TableCell>
+                            <TableCell>
+                              {formatDate(order.created_at)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  order.status === OrderStatus.Delivered
+                                    ? "default"
+                                    : order.status === OrderStatus.Cancelled
+                                      ? "destructive"
+                                      : "secondary"
+                                }
+                              >
+                                {order.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {formatCurrency(order.total_amount)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="sm">
+                                View
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
                         <TableRow>
                           <TableCell colSpan={5} className="text-center">
                             No orders found.
@@ -300,7 +345,9 @@ export default function ProfilePage() {
                         <div className="flex justify-between items-start">
                           <div>
                             <h4 className="font-medium">
-                              <p className="font-bold inline">{address.recipient_name}</p>
+                              <p className="font-bold inline">
+                                {address.recipient_name}
+                              </p>
                               {address.is_default && (
                                 <Badge variant="secondary" className="ml-2">
                                   Default
@@ -341,20 +388,12 @@ export default function ProfilePage() {
             <TabsContent value="settings">
               <Card>
                 <CardHeader>
-                  <CardTitle>Account Settings</CardTitle>
+                  <CardTitle className="font-bold">Account Settings</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <h3 className="font-medium mb-2">Change Password</h3>
-                    <div className="space-y-2">
-                      <Label>Current Password</Label>
-                      <Input type="password" />
-                      <Label>New Password</Label>
-                      <Input type="password" />
-                      <Label>Confirm New Password</Label>
-                      <Input type="password" />
-                    </div>
-                    <Button className="mt-4">Update Password</Button>
+                    <PasswordUpdateForm/>
                   </div>
 
                   <Separator />
@@ -363,35 +402,7 @@ export default function ProfilePage() {
                     <h3 className="font-medium mb-2">
                       Notification Preferences
                     </h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id="order-updates"
-                          className="h-4 w-4"
-                          defaultChecked
-                        />
-                        <Label htmlFor="order-updates">Order Updates</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id="promotions"
-                          className="h-4 w-4"
-                          defaultChecked
-                        />
-                        <Label htmlFor="promotions">Promotions</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id="newsletter"
-                          className="h-4 w-4"
-                        />
-                        <Label htmlFor="newsletter">Newsletter</Label>
-                      </div>
-                    </div>
-                    <Button className="mt-4">Save Preferences</Button>
+                    <NotificationPreferencesForm customer_id={customer.id}/>
                   </div>
 
                   <Separator />
@@ -404,7 +415,39 @@ export default function ProfilePage() {
                       This will permanently delete your account and all
                       associated data.
                     </p>
-                    <Button variant="destructive">Delete Account</Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive">Delete Account</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your account and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-800 hover:bg-red-600 cursor-pointer"
+                            onClick={handleDeleteAccount}
+                          >
+                            {isLodaing ? (
+                              <>
+                                <span className="loading loading-spinner loading-sm mr-2"></span>
+                                Deleting...
+                              </>
+                            ) : (
+                              "Continue"
+                            )}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardContent>
               </Card>

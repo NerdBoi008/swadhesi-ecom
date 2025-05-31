@@ -126,25 +126,44 @@ model AttributeValue {
 }
 
 model Customer {
-  id          String         @id @default(uuid())
-  created_at  DateTime       @default(now())
-  updated_at  DateTime       @updatedAt
-  first_name  String
-  last_name   String
-  name        String
-  email       String         @unique // Email should still be unique for customer records
-  cognito_id  String         @unique @map("cognito_id") // Link to Cognito User ID
-  phone       String?
-  addresses   Address[]
-  orders      Order[]
-  is_guest    Boolean        @default(false)
-  status      CustomerStatus @default(Active) // Using String for enum in Prisma
-  last_login  DateTime?
-  total_spent Decimal?       @default(0) // Use Decimal for monetary values
-  order_count Int?           @default(0)
-  notes       String?
+  id                          String                   @id @default(uuid())
+  created_at                  DateTime                 @default(now())
+  updated_at                  DateTime                 @updatedAt
+  deleted_at                  DateTime?
+  first_name                  String
+  last_name                   String
+  name                        String
+  email                       String                   @unique // Email should still be unique for customer records
+  cognito_id                  String                   @unique @map("cognito_id") // Link to Cognito User ID
+  phone                       String?
+  addresses                   Address[]
+  orders                      Order[]
+  is_guest                    Boolean                  @default(false)
+  status                      CustomerStatus           @default(Active) // Using String for enum in Prisma
+  last_login                  DateTime?
+  total_spent                 Decimal?                 @default(0) // Use Decimal for monetary values
+  order_count                 Int?                     @default(0)
+  notes                       String?
+  notification_preferences    NotificationPreferences? @relation(fields: [notification_preferences_id], references: [id], onDelete: Cascade)
+  notification_preferences_id String?                  @unique @map("notification_preferences_id")
 
   @@map("customers")
+}
+
+model NotificationPreferences {
+  id                    String    @id @default(uuid())
+  customer              Customer?
+  customer_id           String    @unique @map("customer_id") // One-to-one relation, so customer_id is unique here
+  email                 Boolean   @default(true) // General email preference
+  sms                   Boolean   @default(false) // SMS notifications
+  marketing             Boolean   @default(true) // General marketing communications
+  order_updates         Boolean   @default(true) // Updates on order status
+  promotions            Boolean   @default(true) // Promotional offers
+  newsletters           Boolean   @default(true) // Newsletters
+  feedback_requests     Boolean   @default(true) // Requests for feedback
+  account_notifications Boolean   @default(true) // Essential account-related notifications (e.g., password changes)
+
+  @@map("notification_preferences") // Maps this model to the 'notification_preferences' table
 }
 
 model Address {

@@ -173,6 +173,7 @@ const SignUpForm = () => {
                 isDefaultAddress: values.isDefaultAddress,
                 addressType: values.addressType,
                 cognitoUserId: userId,
+                receiveUpdates: values.receiveUpdates,
               })
             );
 

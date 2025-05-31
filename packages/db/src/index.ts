@@ -51,4 +51,6 @@ export {
   addAddress,
   updateAddress,
   deleteAddress,
+  deleteUser,
+  updateNotificationPreferences,
 } from "./customer.actions";
