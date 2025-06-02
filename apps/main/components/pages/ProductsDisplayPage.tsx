@@ -439,52 +439,11 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
           <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 justify-items-center gap-y-6 gap-x-3">
             {filteredAndSortedProducts ? (
               filteredAndSortedProducts.length > 0 ? (
-                filteredAndSortedProducts.map(
-                  ({
-                    id,
-                    name,
-                    variants,
-                    description,
-                    category,
-                    related_products,
-                    thumbnail_image_url,
-                    images_url,
-                  }: Product) => {
-                    const firstVariant = variants?.[0];
-
-                    // Parse price and sale_price to numbers before passing them
-                    const parsedPrice = parseFloat(firstVariant?.price as any);
-                    const parsedSalePrice =
-                      firstVariant?.sale_price !== null &&
-                      firstVariant?.sale_price !== undefined
-                        ? parseFloat(firstVariant.sale_price as any)
-                        : undefined;
-
-                    const priceForCard = !isNaN(parsedPrice) ? parsedPrice : 0;
-
-                    const salePriceForCard =
-                      typeof parsedSalePrice === "number" &&
-                      !isNaN(parsedSalePrice) &&
-                      parsedSalePrice > 0
-                        ? parsedSalePrice
-                        : undefined;
-                    return (
-                      <ProductCard
-                        key={id}
-                        className="w-full"
-                        id={id}
-                        name={name}
-                        price={priceForCard}
-                        sale_price={salePriceForCard}
-                        stock={firstVariant?.stock ?? 0}
-                        size={firstVariant?.size || ""}
-                        thumbnailImage={thumbnail_image_url}
-                        otherImages={images_url}
-                        description={description}
-                        category={category?.name || "Uncategorized"}
-                        related_products={related_products}
-                      />
-                    );
+                filteredAndSortedProducts.map((product: Product) => {
+                    const variant = product.variants?.[0];
+                    return variant ? (
+                      <ProductCard key={product.id} product={product} selectedVariant={variant} />
+                    ) : null;
                   }
                 )
               ) : (

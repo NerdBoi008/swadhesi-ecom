@@ -360,7 +360,7 @@ const Navbar = () => {
                 {cart.length > 0 ? (
                   cart.map((cartItem) => {
                     const originalProduct = products.find(
-                      (p) => p.id === cartItem.id
+                      (product) => cartItem.id.search(product.id)
                     );
 
                     if (!originalProduct) {

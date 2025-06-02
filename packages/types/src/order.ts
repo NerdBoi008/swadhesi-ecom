@@ -22,7 +22,7 @@ export interface Order extends BaseEntity {
   coupon_code?: string;
 }
 
-interface OrderItem {
+export interface OrderItem {
   id?: string;
   order_id: string;
   product_id: string;
