@@ -325,7 +325,7 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
 
         {/* Products display section */}
         <aside className="w-full">
-          <header className="flex items-center pb-5 justify-between md:justify-end">
+          <header className="flex items-center pb-5 justify-between flex-col gap-y-3 md:justify-end md:flex-row">
             <Sheet
               open={isSheetOpen}
               onOpenChange={(open) => setIsSheetOpen(open)}
@@ -404,7 +404,7 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
               </SheetContent>
             </Sheet>
 
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-3 items-center flex-col md:flex-row">
               <div className="flex gap-3 items-center">
                 <span className="text-sm font-semibold">Sort By :</span>
                 <Select
@@ -425,8 +425,8 @@ const ProductsDisplayPage = ({ pageHeading }: ProductsDisplayPageProps) => {
                   </SelectContent>
                 </Select>
               </div>
-              <span className="text-muted-foreground">|</span>
               <p className="text-sm font-semibold">
+              <span className="text-muted-foreground mr-2">|</span>
                 {filteredAndSortedProducts
                   ? filteredAndSortedProducts.length
                   : 0}{" "}

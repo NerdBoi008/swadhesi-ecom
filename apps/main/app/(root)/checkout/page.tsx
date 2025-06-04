@@ -1,24 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Customer, Address, Order, PaymentMethod, ShippingCarrier, OrderStatus, PaymentStatus, Product, ProductVariant, } from '@repo/types';
-import Image from 'next/image';
-import useCartStore from '@/lib/store/cartStore';
-import * as z from "zod"
-import { Form, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@radix-ui/react-checkbox';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@radix-ui/react-select';
+import { useState } from "react";
+import {
+  Customer,
+  Address,
+  Order,
+  PaymentMethod,
+  ShippingCarrier,
+  OrderStatus,
+  PaymentStatus,
+  Product,
+  ProductVariant,
+} from "@repo/types";
+import Image from "next/image";
+import useCartStore from "@/lib/store/cartStore";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Form as FormRoot,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const customerFormSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
-})
+});
 
 export const addressFormSchema = z.object({
   recipient_name: z.string().min(2, "Recipient name is required"),
@@ -27,51 +44,62 @@ export const addressFormSchema = z.object({
   state: z.string().min(2, "State is required"),
   postal_code: z.string().min(4, "Valid postal code is required"),
   country: z.string().min(2, "Country is required"),
-  contact_number: z.string().min(10, "Contact number must be at least 10 digits"),
-})
+  contact_number: z
+    .string()
+    .min(10, "Contact number must be at least 10 digits"),
+});
 
 export const checkoutFormSchema = z.object({
   customer: customerFormSchema,
   shippingAddress: addressFormSchema,
   billingAddress: addressFormSchema.optional(),
   useSameForBilling: z.boolean().default(true),
-})
+});
 
-export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>
+export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
 
 export type CartItem = {
-  id: string; 
+  id: string;
   product_id: string;
   variant_id: string;
-  product?: Product; 
-  variant?: ProductVariant; 
+  product?: Product;
+  variant?: ProductVariant;
   quantity: number;
   price_at_purchase: number;
   variant_sku: string;
   variant_attributes: Record<string, string>;
-  thumbnailImage: string; 
-  name: string; 
+  thumbnailImage: string;
+  name: string;
   stock: number;
   sale_price?: number;
 };
 
 const CheckoutPage = () => {
-  const [currentStep, setCurrentStep] = useState<'information' | 'shipping' | 'payment'>('information');
+  const [currentStep, setCurrentStep] = useState<
+    "information" | "shipping" | "payment"
+  >("information");
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null);
   const [billingAddress, setBillingAddress] = useState<Address | null>(null);
-  const [shippingMethod, setShippingMethod] = useState<ShippingCarrier | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
-  const [orderNotes, setOrderNotes] = useState('');
+  const [shippingMethod, setShippingMethod] = useState<ShippingCarrier | null>(
+    null
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
+    null
+  );
+  const [orderNotes, setOrderNotes] = useState("");
 
   const cartItems = useCartStore((state) => state.cart);
 
   const calculateTotals = () => {
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price_at_purchase * item.quantity), 0);
+    const subtotal = cartItems.reduce(
+      (sum, item) => sum + item.price_at_purchase * item.quantity,
+      0
+    );
     const shipping = shippingMethod ? 5.99 : 0; // Example flat rate
     const tax = subtotal * 0.08; // Example tax calculation
     const total = subtotal + shipping + tax;
-    
+
     return { subtotal, shipping, tax, total };
   };
 
@@ -88,17 +116,17 @@ const CheckoutPage = () => {
       payment_method: paymentMethod!,
       shipping_cost: shipping,
       tax_amount: tax,
-      items: cartItems.map(item => ({
+      items: cartItems.map((item) => ({
         ...item,
-        order_id: '', // Provide a default or appropriate value for order_id
+        order_id: "", // Provide a default or appropriate value for order_id
       })),
-      id: '',
+      id: "",
       created_at: new Date(),
       updated_at: new Date(),
     };
-    
+
     // Submit order to backend
-    console.log('Placing order:', newOrder);
+    console.log("Placing order:", newOrder);
   };
 
   return (
@@ -108,62 +136,72 @@ const CheckoutPage = () => {
         <div className="md:w-2/3">
           <div className="mb-8">
             <h1 className="text-2xl font-bold mb-4">Checkout</h1>
-            
+
             {/* Progress indicator */}
             <div className="flex justify-between mb-8">
-              <div 
-                className={`text-center ${currentStep === 'information' ? 'font-bold text-primary' : ''}`}
-                onClick={() => setCurrentStep('information')}
+              <div
+                className={`text-center ${currentStep === "information" ? "font-bold text-primary" : ""}`}
+                onClick={() => setCurrentStep("information")}
               >
-                <div className="w-8 h-8 mx-auto rounded-full bg-primary text-white flex items-center justify-center mb-1">1</div>
+                <div className="w-8 h-8 mx-auto rounded-full bg-primary text-white flex items-center justify-center mb-1">
+                  1
+                </div>
                 Information
               </div>
-              <div 
-                className={`text-center ${currentStep === 'shipping' ? 'font-bold text-primary' : ''}`}
-                onClick={() => shippingAddress && setCurrentStep('shipping')}
+              <div
+                className={`text-center ${currentStep === "shipping" ? "font-bold text-primary" : ""}`}
+                onClick={() => shippingAddress && setCurrentStep("shipping")}
               >
-                <div className={`w-8 h-8 mx-auto rounded-full ${shippingAddress ? 'bg-primary' : 'bg-gray-300'} text-white flex items-center justify-center mb-1`}>2</div>
+                <div
+                  className={`w-8 h-8 mx-auto rounded-full ${shippingAddress ? "bg-primary" : "bg-gray-300"} text-white flex items-center justify-center mb-1`}
+                >
+                  2
+                </div>
                 Shipping
               </div>
-              <div 
-                className={`text-center ${currentStep === 'payment' ? 'font-bold text-primary' : ''}`}
-                onClick={() => shippingMethod && setCurrentStep('payment')}
+              <div
+                className={`text-center ${currentStep === "payment" ? "font-bold text-primary" : ""}`}
+                onClick={() => shippingMethod && setCurrentStep("payment")}
               >
-                <div className={`w-8 h-8 mx-auto rounded-full ${shippingMethod ? 'bg-primary' : 'bg-gray-300'} text-white flex items-center justify-center mb-1`}>3</div>
+                <div
+                  className={`w-8 h-8 mx-auto rounded-full ${shippingMethod ? "bg-primary" : "bg-gray-300"} text-white flex items-center justify-center mb-1`}
+                >
+                  3
+                </div>
                 Payment
               </div>
             </div>
 
             {/* Current step content */}
-            {currentStep === 'information' && (
-              <InformationStep 
+            {currentStep === "information" && (
+              <InformationStep
                 customer={customer}
                 setCustomer={setCustomer}
                 shippingAddress={shippingAddress}
                 setShippingAddress={setShippingAddress}
                 billingAddress={billingAddress}
                 setBillingAddress={setBillingAddress}
-                onContinue={() => setCurrentStep('shipping')}
+                onContinue={() => setCurrentStep("shipping")}
               />
             )}
 
-            {currentStep === 'shipping' && (
-              <ShippingStep 
+            {currentStep === "shipping" && (
+              <ShippingStep
                 shippingMethod={shippingMethod}
                 setShippingMethod={setShippingMethod}
-                onContinue={() => setCurrentStep('payment')}
-                onBack={() => setCurrentStep('information')}
+                onContinue={() => setCurrentStep("payment")}
+                onBack={() => setCurrentStep("information")}
               />
             )}
 
-            {currentStep === 'payment' && (
-              <PaymentStep 
+            {currentStep === "payment" && (
+              <PaymentStep
                 paymentMethod={paymentMethod}
                 setPaymentMethod={setPaymentMethod}
                 orderNotes={orderNotes}
                 setOrderNotes={setOrderNotes}
                 onPlaceOrder={handlePlaceOrder}
-                onBack={() => setCurrentStep('shipping')}
+                onBack={() => setCurrentStep("shipping")}
               />
             )}
           </div>
@@ -173,16 +211,20 @@ const CheckoutPage = () => {
         <div className="md:w-1/3">
           <div className="bg-gray-50 p-6 rounded-lg sticky top-40">
             <h2 className="text-lg font-bold mb-4">Order Summary</h2>
-            
+
             {/* Cart items */}
             <div className="mb-4 space-y-4">
-              {cartItems.map(item => (
+              {cartItems.map((item) => (
                 <div key={item.variant_id} className="flex gap-4">
                   <div className="w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
                     {item.product?.thumbnail_image_url && (
-                      <Image 
-                        src={item.product?.thumbnail_image_url || item?.variant?.image_url || '/cdn-imgs/not-available.png'} 
-                        alt={item.product?.name || 'Product'} 
+                      <Image
+                        src={
+                          item.product?.thumbnail_image_url ||
+                          item?.variant?.image_url ||
+                          "/cdn-imgs/not-available.png"
+                        }
+                        alt={item.product?.name || "Product"}
                         className="w-full h-full object-cover"
                         height={100}
                         width={100}
@@ -192,9 +234,13 @@ const CheckoutPage = () => {
                   <div className="flex-1">
                     <h3 className="font-medium">{item.product?.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {Object.entries(item.variant_attributes).map(([key, value]) => (
-                        <span key={key} className="mr-2">{key}: {value}</span>
-                      ))}
+                      {Object.entries(item.variant_attributes).map(
+                        ([key, value]) => (
+                          <span key={key} className="mr-2">
+                            {key}: {value}
+                          </span>
+                        )
+                      )}
                     </p>
                     <p className="text-sm">Qty: {item.quantity}</p>
                   </div>
@@ -207,8 +253,10 @@ const CheckoutPage = () => {
 
             {/* Order notes */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Order Notes</label>
-              <textarea 
+              <label className="block text-sm font-medium mb-1">
+                Order Notes
+              </label>
+              <textarea
                 value={orderNotes}
                 onChange={(e) => setOrderNotes(e.target.value)}
                 className="w-full p-2 border rounded text-sm"
@@ -225,7 +273,11 @@ const CheckoutPage = () => {
               </div>
               <div className="flex justify-between mb-2">
                 <span>Shipping</span>
-                <span>{shipping ? `₹${shipping.toFixed(2)}` : 'Calculated at next step'}</span>
+                <span>
+                  {shipping
+                    ? `₹${shipping.toFixed(2)}`
+                    : "Calculated at next step"}
+                </span>
               </div>
               <div className="flex justify-between mb-2">
                 <span>Tax</span>
@@ -250,7 +302,7 @@ const InformationStep = ({
   setShippingAddress,
   billingAddress,
   setBillingAddress,
-  onContinue
+  onContinue,
 }: {
   customer: Customer | null;
   setCustomer: (customer: Customer) => void;
@@ -260,7 +312,6 @@ const InformationStep = ({
   setBillingAddress: (address: Address) => void;
   onContinue: () => void;
 }) => {
-  const [useSameForBilling, setUseSameForBilling] = useState(true);
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
@@ -280,29 +331,29 @@ const InformationStep = ({
         contact_number: shippingAddress?.contact_number || "",
       },
       useSameForBilling: true,
+      billingAddress: billingAddress || undefined,
     },
-  })
+  });
+
+  const useSameForBilling = form.watch("useSameForBilling");
 
   const onSubmit = (data: CheckoutFormValues) => {
-    setCustomer(data.customer as Customer)
-    setShippingAddress(data.shippingAddress as Address)
-    
+    setCustomer(data.customer as Customer);
+    setShippingAddress(data.shippingAddress as Address);
     if (data.useSameForBilling) {
-      setBillingAddress(data.shippingAddress as Address)
+      setBillingAddress(data.shippingAddress as Address);
     } else if (data.billingAddress) {
-      setBillingAddress(data.billingAddress as Address)
+      setBillingAddress(data.billingAddress as Address);
     }
-    
-    onContinue()
-  }
+    onContinue();
+  };
 
   return (
-    <Form {...form}>
+    <FormRoot {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Contact Information */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           <h2 className="text-xl font-bold">Contact Information</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -317,7 +368,7 @@ const InformationStep = ({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="customer.last_name"
@@ -332,7 +383,7 @@ const InformationStep = ({
               )}
             />
           </div>
-          
+
           <FormField
             control={form.control}
             name="customer.email"
@@ -340,13 +391,17 @@ const InformationStep = ({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="john@example.com" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="john@example.com"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="customer.phone"
@@ -354,7 +409,7 @@ const InformationStep = ({
               <FormItem>
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="9876543210" {...field} />
+                  <Input type="tel" placeholder="+91 1234567890" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -362,10 +417,9 @@ const InformationStep = ({
           />
         </div>
 
-        {/* Shipping Address */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           <h2 className="text-xl font-bold">Shipping Address</h2>
-          
+
           <FormField
             control={form.control}
             name="shippingAddress.recipient_name"
@@ -379,7 +433,7 @@ const InformationStep = ({
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="shippingAddress.street"
@@ -393,7 +447,7 @@ const InformationStep = ({
               </FormItem>
             )}
           />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormField
               control={form.control}
@@ -402,13 +456,13 @@ const InformationStep = ({
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input placeholder="Mumbai" {...field} />
+                    <Input placeholder="City" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="shippingAddress.state"
@@ -416,13 +470,13 @@ const InformationStep = ({
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input placeholder="Maharashtra" {...field} />
+                    <Input placeholder="State" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="shippingAddress.postal_code"
@@ -430,37 +484,39 @@ const InformationStep = ({
                 <FormItem>
                   <FormLabel>Postal Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="400001" {...field} />
+                    <Input placeholder="123456" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          
+
           <FormField
             control={form.control}
             name="shippingAddress.country"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Country</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a country" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="India">India</SelectItem>
-                    <SelectItem value="United States">United States</SelectItem>
-                    {/* Add more countries as needed */}
+                    <SelectItem value="IN">India</SelectItem>
+                    <SelectItem value="US">United States</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="shippingAddress.contact_number"
@@ -468,7 +524,7 @@ const InformationStep = ({
               <FormItem>
                 <FormLabel>Contact Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="9876543210" {...field} />
+                  <Input type="tel" placeholder="+91 1234567890" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -476,12 +532,11 @@ const InformationStep = ({
           />
         </div>
 
-        {/* Billing Address */}
         <FormField
           control={form.control}
           name="useSameForBilling"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem className="flex flex-row">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -490,7 +545,7 @@ const InformationStep = ({
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>
-                  Billing address is the same as shipping address
+                  Billing address is same as shipping address
                 </FormLabel>
               </div>
             </FormItem>
@@ -498,110 +553,126 @@ const InformationStep = ({
         />
 
         {!useSameForBilling && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <h2 className="text-xl font-bold">Billing Address</h2>
-            {/* Repeat address fields for billing */}
-          </div>
-        )}
-
-        {/* Shipping Method */}
-        {/* <div className="space-y-6">
-          <h2 className="text-xl font-bold">Shipping Method</h2>
-          
-          <FormField
-            control={form.control}
-            name="shippingMethod"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Shipping Carrier</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+            <FormField
+              control={form.control}
+              name="billingAddress.recipient_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Recipient Name</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a shipping method" />
-                    </SelectTrigger>
+                    <Input placeholder="John Doe" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value={ShippingCarrier.FedEx}>FedEx Standard - ₹5.99 (2-5 business days)</SelectItem>
-                    <SelectItem value={ShippingCarrier.UPS}>UPS Express - ₹12.99 (1-3 business days)</SelectItem>
-                    <SelectItem value={ShippingCarrier.BlueDart}>BlueDart Premium - ₹8.99 (3-7 business days)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div> */}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* Payment Method */}
-        {/* <div className="space-y-6">
-          <h2 className="text-xl font-bold">Payment Method</h2>
-          
-          <FormField
-            control={form.control}
-            name="paymentMethod"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Method</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+            <FormField
+              control={form.control}
+              name="billingAddress.street"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Street Address</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a payment method" />
-                    </SelectTrigger>
+                    <Input placeholder="123 Main St" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value={PaymentMethod.Credit_Card}>Credit Card</SelectItem>
-                    <SelectItem value={PaymentMethod.UPI}>UPI</SelectItem>
-                    <SelectItem value={PaymentMethod.Net_Banking}>Net Banking</SelectItem>
-                    <SelectItem value={PaymentMethod.COD}>Cash on Delivery</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Conditional payment form fields */}
-          {/* {form.watch("paymentMethod") === PaymentMethod.Credit_Card && (
-            <div className="space-y-4 p-4 border rounded">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
-                name="cardNumber" // You'll need to add this to your schema
+                control={form.control}
+                name="billingAddress.city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Card Number</FormLabel>
+                    <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input placeholder="1234 5678 9012 3456" {...field} />
+                      <Input placeholder="City" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="billingAddress.state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State</FormLabel>
+                    <FormControl>
+                      <Input placeholder="State" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="billingAddress.postal_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postal Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123456" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-          )} */}
-        {/* </div> */}
 
-        {/* Order Notes */}
-        {/* <FormField
-          control={form.control}
-          name="orderNotes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Order Notes</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Special instructions, delivery notes, etc."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
+            <FormField
+              control={form.control}
+              name="billingAddress.country"
+              render={({ field }) => (
+                <FormItem className="flex gap-3 flex-row">
+                  <FormLabel>Country</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a country" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="IN">India</SelectItem>
+                      <SelectItem value="US">United States</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="billingAddress.contact_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contact Number</FormLabel>
+                  <FormControl>
+                    <Input type="tel" placeholder="+91 1234567890" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
 
         <Button type="submit" className="w-full">
-          Place Order
+          Continue to Shipping
         </Button>
       </form>
-    </Form>
+    </FormRoot>
   );
 };
 
@@ -609,7 +680,7 @@ const ShippingStep = ({
   shippingMethod,
   setShippingMethod,
   onContinue,
-  onBack
+  onBack,
 }: {
   shippingMethod: ShippingCarrier | null;
   setShippingMethod: (method: ShippingCarrier) => void;
@@ -617,20 +688,35 @@ const ShippingStep = ({
   onBack: () => void;
 }) => {
   const shippingOptions = [
-    { carrier: ShippingCarrier.FedEx, name: 'FedEx Standard', price: 5.99, estDelivery: '2-5 business days' },
-    { carrier: ShippingCarrier.UPS, name: 'UPS Express', price: 12.99, estDelivery: '1-3 business days' },
-    { carrier: ShippingCarrier.BlueDart, name: 'BlueDart Premium', price: 8.99, estDelivery: '3-7 business days' },
+    {
+      carrier: ShippingCarrier.FedEx,
+      name: "FedEx Standard",
+      price: 5.99,
+      estDelivery: "2-5 business days",
+    },
+    {
+      carrier: ShippingCarrier.UPS,
+      name: "UPS Express",
+      price: 12.99,
+      estDelivery: "1-3 business days",
+    },
+    {
+      carrier: ShippingCarrier.BlueDart,
+      name: "BlueDart Premium",
+      price: 8.99,
+      estDelivery: "3-7 business days",
+    },
   ];
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-6">Shipping Method</h2>
-      
+
       <div className="space-y-4 mb-8">
-        {shippingOptions.map(option => (
-          <div 
+        {shippingOptions.map((option) => (
+          <div
             key={option.carrier}
-            className={`p-4 border rounded cursor-pointer ${shippingMethod === option.carrier ? 'border-primary bg-primary/10' : 'hover:border-gray-400'}`}
+            className={`p-4 border rounded cursor-pointer ${shippingMethod === option.carrier ? "border-primary bg-primary/10" : "hover:border-gray-400"}`}
             onClick={() => setShippingMethod(option.carrier)}
           >
             <div className="flex justify-between items-center">
@@ -645,13 +731,13 @@ const ShippingStep = ({
       </div>
 
       <div className="flex gap-4">
-        <button 
+        <button
           className="flex-1 bg-gray-200 text-gray-800 py-3 rounded font-medium"
           onClick={onBack}
         >
           Back
         </button>
-        <button 
+        <button
           className="flex-1 bg-primary text-white py-3 rounded font-medium disabled:bg-gray-400"
           onClick={onContinue}
           disabled={!shippingMethod}
@@ -669,7 +755,7 @@ const PaymentStep = ({
   orderNotes,
   setOrderNotes,
   onPlaceOrder,
-  onBack
+  onBack,
 }: {
   paymentMethod: PaymentMethod | null;
   setPaymentMethod: (method: PaymentMethod) => void;
@@ -679,21 +765,21 @@ const PaymentStep = ({
   onBack: () => void;
 }) => {
   const paymentOptions = [
-    { method: PaymentMethod.Credit_Card, name: 'Credit Card', icon: '💳' },
-    { method: PaymentMethod.UPI, name: 'UPI', icon: '📱' },
-    { method: PaymentMethod.Net_Banking, name: 'Net Banking', icon: '🏦' },
-    { method: PaymentMethod.COD, name: 'Cash on Delivery', icon: '💰' },
+    { method: PaymentMethod.Credit_Card, name: "Credit Card", icon: "💳" },
+    { method: PaymentMethod.UPI, name: "UPI", icon: "📱" },
+    { method: PaymentMethod.Net_Banking, name: "Net Banking", icon: "🏦" },
+    { method: PaymentMethod.COD, name: "Cash on Delivery", icon: "💰" },
   ];
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-6">Payment Method</h2>
-      
+
       <div className="space-y-4 mb-8">
-        {paymentOptions.map(option => (
-          <div 
+        {paymentOptions.map((option) => (
+          <div
             key={option.method}
-            className={`p-4 border rounded cursor-pointer ${paymentMethod === option.method ? 'border-primary bg-primary/10' : 'hover:border-gray-400'}`}
+            className={`p-4 border rounded cursor-pointer ${paymentMethod === option.method ? "border-primary bg-primary/10" : "hover:border-gray-400"}`}
             onClick={() => setPaymentMethod(option.method)}
           >
             <div className="flex items-center gap-3">
@@ -708,34 +794,56 @@ const PaymentStep = ({
       {paymentMethod === PaymentMethod.Credit_Card && (
         <div className="mb-8 p-4 border rounded">
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Card Number</label>
-            <input type="text" className="w-full p-2 border rounded" placeholder="1234 5678 9012 3456" />
+            <label className="block text-sm font-medium mb-1">
+              Card Number
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border rounded"
+              placeholder="1234 5678 9012 3456"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Expiry Date</label>
-              <input type="text" className="w-full p-2 border rounded" placeholder="MM/YY" />
+              <label className="block text-sm font-medium mb-1">
+                Expiry Date
+              </label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="MM/YY"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">CVV</label>
-              <input type="text" className="w-full p-2 border rounded" placeholder="123" />
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="123"
+              />
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Name on Card</label>
-            <input type="text" className="w-full p-2 border rounded" placeholder="John Doe" />
+            <label className="block text-sm font-medium mb-1">
+              Name on Card
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border rounded"
+              placeholder="John Doe"
+            />
           </div>
         </div>
       )}
 
       <div className="flex gap-4">
-        <button 
+        <button
           className="flex-1 bg-gray-200 text-gray-800 py-3 rounded font-medium"
           onClick={onBack}
         >
           Back
         </button>
-        <button 
+        <button
           className="flex-1 bg-primary text-white py-3 rounded font-medium disabled:bg-gray-400"
           onClick={onPlaceOrder}
           disabled={!paymentMethod}
@@ -784,17 +892,17 @@ export default CheckoutPage;
 // export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>
 
 // export type CartItem = {
-//   id: string; 
+//   id: string;
 //   product_id: string;
 //   variant_id: string;
-//   product?: Product; 
-//   variant?: ProductVariant; 
+//   product?: Product;
+//   variant?: ProductVariant;
 //   quantity: number;
 //   price_at_purchase: number;
 //   variant_sku: string;
 //   variant_attributes: Record<string, string>;
-//   thumbnailImage: string; 
-//   name: string; 
+//   thumbnailImage: string;
+//   name: string;
 //   stock: number;
 //   sale_price?: number;
 // };
@@ -815,7 +923,7 @@ export default CheckoutPage;
 //     const shipping = shippingMethod ? 5.99 : 0; // Example flat rate
 //     const tax = subtotal * 0.08; // Example tax calculation
 //     const total = subtotal + shipping + tax;
-    
+
 //     return { subtotal, shipping, tax, total };
 //   };
 
@@ -840,7 +948,7 @@ export default CheckoutPage;
 //       created_at: new Date(),
 //       updated_at: new Date(),
 //     };
-    
+
 //     // Submit order to backend
 //     console.log('Placing order:', newOrder);
 //   };
@@ -852,24 +960,24 @@ export default CheckoutPage;
 //         <div className="md:w-2/3">
 //           <div className="mb-8">
 //             <h1 className="text-2xl font-bold mb-4">Checkout</h1>
-            
+
 //             {/* Progress indicator */}
 //             <div className="flex justify-between mb-8">
-//               <div 
+//               <div
 //                 className={`text-center ${currentStep === 'information' ? 'font-bold text-primary' : ''}`}
 //                 onClick={() => setCurrentStep('information')}
 //               >
 //                 <div className="w-8 h-8 mx-auto rounded-full bg-primary text-white flex items-center justify-center mb-1">1</div>
 //                 Information
 //               </div>
-//               <div 
+//               <div
 //                 className={`text-center ${currentStep === 'shipping' ? 'font-bold text-primary' : ''}`}
 //                 onClick={() => shippingAddress && setCurrentStep('shipping')}
 //               >
 //                 <div className={`w-8 h-8 mx-auto rounded-full ${shippingAddress ? 'bg-primary' : 'bg-gray-300'} text-white flex items-center justify-center mb-1`}>2</div>
 //                 Shipping
 //               </div>
-//               <div 
+//               <div
 //                 className={`text-center ${currentStep === 'payment' ? 'font-bold text-primary' : ''}`}
 //                 onClick={() => shippingMethod && setCurrentStep('payment')}
 //               >
@@ -880,7 +988,7 @@ export default CheckoutPage;
 
 //             {/* Current step content */}
 //             {currentStep === 'information' && (
-//               <InformationStep 
+//               <InformationStep
 //                 customer={customer}
 //                 setCustomer={setCustomer}
 //                 shippingAddress={shippingAddress}
@@ -892,7 +1000,7 @@ export default CheckoutPage;
 //             )}
 
 //             {currentStep === 'shipping' && (
-//               <ShippingStep 
+//               <ShippingStep
 //                 shippingMethod={shippingMethod}
 //                 setShippingMethod={setShippingMethod}
 //                 onContinue={() => setCurrentStep('payment')}
@@ -901,7 +1009,7 @@ export default CheckoutPage;
 //             )}
 
 //             {currentStep === 'payment' && (
-//               <PaymentStep 
+//               <PaymentStep
 //                 paymentMethod={paymentMethod}
 //                 setPaymentMethod={setPaymentMethod}
 //                 orderNotes={orderNotes}
@@ -917,16 +1025,16 @@ export default CheckoutPage;
 //         <div className="md:w-1/3">
 //           <div className="bg-gray-50 p-6 rounded-lg sticky top-40">
 //             <h2 className="text-lg font-bold mb-4">Order Summary</h2>
-            
+
 //             {/* Cart items */}
 //             <div className="mb-4 space-y-4">
 //               {cartItems.map(item => (
 //                 <div key={item.variant_id} className="flex gap-4">
 //                   <div className="w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
 //                     {item.product?.thumbnail_image_url && (
-//                       <Image 
-//                         src={item.product?.thumbnail_image_url || item?.variant?.image_url || '/cdn-imgs/not-available.png'} 
-//                         alt={item.product?.name || 'Product'} 
+//                       <Image
+//                         src={item.product?.thumbnail_image_url || item?.variant?.image_url || '/cdn-imgs/not-available.png'}
+//                         alt={item.product?.name || 'Product'}
 //                         className="w-full h-full object-cover"
 //                         height={100}
 //                         width={100}
@@ -952,7 +1060,7 @@ export default CheckoutPage;
 //             {/* Order notes */}
 //             <div className="mb-4">
 //               <label className="block text-sm font-medium mb-1">Order Notes</label>
-//               <textarea 
+//               <textarea
 //                 value={orderNotes}
 //                 onChange={(e) => setOrderNotes(e.target.value)}
 //                 className="w-full p-2 border rounded text-sm"
@@ -1009,14 +1117,14 @@ export default CheckoutPage;
 //   return (
 //     <div>
 //       <h2 className="text-xl font-bold mb-6">Contact Information</h2>
-      
+
 //       {/* Customer form */}
 //       <div className="mb-8">
 //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 //           <div>
 //             <label className="block text-sm font-medium mb-1">First Name*</label>
-//             <input 
-//               type="text" 
+//             <input
+//               type="text"
 //               className="w-full p-2 border rounded"
 //               value={customer?.first_name || ''}
 //               onChange={(e) => setCustomer({ ...customer!, first_name: e.target.value })}
@@ -1025,8 +1133,8 @@ export default CheckoutPage;
 //           </div>
 //           <div>
 //             <label className="block text-sm font-medium mb-1">Last Name*</label>
-//             <input 
-//               type="text" 
+//             <input
+//               type="text"
 //               className="w-full p-2 border rounded"
 //               value={customer?.last_name || ''}
 //               onChange={(e) => setCustomer({ ...customer!, last_name: e.target.value })}
@@ -1034,22 +1142,22 @@ export default CheckoutPage;
 //             />
 //           </div>
 //         </div>
-        
+
 //         <div className="mb-4">
 //           <label className="block text-sm font-medium mb-1">Email*</label>
-//           <input 
-//             type="email" 
+//           <input
+//             type="email"
 //             className="w-full p-2 border rounded"
 //             value={customer?.email || ''}
 //             onChange={(e) => setCustomer({ ...customer!, email: e.target.value })}
 //             required
 //           />
 //         </div>
-        
+
 //         <div className="mb-4">
 //           <label className="block text-sm font-medium mb-1">Phone*</label>
-//           <input 
-//             type="tel" 
+//           <input
+//             type="tel"
 //             className="w-full p-2 border rounded"
 //             value={customer?.phone || ''}
 //             onChange={(e) => setCustomer({ ...customer!, phone: e.target.value })}
@@ -1059,36 +1167,36 @@ export default CheckoutPage;
 //       </div>
 
 //       <h2 className="text-xl font-bold mb-6">Shipping Address</h2>
-      
+
 //       {/* Shipping address form */}
 //       <div className="mb-8">
 //         <div className="mb-4">
 //           <label className="block text-sm font-medium mb-1">Recipient Name*</label>
-//           <input 
-//             type="text" 
+//           <input
+//             type="text"
 //             className="w-full p-2 border rounded"
 //             value={shippingAddress?.recipient_name || ''}
 //             onChange={(e) => setShippingAddress({ ...shippingAddress!, recipient_name: e.target.value })}
 //             required
 //           />
 //         </div>
-        
+
 //         <div className="mb-4">
 //           <label className="block text-sm font-medium mb-1">Street Address*</label>
-//           <input 
-//             type="text" 
+//           <input
+//             type="text"
 //             className="w-full p-2 border rounded"
 //             value={shippingAddress?.street || ''}
 //             onChange={(e) => setShippingAddress({ ...shippingAddress!, street: e.target.value })}
 //             required
 //           />
 //         </div>
-        
+
 //         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
 //           <div>
 //             <label className="block text-sm font-medium mb-1">City*</label>
-//             <input 
-//               type="text" 
+//             <input
+//               type="text"
 //               className="w-full p-2 border rounded"
 //               value={shippingAddress?.city || ''}
 //               onChange={(e) => setShippingAddress({ ...shippingAddress!, city: e.target.value })}
@@ -1097,8 +1205,8 @@ export default CheckoutPage;
 //           </div>
 //           <div>
 //             <label className="block text-sm font-medium mb-1">State*</label>
-//             <input 
-//               type="text" 
+//             <input
+//               type="text"
 //               className="w-full p-2 border rounded"
 //               value={shippingAddress?.state || ''}
 //               onChange={(e) => setShippingAddress({ ...shippingAddress!, state: e.target.value })}
@@ -1107,8 +1215,8 @@ export default CheckoutPage;
 //           </div>
 //           <div>
 //             <label className="block text-sm font-medium mb-1">Postal Code*</label>
-//             <input 
-//               type="text" 
+//             <input
+//               type="text"
 //               className="w-full p-2 border rounded"
 //               value={shippingAddress?.postal_code || ''}
 //               onChange={(e) => setShippingAddress({ ...shippingAddress!, postal_code: e.target.value })}
@@ -1116,10 +1224,10 @@ export default CheckoutPage;
 //             />
 //           </div>
 //         </div>
-        
+
 //         <div className="mb-4">
 //           <label className="block text-sm font-medium mb-1">Country*</label>
-//           <select 
+//           <select
 //             className="w-full p-2 border rounded"
 //             value={shippingAddress?.country || ''}
 //             onChange={(e) => setShippingAddress({ ...shippingAddress!, country: e.target.value })}
@@ -1131,11 +1239,11 @@ export default CheckoutPage;
 //             {/* More countries */}
 //           </select>
 //         </div>
-        
+
 //         <div className="mb-4">
 //           <label className="block text-sm font-medium mb-1">Contact Number*</label>
-//           <input 
-//             type="tel" 
+//           <input
+//             type="tel"
 //             className="w-full p-2 border rounded"
 //             value={shippingAddress?.contact_number || ''}
 //             onChange={(e) => setShippingAddress({ ...shippingAddress!, contact_number: e.target.value })}
@@ -1147,8 +1255,8 @@ export default CheckoutPage;
 //       {/* Billing address */}
 //       <div className="mb-6">
 //         <label className="flex items-center">
-//           <input 
-//             type="checkbox" 
+//           <input
+//             type="checkbox"
 //             className="mr-2"
 //             checked={useSameForBilling}
 //             onChange={(e) => setUseSameForBilling(e.target.checked)}
@@ -1164,7 +1272,7 @@ export default CheckoutPage;
 //         </div>
 //       )}
 
-//       <button 
+//       <button
 //         className="w-full bg-primary text-white py-3 rounded font-medium"
 //         onClick={onContinue}
 //       >
@@ -1194,10 +1302,10 @@ export default CheckoutPage;
 //   return (
 //     <div>
 //       <h2 className="text-xl font-bold mb-6">Shipping Method</h2>
-      
+
 //       <div className="space-y-4 mb-8">
 //         {shippingOptions.map(option => (
-//           <div 
+//           <div
 //             key={option.carrier}
 //             className={`p-4 border rounded cursor-pointer ${shippingMethod === option.carrier ? 'border-primary bg-primary/10' : 'hover:border-gray-400'}`}
 //             onClick={() => setShippingMethod(option.carrier)}
@@ -1214,13 +1322,13 @@ export default CheckoutPage;
 //       </div>
 
 //       <div className="flex gap-4">
-//         <button 
+//         <button
 //           className="flex-1 bg-gray-200 text-gray-800 py-3 rounded font-medium"
 //           onClick={onBack}
 //         >
 //           Back
 //         </button>
-//         <button 
+//         <button
 //           className="flex-1 bg-primary text-white py-3 rounded font-medium disabled:bg-gray-400"
 //           onClick={onContinue}
 //           disabled={!shippingMethod}
@@ -1257,10 +1365,10 @@ export default CheckoutPage;
 //   return (
 //     <div>
 //       <h2 className="text-xl font-bold mb-6">Payment Method</h2>
-      
+
 //       <div className="space-y-4 mb-8">
 //         {paymentOptions.map(option => (
-//           <div 
+//           <div
 //             key={option.method}
 //             className={`p-4 border rounded cursor-pointer ${paymentMethod === option.method ? 'border-primary bg-primary/10' : 'hover:border-gray-400'}`}
 //             onClick={() => setPaymentMethod(option.method)}
@@ -1298,13 +1406,13 @@ export default CheckoutPage;
 //       )}
 
 //       <div className="flex gap-4">
-//         <button 
+//         <button
 //           className="flex-1 bg-gray-200 text-gray-800 py-3 rounded font-medium"
 //           onClick={onBack}
 //         >
 //           Back
 //         </button>
-//         <button 
+//         <button
 //           className="flex-1 bg-primary text-white py-3 rounded font-medium disabled:bg-gray-400"
 //           onClick={onPlaceOrder}
 //           disabled={!paymentMethod}
@@ -1317,4 +1425,3 @@ export default CheckoutPage;
 // };
 
 // export default CheckoutPage;
-

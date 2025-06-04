@@ -165,8 +165,14 @@ const ProductDetailsPage = () => {
 
   const handleShare = async () => {
     try {
-      const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
+      // Get base URL from environment variable or construct it
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || "https://swadhesi.com";
+      const path = `/products/${pathname}/product-details?productId=${productId}`;
+      const shareUrl = `${baseUrl}${path}`;
+
+      await navigator.clipboard.writeText(shareUrl);
+
       toast.success("Link copied to clipboard!", {
         description: "You can now share this product with others",
       });
