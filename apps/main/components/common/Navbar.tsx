@@ -78,6 +78,9 @@ const Navbar = () => {
   const checkAuthStatus = useUserProfileStore((state) => state.checkAuthStatus);
   const isAuthenticated = useUserProfileStore((state) => state.isAuthenticated);
   const user = useUserProfileStore((state) => state.user);
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
   // Add loading state at the top of the component
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -148,7 +151,7 @@ const Navbar = () => {
     <nav className="bg-background sticky top-0 z-50 text-black">
       <div className="container-x-padding flex items-center justify-between p-4">
         <div className="flex gap-4">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger>
               <MenuIcon className="bolck sm:hidden" />
             </SheetTrigger>
@@ -191,6 +194,7 @@ const Navbar = () => {
                       <Link
                         key={link.name}
                         href={link.href}
+                        onClick={() => setIsSheetOpen(false)}
                         className={`block
                           relative
                           font-semibold
@@ -233,11 +237,17 @@ const Navbar = () => {
                 <Separator className="mt-5" />
                 <p className="text-sm font-bold my-3">Quick Contact</p>
                 <div className="space-y-2">
-                  <Link href={`mailto:${supportEmail}`} className="flex items-center">
+                  <Link
+                    href={`mailto:${supportEmail}`}
+                    className="flex items-center"
+                  >
                     <MailIcon className="inline mr-3 size-4.5" />
                     <p className="text-sm">{supportEmail}</p>
                   </Link>
-                  <Link href={`mailto:${supportPhone}`} className="flex items-center">
+                  <Link
+                    href={`mailto:${supportPhone}`}
+                    className="flex items-center"
+                  >
                     <PhoneIcon className="inline mr-3 size-4.5" />
                     <p className="text-sm">{supportPhone}</p>
                   </Link>
@@ -245,7 +255,7 @@ const Navbar = () => {
               </div>
               <SheetFooter>
                 <div className="bg-gray-100 rounded-md flex justify-between">
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center p-3">
                     <UserRoundIcon />
                     {isAuthenticated ? (
                       <div>
@@ -263,7 +273,9 @@ const Navbar = () => {
                       <EllipsisVerticalIcon />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel className="font-bold">My Account</DropdownMenuLabel>
+                      <DropdownMenuLabel className="font-bold">
+                        My Account
+                      </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {isAuthenticated ? (
                         <>
@@ -359,8 +371,8 @@ const Navbar = () => {
               <div className="px-5 lg:px-10 py-3 overflow-y-scroll grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {cart.length > 0 ? (
                   cart.map((cartItem) => {
-                    const originalProduct = products.find(
-                      (p) => p.id === cartItem.id
+                    const originalProduct = products.find((product) =>
+                      cartItem.id.search(product.id)
                     );
 
                     if (!originalProduct) {
@@ -423,7 +435,9 @@ const Navbar = () => {
               </div>
 
               <DrawerFooter className="flex flex-row-reverse gap-3">
-                <Button className="grow">Check out</Button>
+                <Button className="grow" onClick={() => {router.push('/checkout')}}>
+                  Check out
+                </Button>
                 <DrawerClose asChild>
                   <Button variant="outline" className="grow">
                     Cancel
